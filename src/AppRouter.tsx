@@ -1,6 +1,6 @@
-import { Routes, Route } from 'react-router-dom'
-import Home from './Home'
-import Test from './Test'
+import { Routes, Route } from "react-router-dom"
+import Home from "./Home"
+import Test from "./Test"
 
 const AppRouter = () => {
   return (
