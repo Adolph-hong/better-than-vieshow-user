@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Check, Ticket } from "lucide-react"
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import SeatIcon from "../src/assets/seat/seat.svg?react"
 import {
   mockSeatSelection,
@@ -138,61 +139,74 @@ const SeatSelection = () => {
         </div>
 
         {/* 螢幕指示器和座位地圖 */}
-        <div className="mt-4">
-          {/* 螢幕指示器 */}
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-xs">螢幕</p>
-            <div className="h-[2px] w-[240px] bg-[#D9D9D9]" />
-          </div>
+        <section className="px-4">
+          <TransformWrapper centerOnInit initialScale={1} minScale={1} maxScale={3}>
+            <TransformComponent
+              wrapperClass="!w-full !h-full"
+              contentClass="!w-max"
+              contentStyle={{ width: "max-content" }}
+            >
+              <div className="mt-4">
+                {/* 螢幕指示器 */}
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-xs">螢幕</p>
+                  <div className="h-[2px] w-[240px] bg-[#D9D9D9]" />
+                </div>
 
-          {/* 座位地圖 */}
-          <div className="mt-8 space-y-5 px-4">
-            {ROW_LABELS.map((row, rowIndex) => {
-              const rowSeats = seatsByRow[row] || []
-              // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
-              const shouldAddHorizontalAisleBefore =
-                horizontalAisle !== undefined && rowIndex === horizontalAisle
+                {/* 座位地圖 */}
+                <div className="mt-8 space-y-3">
+                  {ROW_LABELS.map((row, rowIndex) => {
+                    const rowSeats = seatsByRow[row] || []
+                    // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
+                    const shouldAddHorizontalAisleBefore =
+                      horizontalAisle !== undefined && rowIndex === horizontalAisle
 
-              return (
-                <Fragment key={row}>
-                  {/* 橫向走道（在指定排之前插入） */}
-                  {shouldAddHorizontalAisleBefore && (
-                    <div key={`horizontal-aisle-${row}`} className="h-3" />
-                  )}
+                    return (
+                      <Fragment key={row}>
+                        {/* 橫向走道（在指定排之前插入） */}
+                        {shouldAddHorizontalAisleBefore && (
+                          <div key={`horizontal-aisle-${row}`} className="h-3" />
+                        )}
 
-                  <div className="flex items-center justify-center gap-2">
-                    {rowSeats.map((seat) => {
-                      const status = getSeatStatus(seat)
-                      // 檢查是否需要在這個座位後插入垂直走道
-                      const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
+                        <div className="flex items-center justify-center gap-2">
+                          {rowSeats.map((seat) => {
+                            const status = getSeatStatus(seat)
+                            // 檢查是否需要在這個座位後插入垂直走道
+                            const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
 
-                      return (
-                        <Fragment key={`${seat.row}-${seat.column}`}>
-                          <button
-                            type="button"
-                            onClick={() => handleSeatClick(seat)}
-                            disabled={status === "sold"}
-                            className={`${
-                              status === "sold"
-                                ? "cursor-not-allowed opacity-50"
-                                : "cursor-pointer hover:opacity-80"
-                            } transition-all`}
-                            aria-label={`${seat.row}排 ${seat.column}號`}
-                            title={`${seat.row}排 ${seat.column}號`}
-                          >
-                            <SeatIcon fill={getSeatFillColor(status)} className="h-[19px] w-6" />
-                          </button>
-                          {/* 垂直走道（空白間距） */}
-                          {shouldAddVerticalAisle && <div className="w-2" />}
-                        </Fragment>
-                      )
-                    })}
-                  </div>
-                </Fragment>
-              )
-            })}
-          </div>
-        </div>
+                            return (
+                              <Fragment key={`${seat.row}-${seat.column}`}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSeatClick(seat)}
+                                  disabled={status === "sold"}
+                                  className={`${
+                                    status === "sold"
+                                      ? "cursor-not-allowed opacity-50"
+                                      : "cursor-pointer hover:opacity-80"
+                                  } transition-all`}
+                                  aria-label={`${seat.row}排 ${seat.column}號`}
+                                  title={`${seat.row}排 ${seat.column}號`}
+                                >
+                                  <SeatIcon
+                                    fill={getSeatFillColor(status)}
+                                    className="h-[19px] w-6"
+                                  />
+                                </button>
+                                {/* 垂直走道（空白間距） */}
+                                {shouldAddVerticalAisle && <div className="w-2" />}
+                              </Fragment>
+                            )
+                          })}
+                        </div>
+                      </Fragment>
+                    )
+                  })}
+                </div>
+              </div>
+            </TransformComponent>
+          </TransformWrapper>
+        </section>
 
         {/* 圖例 */}
         <div className="mt-[38px] flex justify-center gap-8 text-[10px]">
