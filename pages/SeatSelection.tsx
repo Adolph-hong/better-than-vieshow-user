@@ -80,7 +80,7 @@ const SeatSelection = () => {
       case "wheelchair":
         return "#208716" // 輪椅座位 - 綠色
       default:
-        return "#888888" // 可選座位 - 淺灰色
+        return "#B5B5B5" // 可選座位 - 淺灰色
     }
   }
 
