@@ -180,7 +180,7 @@ const SeatSelection = () => {
                             aria-label={`${seat.row}排 ${seat.column}號`}
                             title={`${seat.row}排 ${seat.column}號`}
                           >
-                            <SeatIcon fill={getSeatFillColor(status)} />
+                            <SeatIcon fill={getSeatFillColor(status)} className="h-[19px] w-6" />
                           </button>
                           {/* 垂直走道（空白間距） */}
                           {shouldAddVerticalAisle && <div className="w-2" />}
