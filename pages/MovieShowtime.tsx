@@ -91,6 +91,10 @@ const MovieShowtime = () => {
           price: selectedGroup.price,
           ticketCount,
           posterUrl: movieData.posterUrl,
+          rating: movieData.rating,
+          duration: movieData.duration,
+          genre: movieData.genres[0],
+          ticketType: selectedGroup.name,
         },
       })
     }

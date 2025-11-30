@@ -17,6 +17,10 @@ type LocationState = {
   price: number
   ticketCount: number
   posterUrl?: string
+  rating?: string
+  duration?: string
+  genre?: string
+  ticketType?: string
 }
 
 const SeatSelection = () => {
@@ -30,13 +34,28 @@ const SeatSelection = () => {
   // Check if state exists, if not redirect or show loading
   // For this exercise, if no state, we can default or return early.
   // We'll initialize with defaults if missing to prevent crash, but ideally should redirect.
-  const { movieTitle, date, time, price, ticketCount, posterUrl } = state || {
+  const {
+    movieTitle,
+    date,
+    time,
+    price,
+    ticketCount,
+    posterUrl,
+    rating,
+    duration,
+    genre,
+    ticketType,
+  } = state || {
     movieTitle: "",
     date: "",
     time: "",
     price: 0,
     ticketCount: 0,
     posterUrl: "",
+    rating: "",
+    duration: "",
+    genre: "",
+    ticketType: "",
   }
 
   // If no ticket count (direct access), maybe default to 1 or redirect
@@ -307,6 +326,25 @@ const SeatSelection = () => {
                 className="flex items-center gap-2 rounded-[28px] bg-[#830508] px-4 py-[8px] font-medium text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={selectedSeats.every((s) => s === null)}
                 aria-label="確認票卷"
+                onClick={() => {
+                  navigate("/checkout", {
+                    state: {
+                      movieTitle,
+                      posterUrl,
+                      rating,
+                      duration,
+                      genre,
+                      date,
+                      time,
+                      room: "Room A", // Hardcoded for now
+                      selectedSeats: selectedSeats.filter((s) => s !== null),
+                      ticketType,
+                      ticketCount: selectedSeats.filter((s) => s !== null).length,
+                      price,
+                      totalPrice: currentTotalPrice,
+                    },
+                  })
+                }}
               >
                 <Ticket className="h-6 w-6" />
                 確認票卷
