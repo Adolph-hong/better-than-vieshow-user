@@ -1,23 +1,48 @@
-import { useState, useMemo } from "react"
-import { ArrowLeft, Info, Play } from "lucide-react"
+import { useState, useMemo, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { ArrowLeft, Info, Play, Loader2 } from "lucide-react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
 import ShowtimeOptionButton from "@/components/showtime/ShowtimeOptionButton"
 import TicketCounter from "@/components/showtime/TicketCounter"
-import { movieShowtimesData } from "@/mocks/movieShowtimesData"
+import {
+  fetchMovieShowtimes,
+  type MovieData,
+  type ShowtimeGroup,
+  type ShowtimeSession,
+} from "@/mocks/movieData"
 
 const MovieShowtime = () => {
-  const [selectedDateId, setSelectedDateId] = useState<string | null>(
-    movieShowtimesData.dates[0].id
-  )
+  const navigate = useNavigate()
+  const [movieData, setMovieData] = useState<MovieData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedDateId, setSelectedDateId] = useState<string | null>(null)
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
   const [ticketCount, setTicketCount] = useState(1)
 
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchMovieShowtimes()
+        setMovieData(data)
+        if (data.dates.length > 0) {
+          setSelectedDateId(data.dates[0].id)
+        }
+      } catch (error) {
+        console.error("Failed to load movie data", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
   const currentShowtimeGroups = useMemo(() => {
-    if (!selectedDateId) return []
-    const selectedDate = movieShowtimesData.dates.find((d) => d.id === selectedDateId)
+    if (!selectedDateId || !movieData) return []
+    const selectedDate = movieData.dates.find((d) => d.id === selectedDateId)
     return selectedDate ? selectedDate.showtimeGroups : []
-  }, [selectedDateId])
+  }, [selectedDateId, movieData])
 
   const selectedSessionPrice = useMemo(() => {
     if (!selectedSessionId) return 0
@@ -38,15 +63,52 @@ const MovieShowtime = () => {
   }
 
   const handleBooking = () => {
-    // 下一頁資料會從這邊帶過去到下一頁
+    if (!selectedDateId || !selectedSessionId || !movieData) return
+
+    const selectedDate = movieData.dates.find((d) => d.id === selectedDateId)
+
+    let selectedGroup: ShowtimeGroup | undefined
+    let selectedSession: ShowtimeSession | undefined
+
+    // 直接遍歷查找，避免依賴計算屬性
+    if (selectedDate) {
+      const foundGroup = selectedDate.showtimeGroups.find((group) =>
+        group.sessions.some((s) => s.id === selectedSessionId)
+      )
+
+      if (foundGroup) {
+        selectedGroup = foundGroup
+        selectedSession = foundGroup.sessions.find((s) => s.id === selectedSessionId)
+      }
+    }
+
+    if (selectedDate && selectedGroup && selectedSession) {
+      navigate("/seat/selection", {
+        state: {
+          movieTitle: movieData.title,
+          date: `${selectedDate.date} (${selectedDate.dayOfWeek})`,
+          time: selectedSession.time,
+          price: selectedGroup.price,
+          ticketCount,
+        },
+      })
+    }
+  }
+
+  if (loading || !movieData) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-black pb-10 text-white">
       <header className="relative aspect-[4/5] w-full">
         <img
-          src={movieShowtimesData.posterUrl}
-          alt={movieShowtimesData.title}
+          src={movieData.posterUrl}
+          alt={movieData.title}
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -80,12 +142,12 @@ const MovieShowtime = () => {
           </div>
 
           <div className="space-y-2 rounded-3xl border border-black/10 p-5 ring-[5px] ring-[#454545] backdrop-blur-[4px]">
-            <h1 className="text-[28px] font-bold tracking-wide">{movieShowtimesData.title}</h1>
+            <h1 className="text-[28px] font-bold tracking-wide">{movieData.title}</h1>
             <p className="text-sm text-[#CCCCCC]">
-              {movieShowtimesData.rating} · {movieShowtimesData.duration}
+              {movieData.rating} · {movieData.duration}
             </p>
             <div className="flex gap-2">
-              {movieShowtimesData.genres.map((genre) => (
+              {movieData.genres.map((genre) => (
                 <span
                   key={genre}
                   className="rounded-3xl border border-[#E5E5E5] px-4 py-[5px] text-xs text-[#E5E5E5]"
@@ -104,7 +166,7 @@ const MovieShowtime = () => {
             日期
           </h2>
           <div className="flex flex-wrap gap-3">
-            {movieShowtimesData.dates.map((dateData) => (
+            {movieData.dates.map((dateData) => (
               <DateOptionButton
                 key={dateData.id}
                 date={dateData.date}

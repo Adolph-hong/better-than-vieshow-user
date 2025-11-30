@@ -1,44 +1,69 @@
-import { Fragment, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Check, Ticket } from "lucide-react"
+import { Fragment, useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import { ArrowLeft, Check, Ticket, Loader2 } from "lucide-react"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import SeatIcon from "../src/assets/seat/seat.svg?react"
-import {
-  mockSeatSelection,
-  type Seat,
-  type SeatMap,
-  type ShowtimeInfo,
-} from "../src/mocks/seatSelectionMock"
+import { fetchSeatMap, type Seat, type SeatMap } from "../src/mocks/movieData"
 
 type SelectedSeat = {
   row: string
   column: number
 } | null
 
+type LocationState = {
+  movieTitle: string
+  date: string
+  time: string
+  price: number
+  ticketCount: number
+}
+
 const SeatSelection = () => {
   const navigate = useNavigate()
-  const [showtimeInfo, setShowtimeInfo] = useState<ShowtimeInfo | null>(null)
+  const location = useLocation()
+  const state = location.state as LocationState | null
+
+  const [loading, setLoading] = useState(true)
   const [seatMap, setSeatMap] = useState<SeatMap | null>(null)
-  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>(Array(3).fill(null))
+
+  // Check if state exists, if not redirect or show loading
+  // For this exercise, if no state, we can default or return early.
+  // We'll initialize with defaults if missing to prevent crash, but ideally should redirect.
+  const { movieTitle, date, time, price, ticketCount } = state || {
+    movieTitle: "",
+    date: "",
+    time: "",
+    price: 0,
+    ticketCount: 0,
+  }
+
+  // If no ticket count (direct access), maybe default to 1 or redirect
+  const effectiveTicketCount = ticketCount > 0 ? ticketCount : 1
+
+  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>(
+    Array(effectiveTicketCount).fill(null)
+  )
 
   useEffect(() => {
-    // 載入 mock 資料
-    setShowtimeInfo(mockSeatSelection.showtime)
-    setSeatMap(mockSeatSelection.seatMap)
-
-    // 初始化已選中的座位（從 mock 資料中）
-    const initialSelected: SelectedSeat[] = []
-    mockSeatSelection.seatMap.seats
-      .filter((seat) => seat.status === "selected")
-      .forEach((seat) => {
-        initialSelected.push({ row: seat.row, column: seat.column })
-      })
-    // 補齊到 3 個
-    while (initialSelected.length < 3) {
-      initialSelected.push(null)
+    if (!state) {
+      // Optional: Redirect back if accessed directly
+      // navigate("/movie/showtime")
+      // return
     }
-    setSelectedSeats(initialSelected.slice(0, 3))
-  }, [])
+
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchSeatMap()
+        setSeatMap(data)
+      } catch (error) {
+        console.error("Failed to load seat map", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [state])
 
   const handleSeatClick = (seat: Seat) => {
     if (seat.status === "sold") return
@@ -47,24 +72,29 @@ const SeatSelection = () => {
     const currentIndex = selectedSeats.findIndex((s) => s && `${s.row}${s.column}` === seatKey)
 
     if (currentIndex !== -1) {
-      // 取消選擇
+      // Unselect: remove the seat from the array
       const newSelected = [...selectedSeats]
       newSelected[currentIndex] = null
       setSelectedSeats(newSelected)
     } else {
-      // 選擇座位
+      // Select: find first empty slot
       const emptyIndex = selectedSeats.findIndex((s) => s === null)
       if (emptyIndex !== -1) {
         const newSelected = [...selectedSeats]
         newSelected[emptyIndex] = { row: seat.row, column: seat.column }
         setSelectedSeats(newSelected)
+      } else {
+        // Optional: Replace the first one or last one if full?
+        // Or just do nothing (current behavior is do nothing if full)
       }
     }
   }
 
   const getSeatStatus = (seat: Seat): "sold" | "available" | "selected" | "wheelchair" => {
+    // Treat 'selected' in mock data as available for this user since we start fresh
     if (seat.status === "sold") return "sold"
     if (seat.type === "wheelchair") return "wheelchair"
+
     const isSelected = selectedSeats.some(
       (s) => s && s.row === seat.row && s.column === seat.column
     )
@@ -84,12 +114,12 @@ const SeatSelection = () => {
     }
   }
 
-  const totalPrice = selectedSeats.filter((s) => s !== null).length * 300
+  const currentTotalPrice = selectedSeats.filter((s) => s !== null).length * price
 
-  if (!showtimeInfo || !seatMap) {
+  if (loading || !seatMap) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-white">載入中...</div>
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
@@ -130,9 +160,9 @@ const SeatSelection = () => {
             <ArrowLeft className="h-6 w-6" />
           </button>
           <div className="flex-1 text-center">
-            <h1 className="text-lg font-medium">{showtimeInfo.movieTitle}</h1>
+            <h1 className="text-lg font-medium">{movieTitle}</h1>
             <p className="font-medium text-[#787878]">
-              {showtimeInfo.date} · {showtimeInfo.time}
+              {date} · {time}
             </p>
           </div>
           <div className="w-6" /> {/* 平衡左側按鈕 */}
@@ -259,7 +289,7 @@ const SeatSelection = () => {
         <footer className="px-[42.5px]">
           <div className="mx-auto mt-5 flex items-center justify-between rounded-[28px] bg-[#FFFFFFBF]">
             <div className="px-[18px] text-sm text-black">
-              <p>總金額 : ${totalPrice} 元</p>
+              <p>總金額 : ${currentTotalPrice} 元</p>
             </div>
             <div className="px-[6px] py-[6px]">
               <button
