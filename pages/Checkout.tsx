@@ -82,31 +82,31 @@ const Checkout = () => {
       <main className="px-6 pb-24">
         {/* Movie Info */}
         <div className="mt-2 flex flex-col items-center">
-          <div className="h-[180px] w-[135px] overflow-hidden rounded-md shadow-lg">
+          <div className="h-[160px] w-[120px] overflow-hidden">
             <img src={posterUrl} alt={movieTitle} className="h-full w-full object-cover" />
           </div>
-          <h2 className="mt-4 text-xl font-bold tracking-wide">{movieTitle}</h2>
-          <p className="mt-1 text-sm text-gray-400">
+          <h2 className="mt-3 text-xl font-bold">{movieTitle}</h2>
+          <p className="mt-1 text-sm text-[#CCCCCC]">
             {genre} · {rating} · {duration}
           </p>
         </div>
 
         {/* Date & Time & Room */}
-        <div className="mt-8">
-          <h3 className="text-sm text-gray-300">日期</h3>
-          <p className="mt-1 text-base font-medium">
+        <div className="mt-4 flex flex-col gap-2">
+          <h3 className="text-sm font-medium">日期</h3>
+          <p className="text-sm font-medium">
             {date} · {time} · {room}
           </p>
         </div>
 
         {/* Seats */}
-        <div className="mt-6">
-          <h3 className="mb-2 text-sm text-gray-300">座位</h3>
-          <div className="space-y-2">
+        <div className="mt-6 flex flex-col gap-2">
+          <h3 className="text-sm font-medium">座位</h3>
+          <div className="space-y-3">
             {selectedSeats.map((seat) => (
               <div key={`${seat.row}-${seat.column}`} className="flex items-center gap-3">
-                <SeatIcon className="h-5 w-5 fill-white" />
-                <span className="text-base font-medium">
+                <SeatIcon className="h-[19px] w-6 fill-white" />
+                <span>
                   {seat.row}排 · {seat.column}號
                 </span>
               </div>
@@ -115,22 +115,22 @@ const Checkout = () => {
         </div>
 
         {/* Cost Breakdown */}
-        <div className="mt-8">
-          <h3 className="mb-2 text-sm text-gray-300">費用</h3>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-base">
-              <div className="flex gap-8">
+        <div className="mt-6">
+          <h3 className="mb-2 font-medium">費用</h3>
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex gap-16">
                 <span>{ticketType}</span>
                 <span>*{ticketCount}</span>
               </div>
               <span>${totalPrice}</span>
             </div>
-            <div className="flex items-center justify-between text-base">
+            <div className="flex items-center justify-between">
               <span>手續費</span>
               <span>${HANDLING_FEE}</span>
             </div>
-            <div className="my-3 h-[1px] w-full bg-gray-700" />
-            <div className="flex items-center justify-between text-base font-bold">
+            <div className="h-[1px] w-full bg-white" />
+            <div className="flex items-center justify-between">
               <span>小記</span>
               <span>${finalTotalPrice}</span>
             </div>
@@ -139,17 +139,31 @@ const Checkout = () => {
       </main>
 
       {/* Footer Action */}
-      <footer className="fixed right-0 bottom-0 left-0 bg-black p-6">
-        <button
-          type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#00B900] py-3 font-bold text-white transition-colors hover:bg-[#009900]"
-        >
-          <span className="text-lg">LINE</span>
-          <span className="flex h-4 items-center rounded bg-white px-1 text-xs font-extrabold text-[#00B900]">
-            Pay
-          </span>
-          <span className="ml-2">支付 NT ${finalTotalPrice}</span>
-        </button>
+      <footer className="fixed right-0 bottom-0 left-0 px-[47.5px] py-3">
+        <div className="rounded-full bg-[#FFFFFFBF] p-[6px]">
+          <button
+            type="button"
+            onClick={() => {
+              navigate("/payment/success", {
+                state: {
+                  movieTitle,
+                  posterUrl,
+                  rating,
+                  duration,
+                  genre,
+                  finalTotalPrice,
+                },
+              })
+            }}
+            className="flex w-full items-center justify-center gap-1 rounded-full bg-[#24B91B] py-[10px] font-bold transition-colors hover:bg-green-600"
+          >
+            <span className="font-bold">LINE</span>
+            <span className="flexitems-center rounded bg-white px-1 font-bold text-[#24B91B]">
+              Pay
+            </span>
+            <span className="ml-11 font-medium">支付 NT ${finalTotalPrice}</span>
+          </button>
+        </div>
       </footer>
     </div>
   )
