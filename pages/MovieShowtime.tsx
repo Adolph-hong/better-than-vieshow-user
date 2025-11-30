@@ -90,6 +90,7 @@ const MovieShowtime = () => {
           time: selectedSession.time,
           price: selectedGroup.price,
           ticketCount,
+          posterUrl: movieData.posterUrl,
         },
       })
     }

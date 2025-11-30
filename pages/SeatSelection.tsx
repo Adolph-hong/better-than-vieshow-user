@@ -16,6 +16,7 @@ type LocationState = {
   time: string
   price: number
   ticketCount: number
+  posterUrl?: string
 }
 
 const SeatSelection = () => {
@@ -29,12 +30,13 @@ const SeatSelection = () => {
   // Check if state exists, if not redirect or show loading
   // For this exercise, if no state, we can default or return early.
   // We'll initialize with defaults if missing to prevent crash, but ideally should redirect.
-  const { movieTitle, date, time, price, ticketCount } = state || {
+  const { movieTitle, date, time, price, ticketCount, posterUrl } = state || {
     movieTitle: "",
     date: "",
     time: "",
     price: 0,
     ticketCount: 0,
+    posterUrl: "",
   }
 
   // If no ticket count (direct access), maybe default to 1 or redirect
@@ -142,10 +144,18 @@ const SeatSelection = () => {
   const { verticalAisles = [], horizontalAisle } = seatMap // 走道位置
 
   return (
-    <div className="min-h-screen w-full bg-black text-white">
+    <div className="relative min-h-screen w-full overflow-hidden bg-black text-white">
       {/* 背景模糊效果 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-black opacity-90" />
-      <div className="absolute inset-0 backdrop-blur-3xl" />
+      {posterUrl && (
+        <div className="absolute top-15 right-0 left-0 z-0 aspect-[4/5] w-full">
+          <img
+            src={posterUrl}
+            alt="background"
+            className="h-full w-full object-cover opacity-35 blur-[8px]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        </div>
+      )}
 
       {/* 內容區域 */}
       <div className="relative z-10">
@@ -259,13 +269,13 @@ const SeatSelection = () => {
         </div>
 
         {/* 座位選擇框 */}
-        <div className="mt-[47px] flex gap-[18px] px-[49px]">
+        <div className="mt-[47px] grid grid-cols-3 gap-[18px] px-[49px]">
           {selectedSeats.map((seat, index) => {
             const seatId = seat ? `${seat.row}-${seat.column}` : `empty-${index}`
             return (
               <div
                 key={`seat-selection-${seatId}`}
-                className={`relative flex-1 rounded-sm border-1 p-3 ${
+                className={`relative rounded-sm border-1 p-3 ${
                   seat ? "border-[#830508]" : "border-gray-400 bg-transparent"
                 }`}
               >
