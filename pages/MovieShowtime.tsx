@@ -106,8 +106,8 @@ const MovieShowtime = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black pb-10 text-white">
-      <header className="relative h-[480px] w-full pt-[60px]">
+    <div className="min-h-screen bg-black text-white">
+      <header className="relative h-[480px] w-full pt-[64px]">
         {/* 模糊背景層 */}
         <div className="absolute inset-0 overflow-hidden">
           <div
@@ -158,10 +158,12 @@ const MovieShowtime = () => {
         </div>
 
         {/* 電影資訊 */}
-        <div className="absolute bottom-0 left-0 z-10 w-full translate-y-4 px-3">
-          <div className="mt-4 space-y-2 rounded-3xl p-5">
-            <h1 className="text-center text-[28px] font-bold tracking-wide">{movieData.title}</h1>
-            <p className="text-center text-sm text-[#D5D5D5]">
+        <div className="absolute z-10 w-full p-3">
+          <div>
+            <h1 className="mb-1 text-center text-[28px] font-bold tracking-wide">
+              {movieData.title}
+            </h1>
+            <p className="mb-2 text-center text-sm text-[#D5D5D5]">
               {movieData.rating} · {movieData.duration}
             </p>
             <div className="flex justify-center gap-2">
@@ -178,7 +180,7 @@ const MovieShowtime = () => {
         </div>
       </header>
 
-      <main className="px-[15px] pt-8">
+      <main className="px-4 pt-4">
         <section className="mb-6" aria-labelledby="date-selection">
           <h2 id="date-selection" className="mb-[5px] text-[17px] font-normal">
             日期
@@ -200,11 +202,11 @@ const MovieShowtime = () => {
         </section>
 
         {selectedDateId && (
-          <section className="mb-6" aria-labelledby="showtime-selection">
-            <h2 id="showtime-selection" className="mb-[5px] text-[17px]">
-              場次
+          <section aria-labelledby="showtime-selection" className="pb-6">
+            <h2 id="showtime-selection" className="mb-2 text-[17px]">
+              選擇時段
             </h2>
-            <div className="space-y-[5px]">
+            <div className="space-y-2">
               {currentShowtimeGroups.map((group) => (
                 <article key={group.id}>
                   <div className="mb-[5px] flex items-center justify-between">
@@ -228,7 +230,7 @@ const MovieShowtime = () => {
         )}
 
         {selectedSessionId && (
-          <section className="mb-8" aria-label="Ticket count selection">
+          <section className="mb-3" aria-label="Ticket count selection">
             <TicketCounter
               count={ticketCount}
               onIncrement={handleIncrement}

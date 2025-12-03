@@ -8,19 +8,24 @@ type BookingActionBarProps = {
 
 const BookingActionBar = ({ totalPrice, onBooking, isDisabled = false }: BookingActionBarProps) => {
   return (
-    <div className="fixed bottom-3 left-0 z-50 flex w-full justify-center px-[42.5px]">
-      <div className="flex w-full items-center justify-between rounded-full bg-[#D9D9D9] py-[6px] pr-1.5 pl-[18px]">
-        <div>
-          <span className="text-sm text-black">總金額：${totalPrice} 元</span>
+    <div className="w-full border-t border-[#CCCCCC] bg-black p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-white">總金額</span>
+          <span className="text-lg font-semibold text-[#11968D]">NTD ${totalPrice}</span>
         </div>
         <button
           type="button"
           onClick={onBooking}
           disabled={isDisabled}
-          className={`flex items-center gap-2 rounded-full py-2 pr-[18px] pl-3 text-base font-bold text-white transition-colors ${isDisabled ? "cursor-not-allowed bg-gray-500" : "cursor-pointer bg-[#8E0000] active:bg-[#600000]"} `}
+          className={`flex cursor-pointer items-center gap-2 rounded-xl py-[10px] pr-[64.5px] pl-[58.5px] font-bold text-white transition-colors ${
+            isDisabled
+              ? "cursor-not-allowed bg-gray-600"
+              : "bg-[#11968D] hover:bg-[#0e7a73] active:bg-[#0b635d]"
+          }`}
         >
           <Armchair />
-          <span className="whitespace-nowrap">挑選座位</span>
+          <span className="font-medium whitespace-nowrap">挑選座位</span>
         </button>
       </div>
     </div>

@@ -23,10 +23,10 @@ const TicketCounter = ({
           type="button"
           onClick={onDecrement}
           disabled={count <= minCount}
-          className={`flex h-[36px] w-[36px] items-center justify-center rounded-full transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#424242] text-gray-500" : "cursor-pointer bg-[#830508] text-white active:bg-[#600000]"} `}
+          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D] text-white active:bg-[#600000]"} `}
           aria-label="Decrease ticket count"
         >
-          <Minus />
+          <Minus className="text-[#FFFFFF]" />
         </button>
 
         <span className="text-[40px] font-bold">{count}</span>
@@ -35,10 +35,10 @@ const TicketCounter = ({
           type="button"
           onClick={onIncrement}
           disabled={count >= maxCount}
-          className={`flex h-[36px] w-[36px] items-center justify-center rounded-full transition-colors duration-200 ${count >= maxCount ? "cursor-not-allowed bg-[#424242] text-gray-500" : "cursor-pointer bg-[#830508] text-white active:bg-[#550000]"} `}
+          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count >= maxCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D]"} `}
           aria-label="Increase ticket count"
         >
-          <Plus />
+          <Plus className="text-[#FFFFFF]" />
         </button>
       </div>
     </div>
