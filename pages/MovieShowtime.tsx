@@ -26,9 +26,7 @@ const MovieShowtime = () => {
         setLoading(true)
         const data = await fetchMovieShowtimes()
         setMovieData(data)
-        if (data.dates.length > 0) {
-          setSelectedDateId(data.dates[0].id)
-        }
+        // Modified: Removed automatic selection of first date to satisfy requirement 1
       } catch (error) {
         console.error("Failed to load movie data", error)
       } finally {
@@ -70,7 +68,6 @@ const MovieShowtime = () => {
     let selectedGroup: ShowtimeGroup | undefined
     let selectedSession: ShowtimeSession | undefined
 
-    // 直接遍歷查找，避免依賴計算屬性
     if (selectedDate) {
       const foundGroup = selectedDate.showtimeGroups.find((group) =>
         group.sessions.some((s) => s.id === selectedSessionId)
@@ -110,15 +107,20 @@ const MovieShowtime = () => {
 
   return (
     <div className="min-h-screen bg-black pb-10 text-white">
-      <header className="relative aspect-[4/5] w-full">
-        <img
-          src={movieData.posterUrl}
-          alt={movieData.title}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+      <header className="relative h-[480px] w-full pt-[60px]">
+        {/* 模糊背景層 */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="h-full w-full bg-cover bg-top bg-no-repeat blur-[10px]"
+            style={{
+              backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), url(${movieData.posterUrl})`,
+            }}
+          />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
 
-        <div className="absolute top-0 right-0 left-0 flex items-center justify-between p-3">
+        {/* 上方導航按鈕 */}
+        <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between px-4 py-3">
           <button
             type="button"
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-white/20 backdrop-blur-[4px]"
@@ -133,29 +135,40 @@ const MovieShowtime = () => {
           </button>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full translate-y-4 px-3">
-          <div className="flex justify-end pb-2">
+        {/* 前景清晰海報層 */}
+        <div className="relative z-10 h-[300px] overflow-hidden px-4 shadow-lg">
+          <img
+            src={movieData.posterUrl}
+            alt={movieData.title}
+            className="h-full w-full rounded-xl object-cover object-top"
+          />
+
+          {/* 播放預告片按鈕 - 移至海報上 */}
+          <div className="absolute right-5.5 bottom-1">
             <button
               type="button"
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-[#830508] px-3 py-[10px] text-sm font-normal shadow-md active:bg-[#600000]"
+              className="active:bg-[#600000 flex shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-[#11968D] px-2 py-[6px] text-sm font-normal"
             >
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
-                <Play className="h-3 w-3 fill-[#830508]" />
+                <Play className="h-3 w-3 fill-[#11968D]" />
               </div>
-              觀看預告片
+              播放預告片
             </button>
           </div>
+        </div>
 
-          <div className="space-y-2 rounded-3xl border border-black/10 p-5 ring-[5px] ring-[#454545] backdrop-blur-[4px]">
-            <h1 className="text-[28px] font-bold tracking-wide">{movieData.title}</h1>
-            <p className="text-sm text-[#CCCCCC]">
+        {/* 電影資訊 */}
+        <div className="absolute bottom-0 left-0 z-10 w-full translate-y-4 px-3">
+          <div className="mt-4 space-y-2 rounded-3xl p-5">
+            <h1 className="text-center text-[28px] font-bold tracking-wide">{movieData.title}</h1>
+            <p className="text-center text-sm text-[#D5D5D5]">
               {movieData.rating} · {movieData.duration}
             </p>
-            <div className="flex gap-2">
+            <div className="flex justify-center gap-2">
               {movieData.genres.map((genre) => (
                 <span
                   key={genre}
-                  className="rounded-3xl border border-[#E5E5E5] px-4 py-[5px] text-xs text-[#E5E5E5]"
+                  className="rounded-3xl border border-[#F2F2F2] px-4 py-[5px] text-xs text-[#F2F2F2]"
                 >
                   {genre}
                 </span>
@@ -179,55 +192,61 @@ const MovieShowtime = () => {
                 isSelected={selectedDateId === dateData.id}
                 onClick={() => {
                   setSelectedDateId(dateData.id)
-                  setSelectedSessionId(null) // 重選日期時清空已選場次
+                  setSelectedSessionId(null) // Reset session when date changes
                 }}
               />
             ))}
           </div>
         </section>
 
-        <section className="mb-6" aria-labelledby="showtime-selection">
-          <h2 id="showtime-selection" className="mb-[5px] text-[17px]">
-            場次
-          </h2>
-          <div className="space-y-[5px]">
-            {currentShowtimeGroups.map((group) => (
-              <article key={group.id}>
-                <div className="mb-[5px] flex items-center justify-between">
-                  <h3 className="text-sm text-[#E5E5E5]">{group.name}</h3>
-                  <span className="text-sm text-gray-300">${group.price}/人</span>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {group.sessions.map((session) => (
-                    <ShowtimeOptionButton
-                      key={session.id}
-                      time={session.time}
-                      isSelected={selectedSessionId === session.id}
-                      onClick={() => setSelectedSessionId(session.id)}
-                    />
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        {selectedDateId && (
+          <section className="mb-6" aria-labelledby="showtime-selection">
+            <h2 id="showtime-selection" className="mb-[5px] text-[17px]">
+              場次
+            </h2>
+            <div className="space-y-[5px]">
+              {currentShowtimeGroups.map((group) => (
+                <article key={group.id}>
+                  <div className="mb-[5px] flex items-center justify-between">
+                    <h3 className="text-sm text-[#E5E5E5]">{group.name}</h3>
+                    <span className="text-sm text-gray-300">${group.price}/人</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {group.sessions.map((session) => (
+                      <ShowtimeOptionButton
+                        key={session.id}
+                        time={session.time}
+                        isSelected={selectedSessionId === session.id}
+                        onClick={() => setSelectedSessionId(session.id)}
+                      />
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
-        <section className="mb-8" aria-label="Ticket count selection">
-          <TicketCounter
-            count={ticketCount}
-            onIncrement={handleIncrement}
-            onDecrement={handleDecrement}
-            maxCount={6}
-            minCount={1}
-          />
-        </section>
+        {selectedSessionId && (
+          <section className="mb-8" aria-label="Ticket count selection">
+            <TicketCounter
+              count={ticketCount}
+              onIncrement={handleIncrement}
+              onDecrement={handleDecrement}
+              maxCount={6}
+              minCount={1}
+            />
+          </section>
+        )}
       </main>
 
-      <BookingActionBar
-        totalPrice={totalPrice}
-        onBooking={handleBooking}
-        isDisabled={!selectedSessionId}
-      />
+      {selectedSessionId && (
+        <BookingActionBar
+          totalPrice={totalPrice}
+          onBooking={handleBooking}
+          isDisabled={!selectedSessionId}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import spiderManPoster from "@/assets/icon/spider man 1.jpg"
+import blackPantherPoster from "@/assets/icon/black-panther.jpg"
 
 // --- Movie Showtime Data Types ---
 
@@ -65,12 +65,12 @@ export type SeatMap = {
 // --- Data Values ---
 
 const movieShowtimesData: MovieData = {
-  id: "spider-man-nwh",
-  title: "蜘蛛人：無家日",
+  id: "black-panther",
+  title: "黑豹",
   rating: "普遍級",
   duration: "2 小時 15 分鐘",
   genres: ["科幻", "動作"],
-  posterUrl: spiderManPoster,
+  posterUrl: blackPantherPoster,
   dates: [
     {
       id: "d1",
