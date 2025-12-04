@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Info, Play, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowLeft, Info, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
+import RoundedPlay from "@/assets/icon/rounded_play.svg?react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
 import ShowtimeOptionButton from "@/components/showtime/ShowtimeOptionButton"
@@ -318,12 +319,10 @@ const MovieShowtime = () => {
             <button
               type="button"
               onClick={() => setShowTrailer(true)}
-              className="active:bg-[#600000 flex shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-[#11968D] px-2 py-[6px] text-sm font-normal"
+              className="flex cursor-pointer items-center gap-1 rounded-lg bg-[#11968D] px-2 py-1 text-sm"
             >
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
-                <Play className="h-3 w-3 fill-[#11968D]" />
-              </div>
-              播放預告片
+              <RoundedPlay />
+              <span className="text-xs leading-[1.2]">播放預告片</span>
             </button>
           </div>
         </div>
