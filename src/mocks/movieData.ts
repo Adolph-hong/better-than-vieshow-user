@@ -29,6 +29,10 @@ export type MovieData = {
   duration: string
   genres: string[]
   posterUrl: string
+  description: string
+  director: string
+  cast: string
+  releaseDate: string
   dates: MovieDate[]
 }
 
@@ -71,6 +75,11 @@ const movieShowtimesData: MovieData = {
   duration: "2 小時 15 分鐘",
   genres: ["科幻", "動作"],
   posterUrl: blackPantherPoster,
+  description:
+    "在經歷《復仇者聯盟》的事件後，東尼·史塔克患上了嚴重的PTSD，對「紐約」和「蟲洞」等詞語會產生恐慌反應。恐怖組織「曼達林」開始在全美各地發動大規模爆炸攻擊，激怒了東尼，他在衝動之下向曼達林宣戰，卻遭到嚴厲的報復。在戰鬥中，東尼的鋼鐵裝甲受損，被迫避難，並開始暗中調查曼達林的秘密。",
+  director: "萊恩·庫格勒",
+  cast: "查德威克·鮑斯曼、麥可·B·喬丹、戴娜·葛里拉、莉蒂西亞·萊特",
+  releaseDate: "2025/06/22",
   dates: [
     {
       id: "d1",

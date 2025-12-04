@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Info, Play, Loader2 } from "lucide-react"
+import { ArrowLeft, Info, Play, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
 import ShowtimeOptionButton from "@/components/showtime/ShowtimeOptionButton"
@@ -19,6 +19,9 @@ const MovieShowtime = () => {
   const [selectedDateId, setSelectedDateId] = useState<string | null>(null)
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
   const [ticketCount, setTicketCount] = useState(1)
+  const [showInfo, setShowInfo] = useState(false)
+  const [showTrailer, setShowTrailer] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -27,8 +30,8 @@ const MovieShowtime = () => {
         const data = await fetchMovieShowtimes()
         setMovieData(data)
         // Modified: Removed automatic selection of first date to satisfy requirement 1
-      } catch (error) {
-        console.error("Failed to load movie data", error)
+      } catch {
+        // console.error("Failed to load movie data", error)
       } finally {
         setLoading(false)
       }
@@ -97,6 +100,16 @@ const MovieShowtime = () => {
     }
   }
 
+  // Truncate description logic
+  const truncateLength = 72
+  const displayDescription = useMemo(() => {
+    if (!movieData) return ""
+    if (isExpanded) return movieData.description
+    return movieData.description.length > truncateLength
+      ? `${movieData.description.slice(0, truncateLength)}...`
+      : movieData.description
+  }, [movieData, isExpanded])
+
   if (loading || !movieData) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -107,6 +120,138 @@ const MovieShowtime = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Trailer Modal */}
+      {showTrailer && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 transition-opacity duration-300">
+          {/* Close button - repositioned to match Info button */}
+          <button
+            type="button"
+            onClick={() => setShowTrailer(false)}
+            className="absolute top-3 right-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-[#AAAAAA] backdrop-blur-[4px]"
+          >
+            <X className="h-6 w-6 text-white" />
+          </button>
+
+          <div className="relative w-full">
+            <div className="aspect-video w-full overflow-hidden bg-black shadow-2xl">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/n9OPh03GnI4?si=q1W4U5QJA6synPex&amp;start=3&autoplay=1"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+          {/* Close modal when clicking outside */}
+          <div
+            className="absolute inset-0 -z-10"
+            onClick={() => setShowTrailer(false)}
+            role="button"
+            tabIndex={0}
+            aria-label="Close trailer"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setShowTrailer(false)
+            }}
+          />
+        </div>
+      )}
+
+      {/* Info Panel Overlay */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Close info panel"
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
+          showInfo ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setShowInfo(false)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") setShowInfo(false)
+        }}
+      />
+
+      {/* Slide-up Info Panel */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-50 h-[436px] transform rounded-t-3xl bg-[#232323] transition-transform duration-300 ease-out ${
+          showInfo ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="flex h-full flex-col px-5 pt-[22px]">
+          {/* Header */}
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white">{movieData.title}</h2>
+              <div className="mt-3 text-sm text-[#CCCCCC]">
+                {movieData.rating} · {movieData.duration}
+              </div>
+              <div className="mt-3 flex gap-2">
+                {movieData.genres.map((genre) => (
+                  <span
+                    key={genre}
+                    className="rounded-full bg-[#333333] px-3 py-1 text-xs text-[#FFFFFF]"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowInfo(false)}
+              className="rounded-full bg-[#777777] text-[#CCCCCC]"
+            >
+              <X className="text-[#232323]" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="mb-3 text-sm leading-relaxed text-[#CCCCCC]">
+              {displayDescription}
+              {!isExpanded && movieData.description.length > truncateLength && (
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(true)}
+                  className="inline-flex cursor-pointer items-center text-sm text-[#CCCCCC] underline decoration-[#CCCCCC] underline-offset-2"
+                >
+                  閱讀更多
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+              )}
+              {isExpanded && (
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(false)}
+                  className="inline-flex cursor-pointer items-center text-sm text-[#CCCCCC] underline decoration-[#CCCCCC] underline-offset-2"
+                >
+                  收起
+                  <ChevronUp className="ml-0.5 h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-2 border-t border-[#E5E5E5] pt-3">
+              <div className="flex text-sm text-[#E5E5E5]">
+                <span className="w-18">導演</span>
+                <span>{movieData.director}</span>
+              </div>
+              <div className="flex text-sm text-[#E5E5E5]">
+                <span className="w-18 shrink-0">演員</span>
+                <span>{movieData.cast}</span>
+              </div>
+              <div className="flex text-sm text-[#E5E5E5]">
+                <span className="w-18">上映日</span>
+                <span>{movieData.releaseDate}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <header className="relative h-[480px] w-full pt-[64px]">
         {/* 模糊背景層 */}
         <div className="absolute inset-0 overflow-hidden">
@@ -129,6 +274,7 @@ const MovieShowtime = () => {
           </button>
           <button
             type="button"
+            onClick={() => setShowInfo(true)}
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-white/20 backdrop-blur-[4px]"
           >
             <Info className="h-6 w-6 text-white" />
@@ -136,7 +282,7 @@ const MovieShowtime = () => {
         </div>
 
         {/* 前景清晰海報層 */}
-        <div className="relative z-10 h-[300px] overflow-hidden px-4 shadow-lg">
+        <div className="relative z-10 h-[300px] overflow-hidden px-4">
           <img
             src={movieData.posterUrl}
             alt={movieData.title}
@@ -147,6 +293,7 @@ const MovieShowtime = () => {
           <div className="absolute right-5.5 bottom-1">
             <button
               type="button"
+              onClick={() => setShowTrailer(true)}
               className="active:bg-[#600000 flex shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-[#11968D] px-2 py-[6px] text-sm font-normal"
             >
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
@@ -170,7 +317,7 @@ const MovieShowtime = () => {
               {movieData.genres.map((genre) => (
                 <span
                   key={genre}
-                  className="rounded-3xl border border-[#F2F2F2] px-4 py-[5px] text-xs text-[#F2F2F2]"
+                  className="rounded-full border border-[#F2F2F2] px-4 py-[5px] text-xs text-[#F2F2F2]"
                 >
                   {genre}
                 </span>
