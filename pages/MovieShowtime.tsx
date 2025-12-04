@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Info, Play, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
@@ -23,6 +23,10 @@ const MovieShowtime = () => {
   const [showTrailer, setShowTrailer] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
 
+  // Refs for auto-scroll
+  const showtimeRef = useRef<HTMLElement>(null)
+  const ticketCounterRef = useRef<HTMLElement>(null)
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -44,6 +48,26 @@ const MovieShowtime = () => {
     const selectedDate = movieData.dates.find((d) => d.id === selectedDateId)
     return selectedDate ? selectedDate.showtimeGroups : []
   }, [selectedDateId, movieData])
+
+  // Auto-scroll to showtime section when date is selected
+  useEffect(() => {
+    if (selectedDateId) {
+      // Delay to wait for DOM render
+      setTimeout(() => {
+        showtimeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }, 100)
+    }
+  }, [selectedDateId])
+
+  // Auto-scroll to ticket counter section when session is selected
+  useEffect(() => {
+    if (selectedSessionId) {
+      // Delay to wait for DOM render
+      setTimeout(() => {
+        ticketCounterRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }, 100)
+    }
+  }, [selectedSessionId])
 
   const selectedSessionPrice = useMemo(() => {
     if (!selectedSessionId) return 0
@@ -349,7 +373,7 @@ const MovieShowtime = () => {
         </section>
 
         {selectedDateId && (
-          <section aria-labelledby="showtime-selection" className="pb-6">
+          <section ref={showtimeRef} aria-labelledby="showtime-selection" className="pb-6">
             <h2 id="showtime-selection" className="mb-2 text-[17px]">
               選擇時段
             </h2>
@@ -377,7 +401,7 @@ const MovieShowtime = () => {
         )}
 
         {selectedSessionId && (
-          <section className="mb-3" aria-label="Ticket count selection">
+          <section ref={ticketCounterRef} className="mb-3" aria-label="Ticket count selection">
             <TicketCounter
               count={ticketCount}
               onIncrement={handleIncrement}
