@@ -23,10 +23,10 @@ const TicketCounter = ({
           type="button"
           onClick={onDecrement}
           disabled={count <= minCount}
-          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D] text-white active:bg-[#600000]"} `}
+          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D] text-white"} `}
           aria-label="Decrease ticket count"
         >
-          <Minus className="text-[#FFFFFF]" />
+          <Minus />
         </button>
 
         <span className="text-[40px] font-bold">{count}</span>
@@ -38,7 +38,7 @@ const TicketCounter = ({
           className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count >= maxCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D]"} `}
           aria-label="Increase ticket count"
         >
-          <Plus className="text-[#FFFFFF]" />
+          <Plus />
         </button>
       </div>
     </div>
