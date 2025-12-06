@@ -32,7 +32,21 @@ const SeatBadge = ({ seat, onRemove }: SeatBadgeProps) => {
 
   // 待選座位：虛線框 + 待選文字
   return (
-    <div className={`${baseClasses} border border-dashed border-[#11968D]`}>
+    <div className={`${baseClasses} relative`}>
+      {/* SVG 虛線邊框 - strokeDasharray 7,7 */}
+      <svg className="absolute inset-0 h-full w-full">
+        <rect
+          x="0.5"
+          y="0.5"
+          width="71"
+          height="31"
+          rx="16"
+          fill="rgba(17, 150, 141, 0.1)"
+          stroke="#11968D"
+          strokeWidth="1"
+          strokeDasharray="7 7"
+        />
+      </svg>
       <span className="text-sm text-[#11968D]">待選</span>
     </div>
   )
