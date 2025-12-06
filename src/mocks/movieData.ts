@@ -33,7 +33,14 @@ export type MovieData = {
   director: string
   cast: string
   releaseDate: string
+  theaterName: string // 影廳名字
+  orderId: string
   dates: MovieDate[]
+}
+
+// 訂單編號生成
+export const generateOrderId = (): string => {
+  return `#BKA-${Math.floor(10000 + Math.random() * 90000)}`
 }
 
 // --- Seat Selection Data Types ---
@@ -80,6 +87,8 @@ const movieShowtimesData: MovieData = {
   director: "萊恩·庫格勒",
   cast: "查德威克·鮑斯曼、麥可·B·喬丹、戴娜·葛里拉、莉蒂西亞·萊特",
   releaseDate: "2025/06/22",
+  theaterName: "鳳廳",
+  orderId: "#BKA-13005",
   dates: [
     {
       id: "d1",
@@ -283,6 +292,8 @@ const mockSeatMap: SeatMap = {
 }
 
 // --- API Simulation ---
+
+export const MOCK_ORDER_ID = "#BKA-13005"
 
 export const fetchMovieShowtimes = async (): Promise<MovieData> => {
   return new Promise((resolve) => {

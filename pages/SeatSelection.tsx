@@ -359,7 +359,7 @@ const SeatSelection = () => {
                 genre,
                 date,
                 time,
-                room: "Room A", // Hardcoded for now
+                theaterName: "鳳廳",
                 selectedSeats: selectedSeats.filter((s) => s !== null),
                 ticketType,
                 ticketCount: selectedSeats.filter((s) => s !== null).length,
