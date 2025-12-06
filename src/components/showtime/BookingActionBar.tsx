@@ -1,12 +1,21 @@
+import type { ReactNode } from "react"
 import { Armchair } from "lucide-react"
 
 type BookingActionBarProps = {
   totalPrice: number
   onBooking: () => void
   isDisabled?: boolean
+  buttonIcon?: ReactNode
+  buttonText?: string
 }
 
-const BookingActionBar = ({ totalPrice, onBooking, isDisabled = false }: BookingActionBarProps) => {
+const BookingActionBar = ({
+  totalPrice,
+  onBooking,
+  isDisabled = false,
+  buttonIcon = <Armchair />,
+  buttonText = "挑選座位",
+}: BookingActionBarProps) => {
   return (
     <div className="w-full border-t border-[#CCCCCC] bg-black p-4">
       <div className="flex items-center justify-between">
@@ -24,8 +33,8 @@ const BookingActionBar = ({ totalPrice, onBooking, isDisabled = false }: Booking
               : "bg-[#11968D] hover:bg-[#0e7a73] active:bg-[#0b635d]"
           }`}
         >
-          <Armchair />
-          <span className="font-medium whitespace-nowrap">挑選座位</span>
+          {buttonIcon}
+          <span className="font-medium whitespace-nowrap">{buttonText}</span>
         </button>
       </div>
     </div>

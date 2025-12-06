@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Info, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
-import RoundedPlay from "@/assets/icon/rounded_play.svg?react"
+import RoundedPlay from "@/assets/icon/checkout-flow/rounded_play.svg?react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
 import ShowtimeOptionButton from "@/components/showtime/ShowtimeOptionButton"
