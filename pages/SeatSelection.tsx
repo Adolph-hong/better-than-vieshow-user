@@ -136,8 +136,6 @@ const SeatSelection = () => {
         return "#3A3A3A"
       case "selected":
         return "#11968D"
-      case "wheelchair":
-        return "#208716"
       default:
         return "#B5B5B5"
     }
@@ -240,24 +238,24 @@ const SeatSelection = () => {
 
                     {/* 縮放按鈕 */}
                     <div className="relative z-10 flex h-10 justify-between px-[12px]">
-                      {/* 縮小按鈕 */}
-                      <button
-                        type="button"
-                        onClick={() => zoomOut()}
-                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#3A3A3A]"
-                        aria-label="縮小"
-                      >
-                        <Minimize2 className="h-4 w-4 text-[#D9D9D9]" />
-                      </button>
-
                       {/* 放大按鈕 */}
                       <button
                         type="button"
                         onClick={() => zoomIn()}
-                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#3A3A3A]"
+                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
                         aria-label="放大"
                       >
-                        <Maximize2 className="h-4 w-4 text-white" />
+                        <Maximize2 className="h-6 w-6 text-white" />
+                      </button>
+
+                      {/* 縮小按鈕 */}
+                      <button
+                        type="button"
+                        onClick={() => zoomOut()}
+                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
+                        aria-label="縮小"
+                      >
+                        <Minimize2 className="h-6 w-6 text-[#D9D9D9]" />
                       </button>
                     </div>
                   </div>
