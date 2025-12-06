@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
-import { MOCK_ORDER_ID } from "../src/mocks/movieData"
+import FooterButton from "@/components/checkout/FooterButton"
+import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
 type SelectedSeat = {
   row: string
@@ -78,7 +79,7 @@ const Checkout = () => {
         >
           <ArrowLeft className="h-6 w-6" />
         </button>
-        <h1 className="text-lg font-bold">確認你的訂單</h1>
+        <h1 className="text-lg font-medium">確認你的訂單</h1>
       </header>
 
       {/* Movie Banner Section */}
@@ -160,10 +161,8 @@ const Checkout = () => {
         </div>
       </main>
 
-      {/* Footer Action */}
-      <footer className="fixed right-0 bottom-0 left-0 bg-gradient-to-t from-black via-black to-transparent px-6 pt-4 pb-8">
-        <button
-          type="button"
+      <footer className="mt-3">
+        <FooterButton
           onClick={() => {
             navigate("/payment/success", {
               state: {
@@ -176,10 +175,9 @@ const Checkout = () => {
               },
             })
           }}
-          className="w-full rounded-xl bg-[#11968D] py-4 text-center text-lg font-bold text-white shadow-lg transition-transform active:scale-[0.98]"
         >
           付款
-        </button>
+        </FooterButton>
       </footer>
     </div>
   )

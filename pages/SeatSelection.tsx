@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft, Ticket, Loader2, Minimize2, Maximize2 } from "lucide-react"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import SeatIcon from "../src/assets/seat/seat.svg?react"
-import SeatBadge from "../src/components/seat/SeatBadge"
+import SeatBadge from "../src/components/checkout/SeatBadge"
 import BookingActionBar from "../src/components/showtime/BookingActionBar"
 import { fetchSeatMap, type Seat, type SeatMap } from "../src/mocks/movieData"
 
