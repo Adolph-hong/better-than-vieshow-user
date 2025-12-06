@@ -325,7 +325,7 @@ const SeatSelection = () => {
         </section>
 
         {/* 座位選擇框 */}
-        <div className="mt-[47px] px-4">
+        <div className="mt-3 px-4">
           {/* 第一行：座位標題和剩餘待選數量 */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-white">座位</span>
@@ -370,7 +370,7 @@ const SeatSelection = () => {
               },
             })
           }}
-          isDisabled={selectedSeats.every((s) => s === null)}
+          isDisabled={selectedSeats.some((s) => s === null)}
           buttonIcon={<Ticket className="h-6 w-6" />}
           buttonText="確認票卷"
         />
