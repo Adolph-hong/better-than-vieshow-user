@@ -327,9 +327,11 @@ const SeatSelection = () => {
           {/* 第一行：座位標題和剩餘待選數量 */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-white">座位</span>
-            <span className="text-sm text-white">
-              尚有 {selectedSeats.filter((s) => s === null).length} 個待選座位
-            </span>
+            {selectedSeats.filter((s) => s === null).length > 0 && (
+              <span className="text-sm text-white">
+                尚有 {selectedSeats.filter((s) => s === null).length} 個待選座位
+              </span>
+            )}
           </div>
 
           {/* 第二行：座位按鈕區域 */}
