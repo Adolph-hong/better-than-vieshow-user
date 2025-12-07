@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import FooterButton from "@/components/checkout/FooterButton"
+import OrderInfoCard from "@/components/checkout/OrderInfoCard"
 import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
 type SelectedSeat = {
@@ -46,6 +47,7 @@ const Checkout = () => {
     posterUrl,
     rating,
     duration,
+    genre,
     date,
     time,
     theaterName,
@@ -99,31 +101,13 @@ const Checkout = () => {
 
       <main className="mt-10 px-4">
         {/* Order Details Card */}
-        <div className="rounded-2xl bg-[#222222] p-3">
-          <div className="grid grid-cols-2 gap-y-3">
-            <div className="flex flex-col">
-              <span className="text-[13px] font-bold text-[#A5A5A5]">日期</span>
-              <span className="text-[15px] font-medium">{date}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[13px] font-bold text-[#A5A5A5]">時間</span>
-              <span className="text-[15px] font-medium">{time}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[13px] font-bold text-[#A5A5A5]">影廳</span>
-              <span className="text-[15px] font-medium">{displayTheater}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[13px] font-bold text-[#A5A5A5]">類型</span>
-              <span className="text-[15px] font-medium">{ticketType || "一般數位"}</span>
-            </div>
-          </div>
-
-          <div className="mt-3 flex flex-col">
-            <span className="text-[13px] font-bold text-[#A5A5A5]">座位</span>
-            <span className="text-[15px] font-medium">{seatString}</span>
-          </div>
-        </div>
+        <OrderInfoCard
+          date={date}
+          time={time}
+          theater={displayTheater}
+          type={ticketType || "一般數位"}
+          seats={seatString}
+        />
 
         {/* Price Details Card */}
         <div className="mt-3 rounded-2xl bg-[#222222] px-3 py-4">
@@ -161,7 +145,7 @@ const Checkout = () => {
         </div>
       </main>
 
-      <footer className="mt-3">
+      <footer className="mt-3 px-4">
         <FooterButton
           onClick={() => {
             navigate("/payment/success", {
@@ -170,6 +154,12 @@ const Checkout = () => {
                 posterUrl,
                 rating,
                 duration,
+                genre,
+                date,
+                time,
+                theaterName: displayTheater,
+                ticketType: ticketType || "一般數位",
+                seatString,
                 finalTotalPrice,
                 orderId: MOCK_ORDER_ID,
               },
