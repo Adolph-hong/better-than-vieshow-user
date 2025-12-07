@@ -1,0 +1,32 @@
+/* 斜向輪播樣式 */
+.movie-swiper {
+  overflow: visible !important;
+}
+
+.movie-swiper .swiper-slide {
+  transition: all 0.5s ease;
+  transform-origin: center center;
+}
+
+/* 左邊的卡片較高，右邊的卡片較低 */
+.movie-swiper .swiper-slide-prev {
+  transform: translateY(-20px) scale(0.9) !important;
+  opacity: 0.7;
+}
+
+.movie-swiper .swiper-slide-active {
+  transform: translateY(0) scale(1) !important;
+  z-index: 10;
+  opacity: 1;
+}
+
+.movie-swiper .swiper-slide-next {
+  transform: translateY(20px) scale(0.9) !important;
+  opacity: 0.7;
+}
+
+/* 更遠的卡片 */
+.movie-swiper .swiper-slide:not(.swiper-slide-prev):not(.swiper-slide-active):not(.swiper-slide-next) {
+  opacity: 0.4;
+  transform: scale(0.8) !important;
+}
