@@ -110,8 +110,8 @@ const Checkout = () => {
         />
 
         {/* Price Details Card */}
-        <div className="mt-3 rounded-2xl bg-[#222222] px-3 py-4">
-          <div className="space-y-3">
+        <div className="mt-3 rounded-[10px] bg-[#222222]">
+          <div className="space-y-3 px-3 py-4">
             <div className="flex justify-between text-[#A5A5A5]">
               <span>
                 {ticketType || "一般數位"} * {ticketCount}
@@ -122,18 +122,15 @@ const Checkout = () => {
               <span>手續費</span>
               <span>${HANDLING_FEE}</span>
             </div>
-
-            <div className="my-3 h-[1px] w-full bg-[#333333]" />
-
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold">總計</span>
-              <span className="text-lg font-semibold text-[#4BCCBE]">${finalTotalPrice}</span>
-            </div>
+          </div>
+          <div className="flex items-center justify-between rounded-[10px] bg-[#353535] px-3 py-4">
+            <span className="text-lg font-semibold">總計</span>
+            <span className="text-lg font-semibold text-[#4BCCBE]">${finalTotalPrice}</span>
           </div>
         </div>
 
         {/* Payment Method Selection */}
-        <div className="mt-3 rounded-2xl bg-[#222222] p-3">
+        <div className="mt-3 rounded-[10px] bg-[#222222] p-3">
           <span className="text-xs text-[#A5A5A5]">付款方式</span>
           <div className="mt-2 flex items-center gap-3">
             {/* Custom Radio Button for Line Pay */}
