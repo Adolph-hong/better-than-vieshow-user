@@ -1,8 +1,10 @@
 import { Fragment, useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { ArrowLeft, Check, Ticket, Loader2 } from "lucide-react"
+import { ArrowLeft, Ticket, Loader2, Minimize2, Maximize2 } from "lucide-react"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import SeatIcon from "../src/assets/seat/seat.svg?react"
+import SeatBadge from "../src/components/checkout/SeatBadge"
+import BookingActionBar from "../src/components/showtime/BookingActionBar"
 import { fetchSeatMap, type Seat, type SeatMap } from "../src/mocks/movieData"
 
 type SelectedSeat = {
@@ -111,6 +113,12 @@ const SeatSelection = () => {
     }
   }
 
+  const handleRemoveSeat = (index: number) => {
+    const newSelected = [...selectedSeats]
+    newSelected[index] = null
+    setSelectedSeats(newSelected)
+  }
+
   const getSeatStatus = (seat: Seat): "sold" | "available" | "selected" | "wheelchair" => {
     // Treat 'selected' in mock data as available for this user since we start fresh
     if (seat.status === "sold") return "sold"
@@ -125,13 +133,11 @@ const SeatSelection = () => {
   const getSeatFillColor = (status: string) => {
     switch (status) {
       case "sold":
-        return "#3A3A3A" // 已售出 - 深灰色
+        return "#3A3A3A"
       case "selected":
-        return "#A92828" // 已選擇 - 紅色
-      case "wheelchair":
-        return "#208716" // 輪椅座位 - 綠色
+        return "#11968D"
       default:
-        return "#B5B5B5" // 可選座位 - 淺灰色
+        return "#B5B5B5"
     }
   }
 
@@ -163,196 +169,212 @@ const SeatSelection = () => {
   const { verticalAisles = [], horizontalAisle } = seatMap // 走道位置
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black text-white">
-      {/* 背景模糊效果 */}
-      {posterUrl && (
-        <div className="absolute top-15 right-0 left-0 z-0 aspect-[4/5] w-full">
-          <img
-            src={posterUrl}
-            alt="background"
-            className="h-full w-full object-cover opacity-35 blur-[8px]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-        </div>
-      )}
-
+    <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-black text-white">
       {/* 內容區域 */}
-      <div className="relative z-10">
+      <div className="relative z-10 flex-1">
         {/* 頂部導航欄 */}
-        <div className="flex px-4 py-3">
+        <div className="flex px-4 pt-[15px] pb-[14px]">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="rounded-full transition-colors hover:bg-gray-800"
+            className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#AAAAAA66] transition-colors"
             aria-label="返回"
           >
             <ArrowLeft className="h-6 w-6" />
           </button>
-          <div className="flex-1 text-center">
+          <div className="-mt-2 flex-1 text-center">
             <h1 className="text-lg font-medium">{movieTitle}</h1>
             <p className="font-medium text-[#787878]">
               {date} · {time}
             </p>
           </div>
-          <div className="w-6" /> {/* 平衡左側按鈕 */}
+          <div className="w-8" /> {/* 平衡左側按鈕 */}
         </div>
 
-        {/* 螢幕指示器和座位地圖 */}
-        <section className="px-4">
-          <TransformWrapper centerOnInit initialScale={1} minScale={1} maxScale={3}>
-            <TransformComponent
-              wrapperClass="!w-full !h-full"
-              contentClass="!w-max"
-              contentStyle={{ width: "max-content" }}
-            >
-              <div className="mt-4">
-                {/* 螢幕指示器 */}
-                <div className="flex flex-col items-center gap-1">
-                  <p className="text-xs">螢幕</p>
-                  <div className="h-[2px] w-[240px] bg-[#D9D9D9]" />
-                </div>
-
-                {/* 座位地圖 */}
-                <div className="mt-8 space-y-3">
-                  {ROW_LABELS.map((row, rowIndex) => {
-                    const rowSeats = seatsByRow[row] || []
-                    // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
-                    const shouldAddHorizontalAisleBefore =
-                      horizontalAisle !== undefined && rowIndex === horizontalAisle
-
-                    return (
-                      <Fragment key={row}>
-                        {/* 橫向走道（在指定排之前插入） */}
-                        {shouldAddHorizontalAisleBefore && (
-                          <div key={`horizontal-aisle-${row}`} className="h-3" />
-                        )}
-
-                        <div className="flex items-center justify-center gap-2">
-                          {rowSeats.map((seat) => {
-                            const status = getSeatStatus(seat)
-                            // 檢查是否需要在這個座位後插入垂直走道
-                            const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
-
-                            return (
-                              <Fragment key={`${seat.row}-${seat.column}`}>
-                                <button
-                                  type="button"
-                                  onClick={() => handleSeatClick(seat)}
-                                  disabled={status === "sold"}
-                                  className={`${
-                                    status === "sold"
-                                      ? "cursor-not-allowed opacity-50"
-                                      : "cursor-pointer hover:opacity-80"
-                                  } transition-all`}
-                                  aria-label={`${seat.row}排 ${seat.column}號`}
-                                  title={`${seat.row}排 ${seat.column}號`}
-                                >
-                                  <SeatIcon
-                                    fill={getSeatFillColor(status)}
-                                    className="h-[19px] w-6"
-                                  />
-                                </button>
-                                {/* 垂直走道（空白間距） */}
-                                {shouldAddVerticalAisle && <div className="w-2" />}
-                              </Fragment>
-                            )
-                          })}
-                        </div>
-                      </Fragment>
-                    )
-                  })}
-                </div>
-              </div>
-            </TransformComponent>
-          </TransformWrapper>
-        </section>
-
         {/* 圖例 */}
-        <div className="mt-[38px] flex justify-center gap-8 text-[10px]">
-          <div className="flex flex-col items-center gap-1">
+        <div className="mt-3 flex justify-center gap-10 text-[10px]">
+          <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded-full bg-[#3A3A3A]" />
             <span className="text-xs">已售出</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded-full bg-[#888888]" />
             <span className="text-xs">可選座位</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <div className="h-3 w-3 rounded-full bg-[#A92828]" />
+          <div className="flex items-center gap-1">
+            <div className="h-3 w-3 rounded-full bg-[#11968D]" />
             <span className="text-xs">已選擇</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <div className="h-3 w-3 rounded-full bg-[#208716]" />
-            <span className="text-xs">輪椅座位</span>
-          </div>
         </div>
+
+        {/* 螢幕指示器和座位地圖 */}
+        <section className="mt-4">
+          <div className="mx-4 flex h-[400px] flex-col overflow-hidden bg-[#232323]">
+            <TransformWrapper centerOnInit initialScale={1} minScale={1} maxScale={3}>
+              {({ zoomIn, zoomOut }) => (
+                <>
+                  {/* 螢幕指示器與縮放按鈕 */}
+                  <div className="relative mt-3">
+                    {/* 梯形深色背景 - 漸層效果 */}
+                    <div
+                      className="pointer-events-none absolute top-0 left-1/2 h-[194px] w-[628px] -translate-x-1/2"
+                      style={{
+                        background: "linear-gradient(to bottom, #444444 0%, #232323 100%)",
+                        clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                      }}
+                    />
+                    {/* 投影光效 */}
+                    <div
+                      className="pointer-events-none absolute top-0 left-1/2 h-[194px] w-[628px] -translate-x-1/2"
+                      style={{
+                        background:
+                          "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
+                        clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                      }}
+                    />
+
+                    {/* 螢幕橫槓 - 獨立定位於頂部中央 */}
+                    <div className="absolute top-0 left-1/2 z-10 h-2 w-[180px] -translate-x-1/2 rounded-lg bg-white" />
+
+                    {/* 縮放按鈕 */}
+                    <div className="relative z-10 flex h-10 justify-between px-[12px]">
+                      {/* 放大按鈕 */}
+                      <button
+                        type="button"
+                        onClick={() => zoomIn()}
+                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
+                        aria-label="放大"
+                      >
+                        <Maximize2 className="h-6 w-6 text-white" />
+                      </button>
+
+                      {/* 縮小按鈕 */}
+                      <button
+                        type="button"
+                        onClick={() => zoomOut()}
+                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
+                        aria-label="縮小"
+                      >
+                        <Minimize2 className="h-6 w-6 text-[#D9D9D9]" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <TransformComponent
+                    wrapperClass="!w-full flex-1 min-h-0"
+                    contentClass="!w-max"
+                    contentStyle={{ width: "max-content" }}
+                  >
+                    {/* 座位地圖 */}
+                    <div className="mt-8 space-y-3">
+                      {ROW_LABELS.map((row, rowIndex) => {
+                        const rowSeats = seatsByRow[row] || []
+                        // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
+                        const shouldAddHorizontalAisleBefore =
+                          horizontalAisle !== undefined && rowIndex === horizontalAisle
+
+                        return (
+                          <Fragment key={row}>
+                            {/* 橫向走道（在指定排之前插入） */}
+                            {shouldAddHorizontalAisleBefore && (
+                              <div key={`horizontal-aisle-${row}`} className="h-3" />
+                            )}
+
+                            <div className="flex items-center justify-center gap-2">
+                              {rowSeats.map((seat) => {
+                                const status = getSeatStatus(seat)
+                                // 檢查是否需要在這個座位後插入垂直走道
+                                const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
+
+                                return (
+                                  <Fragment key={`${seat.row}-${seat.column}`}>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSeatClick(seat)}
+                                      disabled={status === "sold"}
+                                      className={`${
+                                        status === "sold"
+                                          ? "cursor-not-allowed opacity-50"
+                                          : "cursor-pointer hover:opacity-80"
+                                      } transition-all`}
+                                      aria-label={`${seat.row}排 ${seat.column}號`}
+                                      title={`${seat.row}排 ${seat.column}號`}
+                                    >
+                                      <SeatIcon
+                                        fill={getSeatFillColor(status)}
+                                        className="h-[19px] w-6"
+                                      />
+                                    </button>
+                                    {/* 垂直走道（空白間距） */}
+                                    {shouldAddVerticalAisle && <div className="w-2" />}
+                                  </Fragment>
+                                )
+                              })}
+                            </div>
+                          </Fragment>
+                        )
+                      })}
+                    </div>
+                  </TransformComponent>
+                </>
+              )}
+            </TransformWrapper>
+          </div>
+        </section>
 
         {/* 座位選擇框 */}
-        <div className="mt-[47px] grid grid-cols-3 gap-[18px] px-[49px]">
-          {selectedSeats.map((seat, index) => {
-            const seatId = seat ? `${seat.row}-${seat.column}` : `empty-${index}`
-            return (
-              <div
-                key={`seat-selection-${seatId}`}
-                className={`relative rounded-sm border-1 p-3 ${
-                  seat ? "border-[#830508]" : "border-gray-400 bg-transparent"
-                }`}
-              >
-                {seat && (
-                  <div className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#830508] bg-[#830508]">
-                    <Check className="h-4 w-4" />
-                  </div>
-                )}
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <p className="text-xs font-normal">座位 {index + 1}</p>
-                  <p className="text-xs font-normal">
-                    {seat ? `${seat.row} 排 ${seat.column}號` : "尚未選取"}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* 底部總金額和確認按鈕 */}
-        <footer className="px-[42.5px]">
-          <div className="mx-auto mt-5 flex items-center justify-between rounded-[28px] bg-[#FFFFFFBF]">
-            <div className="px-[18px] text-sm text-black">
-              <p>總金額 : ${currentTotalPrice} 元</p>
-            </div>
-            <div className="px-[6px] py-[6px]">
-              <button
-                type="button"
-                className="flex items-center gap-2 rounded-[28px] bg-[#830508] px-4 py-[8px] font-medium text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={selectedSeats.every((s) => s === null)}
-                aria-label="確認票卷"
-                onClick={() => {
-                  navigate("/checkout", {
-                    state: {
-                      movieTitle,
-                      posterUrl,
-                      rating,
-                      duration,
-                      genre,
-                      date,
-                      time,
-                      room: "Room A", // Hardcoded for now
-                      selectedSeats: selectedSeats.filter((s) => s !== null),
-                      ticketType,
-                      ticketCount: selectedSeats.filter((s) => s !== null).length,
-                      price,
-                      totalPrice: currentTotalPrice,
-                    },
-                  })
-                }}
-              >
-                <Ticket className="h-6 w-6" />
-                確認票卷
-              </button>
-            </div>
+        <div className="mt-3 px-4">
+          {/* 第一行：座位標題和剩餘待選數量 */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-white">座位</span>
+            {selectedSeats.filter((s) => s === null).length > 0 && (
+              <span className="text-sm text-white">
+                尚有 {selectedSeats.filter((s) => s === null).length} 個待選座位
+              </span>
+            )}
           </div>
-        </footer>
+
+          {/* 第二行：座位按鈕區域 */}
+          <div className="mt-2 flex flex-wrap items-center justify-start gap-3">
+            {selectedSeats.map((seat, index) => (
+              <SeatBadge
+                key={seat ? `${seat.row}-${seat.column}` : `empty-${index}`}
+                seat={seat}
+                onRemove={() => handleRemoveSeat(index)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* 底部總金額和確認按鈕 */}
+      <footer className="mt-[108px]">
+        <BookingActionBar
+          totalPrice={currentTotalPrice}
+          onBooking={() => {
+            navigate("/checkout", {
+              state: {
+                movieTitle,
+                posterUrl,
+                rating,
+                duration,
+                genre,
+                date,
+                time,
+                theaterName: "鳳廳",
+                selectedSeats: selectedSeats.filter((s) => s !== null),
+                ticketType,
+                ticketCount: selectedSeats.filter((s) => s !== null).length,
+                price,
+                totalPrice: currentTotalPrice,
+              },
+            })
+          }}
+          isDisabled={selectedSeats.some((s) => s === null)}
+          buttonIcon={<Ticket className="h-6 w-6" />}
+          buttonText="確認票卷"
+        />
+      </footer>
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom"
-import { ArrowLeft, X } from "lucide-react"
-import SeatIcon from "../src/assets/seat/seat.svg?react"
+import { ArrowLeft } from "lucide-react"
+import FooterButton from "@/components/checkout/FooterButton"
+import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
 type SelectedSeat = {
   row: string
@@ -15,7 +17,8 @@ type LocationState = {
   genre: string
   date: string
   time: string
-  room: string
+  theaterName: string
+  room?: string // Legacy support if needed
   selectedSeats: SelectedSeat[]
   ticketType: string
   ticketCount: number
@@ -29,7 +32,6 @@ const Checkout = () => {
   const state = location.state as LocationState | null
 
   if (!state) {
-    // Fallback if accessed directly without state
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
         <p>無資料，請重新選擇</p>
@@ -48,122 +50,121 @@ const Checkout = () => {
     genre,
     date,
     time,
+    theaterName,
     room,
     selectedSeats,
     ticketType,
     ticketCount,
-    totalPrice, // This is just ticket price from previous page
+    totalPrice,
   } = state
 
+  const displayTheater = theaterName || room || "未知影廳"
   const HANDLING_FEE = 20
   const finalTotalPrice = totalPrice + HANDLING_FEE
 
+  // Sort seats for display
+  const sortedSeats = [...selectedSeats].sort((a, b) => {
+    if (a.row === b.row) return a.column - b.column
+    return a.row.localeCompare(b.row)
+  })
+
+  const seatString = sortedSeats.map((s) => `${s.row}${s.column}`).join(", ")
+
   return (
-    <div className="min-h-screen w-full bg-black font-sans text-white">
+    <div className="min-h-screen w-full bg-black text-white">
       {/* Header */}
-      <header className="relative flex items-center justify-between px-4 py-4">
+      <header className="absolute top-0 right-0 left-0 z-20 flex items-center justify-center px-4 py-[15px]">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="rounded-full p-1 hover:bg-gray-800"
+          className="absolute left-4 rounded-sm bg-[rgba(170,170,170,0.4)] p-2 hover:bg-white/20"
         >
           <ArrowLeft className="h-6 w-6" />
         </button>
-        <h1 className="text-lg font-medium">結帳</h1>
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="rounded-full p-1 hover:bg-gray-800"
-        >
-          <X className="h-6 w-6" />
-        </button>
+        <h1 className="text-lg font-medium">確認你的訂單</h1>
       </header>
 
-      <main className="px-6 pb-24">
-        {/* Movie Info */}
-        <div className="mt-2 flex flex-col items-center">
-          <div className="h-[160px] w-[120px] overflow-hidden">
-            <img src={posterUrl} alt={movieTitle} className="h-full w-full object-cover" />
-          </div>
-          <h2 className="mt-3 text-xl font-bold">{movieTitle}</h2>
-          <p className="mt-1 text-sm text-[#CCCCCC]">
-            {genre} · {rating} · {duration}
+      {/* Movie Banner Section */}
+      <div className="relative h-[230px] w-full">
+        <div className="absolute inset-0">
+          <img src={posterUrl} alt={movieTitle} className="h-full w-full object-cover object-top" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/90" />
+        </div>
+
+        <div className="absolute -bottom-8 left-0 px-4">
+          <h2 className="text-3xl font-bold tracking-wide">{movieTitle}</h2>
+          <p className="mt-1 text-sm font-medium text-[#CCCCCC]">
+            {rating} · {duration}
           </p>
         </div>
+      </div>
 
-        {/* Date & Time & Room */}
-        <div className="mt-4 flex flex-col gap-2">
-          <h3 className="text-sm font-medium">日期</h3>
-          <p className="text-sm font-medium">
-            {date} · {time} · {room}
-          </p>
-        </div>
+      <main className="mt-10 px-4">
+        {/* Order Details Card */}
+        <OrderInfoCard
+          date={date}
+          time={time}
+          theater={displayTheater}
+          type={ticketType || "一般數位"}
+          seats={seatString}
+        />
 
-        {/* Seats */}
-        <div className="mt-6 flex flex-col gap-2">
-          <h3 className="text-sm font-medium">座位</h3>
-          <div className="space-y-3">
-            {selectedSeats.map((seat) => (
-              <div key={`${seat.row}-${seat.column}`} className="flex items-center gap-3">
-                <SeatIcon className="h-[19px] w-6 fill-white" />
-                <span>
-                  {seat.row}排 · {seat.column}號
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Cost Breakdown */}
-        <div className="mt-6">
-          <h3 className="mb-2 font-medium">費用</h3>
-          <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-16">
-                <span>{ticketType}</span>
-                <span>*{ticketCount}</span>
-              </div>
+        {/* Price Details Card */}
+        <div className="mt-3 rounded-[10px] bg-[#222222]">
+          <div className="space-y-3 px-3 py-4">
+            <div className="flex justify-between text-[#A5A5A5]">
+              <span>
+                {ticketType || "一般數位"} * {ticketCount}
+              </span>
               <span>${totalPrice}</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between text-[#A5A5A5]">
               <span>手續費</span>
               <span>${HANDLING_FEE}</span>
             </div>
-            <div className="h-[1px] w-full bg-white" />
-            <div className="flex items-center justify-between">
-              <span>小記</span>
-              <span>${finalTotalPrice}</span>
+          </div>
+          <div className="flex items-center justify-between rounded-[10px] bg-[#353535] px-3 py-4">
+            <span className="text-lg font-semibold">總計</span>
+            <span className="text-lg font-semibold text-[#4BCCBE]">${finalTotalPrice}</span>
+          </div>
+        </div>
+
+        {/* Payment Method Selection */}
+        <div className="mt-3 rounded-[10px] bg-[#222222] p-3">
+          <span className="text-xs text-[#A5A5A5]">付款方式</span>
+          <div className="mt-2 flex items-center gap-3">
+            {/* Custom Radio Button for Line Pay */}
+            <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#11968D]">
+              <div className="h-2.5 w-2.5 rounded-full bg-[#11968D]" />
             </div>
+            <span className="font-medium">Line Pay</span>
           </div>
         </div>
       </main>
 
-      {/* Footer Action */}
-      <footer className="fixed right-0 bottom-0 left-0 px-[47.5px] py-3">
-        <div className="rounded-full bg-[#FFFFFFBF] p-[6px]">
-          <button
-            type="button"
-            onClick={() => {
-              navigate("/payment/success", {
-                state: {
-                  movieTitle,
-                  posterUrl,
-                  rating,
-                  duration,
-                  genre,
-                  finalTotalPrice,
-                },
-              })
-            }}
-            className="flex w-full items-center justify-center gap-1 rounded-full bg-[#24B91B] py-[10px] font-bold transition-colors hover:bg-green-600"
-          >
-            <span className="font-bold">LINE</span>
-            <span className="flexitems-center rounded bg-white px-1 font-bold text-[#24B91B]">
-              Pay
-            </span>
-            <span className="ml-11 font-medium">支付 NT ${finalTotalPrice}</span>
-          </button>
-        </div>
+      <footer className="mt-3 px-4">
+        <FooterButton
+          onClick={() => {
+            navigate("/payment/success", {
+              state: {
+                movieTitle,
+                posterUrl,
+                rating,
+                duration,
+                genre,
+                date,
+                time,
+                theaterName: displayTheater,
+                ticketType: ticketType || "一般數位",
+                seatString,
+                finalTotalPrice,
+                orderId: MOCK_ORDER_ID,
+              },
+            })
+          }}
+        >
+          付款
+        </FooterButton>
       </footer>
     </div>
   )

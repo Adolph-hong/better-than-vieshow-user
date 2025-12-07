@@ -1,5 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { Check } from "lucide-react"
+import FooterButton from "@/components/checkout/FooterButton"
+import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import { generateOrderId } from "@/mocks/movieData"
 
 type LocationState = {
   movieTitle: string
@@ -7,6 +10,11 @@ type LocationState = {
   rating: string
   duration: string
   genre: string
+  date: string
+  time: string
+  theaterName: string
+  ticketType: string
+  seatString: string
   finalTotalPrice: number
 }
 
@@ -26,61 +34,55 @@ const PaymentSuccess = () => {
     )
   }
 
-  const { movieTitle, posterUrl, rating, duration, genre, finalTotalPrice } = state
+  const { movieTitle, date, time, theaterName, ticketType, seatString, finalTotalPrice } = state
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-black font-sans text-white">
-      {/* Top Half: Poster Background */}
-      <div className="relative h-[45vh] w-full">
-        <img src={posterUrl} alt={movieTitle} className="h-full w-full object-cover opacity-80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
-      </div>
-
+    <div className="flex min-h-screen w-full flex-col bg-black text-white">
       {/* Content */}
-      <div className="z-10 -mt-10 flex flex-1 flex-col items-center px-3 py-3">
+      <div className="z-10 flex flex-1 flex-col items-center px-4 py-[105px]">
         {/* Success Icon */}
-        <div className="rounded-full bg-[#830508]/40 p-[11.86px]">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#830508E5]">
+        <div className="rounded-full bg-[#4BCCBE]/40 p-[11.86px]">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#4BCCBE]">
             <Check className="h-10 w-10 stroke-[3] text-white" />
           </div>
         </div>
 
         <h1 className="mt-3 text-2xl font-bold">付款成功</h1>
 
-        {/* Ticket Info Card */}
-        <div className="mt-10 w-full max-w-sm rounded-lg bg-[#222222] p-5">
-          <div className="flex flex-col gap-1">
-            <span className="text-2xl font-medium text-[#F2F2F2]">
-              ${finalTotalPrice.toLocaleString()}
-            </span>
-            <div className="my-3 h-[1px] w-full bg-[#414141]" />
-            <h2 className="font-bold text-[#F2F2F2]">{movieTitle}</h2>
-            <p className="text-sm text-[#CCCCCC]">
-              {genre} · {rating} · {duration}
-            </p>
-          </div>
-        </div>
+        <section className="w-full">
+          <OrderInfoCard
+            title={movieTitle}
+            date={date}
+            time={time}
+            theater={theaterName}
+            type={ticketType}
+            seats={seatString}
+            className="mt-3"
+          />
+        </section>
 
-        {/* Buttons */}
-        <footer className="mt-[134px] w-full px-[77.5px]">
-          <div className="w-full rounded-full bg-[#FFFFFFBF] p-[6px]">
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-                className="flex-1 rounded-full border border-black bg-[#D9D9D9] px-3 py-2 font-medium whitespace-nowrap text-black transition-colors hover:bg-gray-300"
-              >
-                回到首頁
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-                className="flex-1 rounded-full bg-[#830508] px-3 py-2 font-medium whitespace-nowrap text-white transition-colors hover:bg-[#600000]"
-              >
-                查看票卷
-              </button>
-            </div>
+        <section className="mt-3 w-full justify-between space-y-3 rounded-[10px] bg-[#222222] px-3 py-4">
+          <div className="flex justify-between">
+            <p className="text-[#A5A5A5]">總金額</p>
+            <p>${finalTotalPrice}</p>
           </div>
+
+          <div className="flex justify-between">
+            <p className="text-[#A5A5A5]">付款方式</p>
+            <p>LIne Pay</p>
+          </div>
+
+          <div className="flex justify-between">
+            <p className="text-[#A5A5A5]">訂單編號</p>
+            <p>{generateOrderId()}</p>
+          </div>
+        </section>
+
+        <footer className="mt-6 w-full space-y-2">
+          <FooterButton variant="outline" onClick={() => navigate("/")}>
+            返回首頁
+          </FooterButton>
+          <FooterButton>查看票卷</FooterButton>
         </footer>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import spiderManPoster from "@/assets/icon/spider man 1.jpg"
+import blackPantherPoster from "@/assets/icon/black-panther.jpg"
 
 // --- Movie Showtime Data Types ---
 
@@ -29,7 +29,18 @@ export type MovieData = {
   duration: string
   genres: string[]
   posterUrl: string
+  description: string
+  director: string
+  cast: string
+  releaseDate: string
+  theaterName: string // 影廳名字
+  orderId: string
   dates: MovieDate[]
+}
+
+// 訂單編號生成
+export const generateOrderId = (): string => {
+  return `#BKA-${Math.floor(10000 + Math.random() * 90000)}`
 }
 
 // --- Seat Selection Data Types ---
@@ -65,12 +76,19 @@ export type SeatMap = {
 // --- Data Values ---
 
 const movieShowtimesData: MovieData = {
-  id: "spider-man-nwh",
-  title: "蜘蛛人：無家日",
+  id: "black-panther",
+  title: "黑豹",
   rating: "普遍級",
   duration: "2 小時 15 分鐘",
   genres: ["科幻", "動作"],
-  posterUrl: spiderManPoster,
+  posterUrl: blackPantherPoster,
+  description:
+    "在經歷《復仇者聯盟》的事件後，東尼·史塔克患上了嚴重的PTSD，對「紐約」和「蟲洞」等詞語會產生恐慌反應。恐怖組織「曼達林」開始在全美各地發動大規模爆炸攻擊，激怒了東尼，他在衝動之下向曼達林宣戰，卻遭到嚴厲的報復。在戰鬥中，東尼的鋼鐵裝甲受損，被迫避難，並開始暗中調查曼達林的秘密。",
+  director: "萊恩·庫格勒",
+  cast: "查德威克·鮑斯曼、麥可·B·喬丹、戴娜·葛里拉、莉蒂西亞·萊特",
+  releaseDate: "2025/06/22",
+  theaterName: "鳳廳",
+  orderId: "#BKA-13005",
   dates: [
     {
       id: "d1",
@@ -274,6 +292,8 @@ const mockSeatMap: SeatMap = {
 }
 
 // --- API Simulation ---
+
+export const MOCK_ORDER_ID = "#BKA-13005"
 
 export const fetchMovieShowtimes = async (): Promise<MovieData> => {
   return new Promise((resolve) => {
