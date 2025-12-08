@@ -1,3 +1,4 @@
+import Footer from "@/components/home/Footer"
 import HeroBanner from "@/components/home/HeroBanner"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -5,6 +6,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col min-h-screen items-center bg-[#121212]">
       <HeroBanner/>
       {children}
+      <Footer />
     </div>
   )
 }
