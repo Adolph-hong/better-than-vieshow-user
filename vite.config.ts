@@ -6,6 +6,10 @@ import svgr from "vite-plugin-svgr"
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), svgr()],
+  server: {
+    host: true,
+    allowedHosts: true,
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
