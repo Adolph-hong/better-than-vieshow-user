@@ -71,7 +71,7 @@ const Checkout = () => {
   const seatString = sortedSeats.map((s) => `${s.row}${s.column}`).join(", ")
 
   return (
-    <div className="min-h-screen w-full bg-black text-white">
+    <div className="min-h-[100dvh] w-full bg-black text-white">
       {/* Header */}
       <header className="absolute top-0 right-0 left-0 z-20 flex items-center justify-center px-4 py-[15px]">
         <button

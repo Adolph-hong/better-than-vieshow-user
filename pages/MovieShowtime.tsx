@@ -144,7 +144,7 @@ const MovieShowtime = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-[100dvh] bg-black text-white">
       {/* Trailer Modal */}
       {showTrailer && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 transition-opacity duration-300">
