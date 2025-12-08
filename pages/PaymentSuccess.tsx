@@ -37,7 +37,7 @@ const PaymentSuccess = () => {
   const { movieTitle, date, time, theaterName, ticketType, seatString, finalTotalPrice } = state
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-black text-white">
+    <div className="flex min-h-[100dvh] w-full flex-col bg-black text-white">
       {/* Content */}
       <div className="z-10 flex flex-1 flex-col items-center px-4 py-[105px]">
         {/* Success Icon */}
