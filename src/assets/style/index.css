@@ -3,3 +3,5 @@
 * {
   font-family: "Inter", sans-serif;
 }
+@import "@/assets/style/_theme.css";
+@import "@/assets/style/_utility.css";

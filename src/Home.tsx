@@ -1,7 +1,9 @@
-const Home = () => (
-  <div>
-    <h1 className="text-3xl font-bold">Suck my duck</h1>
-  </div>
+import Layout from "@/components/home/Layout"
+
+const Home = ({ children }: { children?: React.ReactNode }) => (
+  <Layout>
+    {children}
+  </Layout>
 )
 
 export default Home

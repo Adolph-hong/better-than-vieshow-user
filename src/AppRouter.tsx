@@ -6,6 +6,7 @@ import PaymentSuccess from "../pages/PaymentSuccess"
 import SeatSelection from "../pages/SeatSelection"
 import Signup from "../pages/Signup"
 import Home from "./Home"
+import MovieSearch from "./MovieSearch"
 
 const AppRouter = () => (
   <Routes>
@@ -16,6 +17,7 @@ const AppRouter = () => (
     <Route path="/payment/success" element={<PaymentSuccess />} />
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
+    <Route path="/movie-search" element={<MovieSearch />} />
   </Routes>
 )
 
