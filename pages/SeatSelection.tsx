@@ -169,7 +169,7 @@ const SeatSelection = () => {
   const { verticalAisles = [], horizontalAisle } = seatMap // 走道位置
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-black text-white">
+    <div className="relative flex w-full flex-col overflow-hidden bg-black text-white">
       {/* 內容區域 */}
       <div className="relative z-10 flex-1">
         {/* 頂部導航欄 */}
