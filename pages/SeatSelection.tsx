@@ -141,7 +141,7 @@ const SeatSelection = () => {
     }
   }
 
-  const currentTotalPrice = selectedSeats.filter((s) => s !== null).length * price
+  const currentTotalPrice = effectiveTicketCount * price
 
   if (loading || !seatMap) {
     return (
