@@ -142,7 +142,7 @@ const Checkout = () => {
         </div>
       </main>
 
-      <footer className="mt-3 px-4">
+      <footer className="mt-3 mb-[101px] px-4">
         <FooterButton
           onClick={() => {
             navigate("/payment/success", {
