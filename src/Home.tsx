@@ -1,8 +1,9 @@
 import Layout from "@/components/home/Layout"
+import MovieSectionGroup from "@/components/home/MovieSectionGroup"
 
-const Home = ({ children }: { children?: React.ReactNode }) => (
+const Home = () => (
   <Layout>
-    {children}
+    <MovieSectionGroup />
   </Layout>
 )
 

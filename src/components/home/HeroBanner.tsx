@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Navigation, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Header from "@/components/home/Header"
-import { movies } from "@/components/home/movieData"
+import { movies, type Movie } from "@/components/home/movieData"
 import type { Swiper as SwiperType } from "swiper"
 // @ts-expect-error - Swiper CSS files don't have type declarations
 import "swiper/css"
@@ -21,7 +21,7 @@ const HeroBanner = () => {
   const currentMovie = movies[activeIndex]
 
   return (
-    <div className="relative flex flex-col w-full h-125 mb-3 overflow-hidden">
+    <section className="relative flex flex-col w-full h-125 mb-3 overflow-hidden">
       {/* 背景圖片 */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-500"
@@ -59,7 +59,7 @@ const HeroBanner = () => {
               height: "auto",
             }}
           >
-            {movies.map((movie, index) => {
+            {movies.map((movie: Movie, index: number) => {
               const diff = index - activeIndex
               const absDiff = Math.abs(diff)
               
@@ -133,7 +133,7 @@ const HeroBanner = () => {
           </div> */}
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
