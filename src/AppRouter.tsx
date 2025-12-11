@@ -6,6 +6,7 @@ import SeatSelection from "../pages/SeatSelection"
 import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
+import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
 import Home from "./Home"
 
 const AppRouter = () => (
@@ -14,12 +15,16 @@ const AppRouter = () => (
     <Route path="/movie/showtime" element={<MovieShowtime />} />
     <Route path="/seat/selection" element={<SeatSelection />} />
     <Route path="/checkout" element={<Checkout />} />
-    <Route path="/payment/success" element={<PaymentSuccess />} />
-    <Route path="/tickets">
-      <Route element={<TicketsLayout />}>
-        <Route index element={<TicketList />} />
+
+    {/* Routes that require TicketContext */}
+    <Route element={<TicketFeatureLayout />}>
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/tickets">
+        <Route element={<TicketsLayout />}>
+          <Route index element={<TicketList />} />
+        </Route>
+        <Route path=":id" element={<TicketDetail />} />
       </Route>
-      <Route path=":id" element={<TicketDetail />} />
     </Route>
   </Routes>
 )
