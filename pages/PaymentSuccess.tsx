@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { Check } from "lucide-react"
 import FooterButton from "@/components/checkout/FooterButton"
 import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
 import { useTickets } from "@/context/TicketContext"
 import { generateOrderId } from "@/mocks/movieData"
 
@@ -94,22 +95,12 @@ const PaymentSuccess = () => {
           />
         </section>
 
-        <section className="mt-3 w-full justify-between space-y-3 rounded-[10px] bg-[#222222] px-3 py-4">
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">總金額</p>
-            <p>${finalTotalPrice}</p>
-          </div>
-
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">付款方式</p>
-            <p>Line Pay</p>
-          </div>
-
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">訂單編號</p>
-            <p>{orderId}</p>
-          </div>
-        </section>
+        <OrderSummaryCard
+          totalPrice={finalTotalPrice}
+          paymentMethod="Line Pay"
+          orderId={orderId}
+          className="mt-3"
+        />
 
         <footer className="mt-6 w-full space-y-2">
           <FooterButton variant="outline" onClick={() => navigate("/")}>

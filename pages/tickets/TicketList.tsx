@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom"
-import { Users, Clock } from "lucide-react"
-import TicketsGhostIcon from "@/assets/icon/tickets-ghost.svg?react"
+import DotIcon from "@/assets/icon/tickets-icon/dot.svg?react"
+import ClockIcon from "@/assets/icon/tickets-icon/mdi_clock.svg?react"
+import UserIcon from "@/assets/icon/tickets-icon/mdi_users.svg?react"
+import TicketsGhostIcon from "@/assets/icon/tickets-icon/tickets-ghost.svg?react"
 import { useTickets } from "@/context/TicketContext"
 
 const TicketList = () => {
@@ -48,22 +50,46 @@ const TicketList = () => {
             )}
 
             {/* Date Tag */}
-            <div className="absolute top-4 right-4 flex flex-col rounded-lg bg-[#11968D] px-3 py-2 text-white shadow-sm">
-              <div className="mb-1 flex w-full justify-between gap-4 text-xs font-medium opacity-80">
-                <span>2025</span>
-                <span>
+            <div className="absolute top-4 right-4 flex flex-col rounded-lg bg-[#11968D] py-[6.5px] pr-3 pl-2 text-white">
+              <div className="flex w-full justify-between font-medium">
+                <span className="text-[10px]">2025</span>
+                <span className="text-[10px]">
                   {(() => {
                     const match = ticket.date.match(/\((.)\)/)
                     return match ? `週${match[1]}` : ""
                   })()}
                 </span>
               </div>
-              <div className="text-center text-[15px] leading-none font-bold tracking-wide">
+              <div className="text-center">
                 {(() => {
                   const match = ticket.date.match(/^(\d{2})\/(\d{2})/)
-                  const dateStr = match ? `${match[1]}月${match[2]}日` : ticket.date
-                  const timeStr = ticket.time.replace(/\s/g, "")
-                  return `${dateStr} ${timeStr}`
+                  const dateEl = match ? (
+                    <>
+                      {match[1]}
+                      <span className="text-[10px]">月</span>
+                      {match[2]}
+                      <span className="text-[10px]">日</span>
+                    </>
+                  ) : (
+                    ticket.date
+                  )
+
+                  const rawTime = ticket.time.replace(/\s/g, "")
+                  const timeMatch = rawTime.match(/^(上午|中午|下午|晚上)(.*)/)
+                  const timeEl = timeMatch ? (
+                    <>
+                      <span className="text-[10px]">{timeMatch[1]}</span>
+                      {timeMatch[2]}
+                    </>
+                  ) : (
+                    rawTime
+                  )
+
+                  return (
+                    <>
+                      {dateEl} {timeEl}
+                    </>
+                  )
                 })()}
               </div>
             </div>
@@ -73,11 +99,10 @@ const TicketList = () => {
               <h3 className="text-xl font-bold text-white">{ticket.movieTitle}</h3>
               <div className="mt-2 flex items-center space-x-4 text-xs text-[#A5A5A5]">
                 <div className="flex items-center space-x-1">
-                  <Users className="h-3 w-3" />
+                  <UserIcon />
                   <span>{ticket.participantCount} 人</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-3 w-3" />
+                  <DotIcon />
+                  <ClockIcon />
                   <span>{ticket.duration}</span>
                 </div>
               </div>
