@@ -2,7 +2,7 @@ import { useState, useMemo } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 import QRCode from "react-qr-code"
-import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
 import { useTickets } from "@/context/TicketContext"
 
