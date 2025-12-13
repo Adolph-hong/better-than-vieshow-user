@@ -52,7 +52,10 @@ export const TicketProvider = ({ children }: { children: ReactNode }) => {
   const addTicket = useCallback((newTicketData: Omit<Ticket, "id" | "purchaseDate" | "status">) => {
     const newTicket: Ticket = {
       ...newTicketData,
-      id: crypto.randomUUID(),
+      id:
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).substring(2),
       purchaseDate: Date.now(),
       status: "active",
     }
