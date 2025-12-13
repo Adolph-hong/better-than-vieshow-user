@@ -41,7 +41,7 @@ const TicketDetail = () => {
 
   const dragConstraints = {
     left: isLast ? -50 : -window.innerWidth,
-    right: isFirst ? 50 : window.innerWidth, // Allow dragging right significantly unless first
+    right: isFirst ? 50 : window.innerWidth,
   }
 
   if (!ticket) {
@@ -178,7 +178,6 @@ const TicketDetail = () => {
                   </span>
                 </div>
 
-                {/* QR Code Area */}
                 <div className="flex flex-col items-center pt-14">
                   <div className="bg-white p-[8.75px]">
                     <QRCode
