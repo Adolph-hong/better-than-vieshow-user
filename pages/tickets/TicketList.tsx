@@ -11,11 +11,11 @@ const TicketList = () => {
 
   if (tickets.length === 0) {
     return (
-      <div className="flex w-full flex-col items-center justify-center space-y-4">
+      <div className="absolute top-1/2 left-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
         <TicketsGhostIcon className="h-[240px] w-[240px]" />
         <div className="text-center">
-          <p className="text-xl font-bold text-white">一張票卷都還沒有</p>
-          <p className="mt-2 text-sm text-[#A5A5A5]">去首頁購買你的第一張電影票吧</p>
+          <p className="text-xl font-medium text-white">一張票卷都還沒有</p>
+          <p className="mt-1 text-[#A5A5A5]">去首頁購買你的第一張電影票吧</p>
         </div>
       </div>
     )
