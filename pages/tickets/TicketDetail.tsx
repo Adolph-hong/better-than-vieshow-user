@@ -31,6 +31,38 @@ const TicketDetail = () => {
     setPage([index, index > currentSeatIndex ? 1 : -1])
   }
 
+  const swipeConfidenceThreshold = 10000
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity
+  }
+
+  // Drag constraints logic
+  // Calculate the drag boundaries based on the number of seats
+  // We want to allow dragging freely between the first and last card
+  // The 'left' constraint limits how far we can drag left (to see the end)
+  // The 'right' constraint limits how far we can drag right (to see the beginning)
+
+  // However, since we are moving the container with 'x' animate prop,
+  // we can use a simpler approach: let it drag freely but snap back on release.
+  // We just need to prevent dragging too far past the edges.
+
+  // For constraints:
+  // Since we use `animate` to position the slider, `dragConstraints` are relative to that position.
+  // If we want to allow "rubber banding" on edges but free movement otherwise:
+  // When at index 0: right constraint should be small (rubber band), left constraint large (allow move to next)
+  // When at last index: right constraint large (allow move to prev), left constraint small (rubber band)
+
+  const isFirst = currentSeatIndex === 0
+  const isLast = currentSeatIndex === seats.length - 1
+
+  // Dynamic constraints based on position
+  // We make constraints very loose to allow "pulling" the next card into view
+  // Only constrain the "wrong" direction strongly (e.g. dragging right on first card)
+  const dragConstraints = {
+    left: isLast ? -50 : -window.innerWidth, // Allow dragging left significantly unless last
+    right: isFirst ? 50 : window.innerWidth, // Allow dragging right significantly unless first
+  }
+
   if (!ticket) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -124,6 +156,24 @@ const TicketDetail = () => {
             type: "spring",
             stiffness: 300,
             damping: 30,
+          }}
+          drag="x"
+          dragConstraints={dragConstraints}
+          dragElastic={0.1} // Add some resistance at the edges
+          onDragEnd={(_, { offset, velocity }) => {
+            const swipe = swipePower(offset.x, velocity.x)
+
+            // Threshold for dragging (distance) to trigger change without fast swipe
+            const dragThreshold = window.innerWidth * 0.15 // Reduce threshold to 15% for easier switching
+
+            if (swipe < -swipeConfidenceThreshold || offset.x < -dragThreshold) {
+              // Swiped left or dragged far enough left -> Next
+              if (!isLast) paginate(1)
+            } else if (swipe > swipeConfidenceThreshold || offset.x > dragThreshold) {
+              // Swiped right or dragged far enough right -> Prev
+              if (!isFirst) paginate(-1)
+            }
+            // If neither, framer-motion will snap back to the current 'animate' x value automatically
           }}
           style={{
             gap: "12px",
