@@ -40,6 +40,8 @@ const TicketCounter = ({
         >
           <Plus />
         </button>
+
+        {count >= maxCount && <span className="-ml-4 text-white">最多選擇 {maxCount} 位</span>}
       </div>
     </div>
   )

@@ -141,7 +141,7 @@ const SeatSelection = () => {
     }
   }
 
-  const currentTotalPrice = selectedSeats.filter((s) => s !== null).length * price
+  const currentTotalPrice = effectiveTicketCount * price
 
   if (loading || !seatMap) {
     return (
@@ -169,7 +169,7 @@ const SeatSelection = () => {
   const { verticalAisles = [], horizontalAisle } = seatMap // 走道位置
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-black text-white">
+    <div className="relative flex w-full flex-col overflow-hidden bg-black text-white">
       {/* 內容區域 */}
       <div className="relative z-10 flex-1">
         {/* 頂部導航欄 */}
@@ -212,52 +212,28 @@ const SeatSelection = () => {
           <div className="mx-4 flex h-[400px] flex-col overflow-hidden bg-[#232323]">
             <TransformWrapper centerOnInit initialScale={1} minScale={1} maxScale={3}>
               {({ zoomIn, zoomOut }) => (
-                <>
-                  {/* 螢幕指示器與縮放按鈕 */}
-                  <div className="relative mt-3">
-                    {/* 梯形深色背景 - 漸層效果 */}
-                    <div
-                      className="pointer-events-none absolute top-0 left-1/2 h-[194px] w-[628px] -translate-x-1/2"
-                      style={{
-                        background: "linear-gradient(to bottom, #444444 0%, #232323 100%)",
-                        clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
-                      }}
-                    />
-                    {/* 投影光效 */}
-                    <div
-                      className="pointer-events-none absolute top-0 left-1/2 h-[194px] w-[628px] -translate-x-1/2"
-                      style={{
-                        background:
-                          "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
-                        clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
-                      }}
-                    />
+                <div className="relative h-full">
+                  {/* 縮放按鈕 - 固定位置，不會跟著縮放 */}
+                  <div className="absolute top-3 right-0 left-0 z-20 flex justify-between px-3">
+                    {/* 放大按鈕 */}
+                    <button
+                      type="button"
+                      onClick={() => zoomIn()}
+                      className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
+                      aria-label="放大"
+                    >
+                      <Maximize2 className="h-6 w-6 text-white" />
+                    </button>
 
-                    {/* 螢幕橫槓 - 獨立定位於頂部中央 */}
-                    <div className="absolute top-0 left-1/2 z-10 h-2 w-[180px] -translate-x-1/2 rounded-lg bg-white" />
-
-                    {/* 縮放按鈕 */}
-                    <div className="relative z-10 flex h-10 justify-between px-[12px]">
-                      {/* 放大按鈕 */}
-                      <button
-                        type="button"
-                        onClick={() => zoomIn()}
-                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
-                        aria-label="放大"
-                      >
-                        <Maximize2 className="h-6 w-6 text-white" />
-                      </button>
-
-                      {/* 縮小按鈕 */}
-                      <button
-                        type="button"
-                        onClick={() => zoomOut()}
-                        className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
-                        aria-label="縮小"
-                      >
-                        <Minimize2 className="h-6 w-6 text-[#D9D9D9]" />
-                      </button>
-                    </div>
+                    {/* 縮小按鈕 */}
+                    <button
+                      type="button"
+                      onClick={() => zoomOut()}
+                      className="flex h-10 w-10 items-center justify-center rounded-sm bg-[rgba(170,170,170,0.4)]"
+                      aria-label="縮小"
+                    >
+                      <Minimize2 className="h-6 w-6 text-[#D9D9D9]" />
+                    </button>
                   </div>
 
                   <TransformComponent
@@ -265,8 +241,32 @@ const SeatSelection = () => {
                     contentClass="!w-max"
                     contentStyle={{ width: "max-content" }}
                   >
-                    {/* 座位地圖 */}
-                    <div className="mt-8 space-y-3">
+                    {/* 座位地圖與螢幕指示器 - 合併成同一個容器 */}
+                    <div className="relative mt-3 space-y-3">
+                      {/* 螢幕指示器 */}
+                      {/* 梯形深色背景 - 漸層效果 */}
+                      <div
+                        className="pointer-events-none absolute top-0 left-1/2 z-[1] h-[194px] w-[628px] -translate-x-1/2"
+                        style={{
+                          background: "linear-gradient(to bottom, #444444 0%, #232323 100%)",
+                          clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                        }}
+                      />
+                      {/* 投影光效 */}
+                      <div
+                        className="pointer-events-none absolute top-0 left-1/2 z-[2] h-[194px] w-[628px] -translate-x-1/2"
+                        style={{
+                          background:
+                            "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
+                          clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                        }}
+                      />
+                      {/* 螢幕橫槓 - 獨立定位於頂部中央 */}
+                      <div className="absolute top-0 left-1/2 z-10 h-2 w-[180px] -translate-x-1/2 rounded-lg bg-white" />
+
+                      {/* 佔位元素 - 讓座位區往下移動避開螢幕指示器 */}
+                      <div className="h-8" />
+
                       {ROW_LABELS.map((row, rowIndex) => {
                         const rowSeats = seatsByRow[row] || []
                         // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
@@ -280,7 +280,7 @@ const SeatSelection = () => {
                               <div key={`horizontal-aisle-${row}`} className="h-3" />
                             )}
 
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="relative z-[3] flex items-center justify-center gap-2">
                               {rowSeats.map((seat) => {
                                 const status = getSeatStatus(seat)
                                 // 檢查是否需要在這個座位後插入垂直走道
@@ -316,7 +316,7 @@ const SeatSelection = () => {
                       })}
                     </div>
                   </TransformComponent>
-                </>
+                </div>
               )}
             </TransformWrapper>
           </div>
