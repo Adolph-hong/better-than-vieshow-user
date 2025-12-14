@@ -39,7 +39,7 @@ const MovieCategory = ({ category }: { category: string }) => {
                         className="w-full h-full object-cover rounded-xl"
                       />
                     </div>
-                    <span className="font-family-inter font-normal text-[13px] text-white line-clamp-2 h-8.5 break-all w-25">
+                    <span className="font-family-inter font-normal text-[13px] text-white line-clamp-2 h-8.5 break-all w-25 text-center">
                       {titleZh}
                     </span>
                   </div>

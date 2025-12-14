@@ -155,6 +155,27 @@ const moviesRandomRecommend = buildList(
   201
 )
 
+// 所有電影列表（基於 baseMovies，固定順序）
+const allMoviesBase = buildList(
+  ["xuanyuan", "buliangren", "xianni", "fanren", "tianguan", "wanmei", "yongsheng", "mushen", "shendiao", "zhuxian", "yunshen", "doupo", "modao"],
+  301
+)
+
+// 為每部電影加上2和3的版本
+export const allMovies: Movie[] = [
+  ...allMoviesBase,
+  ...allMoviesBase.map((movie, idx) => ({
+    ...movie,
+    id: 301 + allMoviesBase.length + idx,
+    titleZh: `${movie.titleZh}2`,
+  })),
+  ...allMoviesBase.map((movie, idx) => ({
+    ...movie,
+    id: 301 + allMoviesBase.length * 2 + idx,
+    titleZh: `${movie.titleZh}3`,
+  })),
+]
+
 // 電影分類介面
 export interface MovieCategory {
   title: string
