@@ -21,7 +21,10 @@ const HeroBanner = () => {
   const currentMovie = movies[activeIndex]
 
   return (
-    <section className="relative flex flex-col w-full h-125 mb-3 overflow-hidden">
+    <section className="
+    relative flex flex-col w-full h-[517px] mb-3 overflow-hidden
+    mask-[linear-gradient(to_bottom,black_80%,transparent)]
+  ">
       {/* 背景圖片 */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-500"
@@ -30,34 +33,28 @@ const HeroBanner = () => {
         }}
       >
         {/* 模糊效果 */}
-        <div className="absolute inset-0 backdrop-blur-md" />
+        <div className="absolute inset-0 backdrop-blur-[10px]" />
       </div>
 
       {/* 75% 黑色遮罩 */}
       <div className="absolute inset-0 bg-black/75" />
 
-      {/* Header */}
       <Header />
 
-      {/* 輪播內容 */}
-      <div className="relative z-10 flex-1 flex items-start justify-center pt-[30px]">
+      {/* 輪播 */}
+      <div className="relative z-10 flex-1 flex items-start justify-center">
         <div className="w-full max-w-6xl">
           <Swiper
             onSlideChange={handleSlideChange}
             grabCursor
             centeredSlides
             slidesPerView="auto"
-            spaceBetween={24}
             loop={false}
             resistance
             resistanceRatio={0.5}
             watchSlidesProgress
             modules={[Navigation, Pagination]}
-            className="movie-swiper"
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
+            className="pr-3 first:pl-0 last:pr-0 h-[410px]"
           >
             {movies.map((movie: Movie, index: number) => {
               const diff = index - activeIndex
@@ -67,18 +64,17 @@ const HeroBanner = () => {
               const getTransform = () => {
                 if (diff === 0) {
                   // 當前活動的卡片（中間）- 距離上面30px（已經通過容器pt-[30px]設置）
-                  return "translateY(0) scale(1) translateX(0)"
+                  return "translateY(30px) translateX(0)"
                 }
                 if (diff === -1) {
                   // 左邊的卡片（前一個）- 頂在最上（需要向上移動30px來對齊頂部）
-                  return "translateY(-30px) scale(0.9) translateX(-30px)"
+                  return "translateY(0px) translateX(-30px)"
                 }
                 if (diff === 1) {
                   // 右邊的卡片（下一個）- 距離上面60px（需要向下移動30px）
-                  return "translateY(30px) scale(0.9) translateX(30px)"
+                  return "translateY(60px) translateX(30px)"
                 }
                 if (absDiff > 1) {
-                  // 更遠的卡片 - 隱藏或淡出
                   if (diff < 0) {
                     // 更左邊
                     return `translateY(-30px) scale(${Math.max(0.5, 0.8 - absDiff * 0.1)}) translateX(${-50 - (absDiff - 1) * 20}px)`
@@ -118,7 +114,9 @@ const HeroBanner = () => {
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />
+                    
                   </div>
+                  
                 </SwiperSlide>
               )
             })}
@@ -133,6 +131,7 @@ const HeroBanner = () => {
           </div> */}
         </div>
       </div>
+      
     </section>
   )
 }
