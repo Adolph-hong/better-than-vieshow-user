@@ -23,18 +23,17 @@ export interface Movie {
   poster: string
 }
 
-export const movies: Movie[] = [
-  {
-    id: 1,
+// 來源資料：用 key 方便組裝三組不同順序、不同 id
+const baseMovies = {
+  xuanyuan: {
     title: "Xuanyuan Sword",
-    titleZh: "軒轅劍",
+    titleZh: "軒轅劍11111111111111111111111111111111111",
     genre: "奇幻片",
     rating: "普遍級",
     duration: "2小時",
     poster: xuanyuanPoster,
   },
-  {
-    id: 2,
+  buliangren: {
     title: "Bu Liang Ren",
     titleZh: "不良人",
     genre: "武俠片",
@@ -42,8 +41,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: buliangrenPoster,
   },
-  {
-    id: 3,
+  xianni: {
     title: "Xian Ni",
     titleZh: "仙逆",
     genre: "奇幻片",
@@ -51,8 +49,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: xianniPoster,
   },
-  {
-    id: 4,
+  fanren: {
     title: "Fan Ren Xiu Xian",
     titleZh: "凡人修仙",
     genre: "奇幻片",
@@ -60,8 +57,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: fanrenPoster,
   },
-  {
-    id: 5,
+  tianguan: {
     title: "Tian Guan Ci Fu",
     titleZh: "天官賜福",
     genre: "奇幻片",
@@ -69,8 +65,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: tianguanPoster,
   },
-  {
-    id: 6,
+  wanmei: {
     title: "Perfect World",
     titleZh: "完美世界",
     genre: "奇幻片",
@@ -78,8 +73,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: wanmeiPoster,
   },
-  {
-    id: 7,
+  yongsheng: {
     title: "Yong Sheng",
     titleZh: "永生",
     genre: "奇幻片",
@@ -87,8 +81,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: yongshengPoster,
   },
-  {
-    id: 8,
+  mushen: {
     title: "Mu Shen Ji",
     titleZh: "牧神記",
     genre: "奇幻片",
@@ -96,8 +89,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: mushenPoster,
   },
-  {
-    id: 9,
+  shendiao: {
     title: "The Legend of the Condor Heroes",
     titleZh: "神雕俠侶",
     genre: "武俠片",
@@ -105,8 +97,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: shendiaoPoster,
   },
-  {
-    id: 10,
+  zhuxian: {
     title: "Zhu Xian",
     titleZh: "誅仙",
     genre: "奇幻片",
@@ -114,8 +105,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: zhuxianPoster,
   },
-  {
-    id: 11,
+  yunshen: {
     title: "Yun Shen Bu Zhi Meng",
     titleZh: "雲深不知夢",
     genre: "奇幻片",
@@ -123,8 +113,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: yunshenPoster,
   },
-  {
-    id: 12,
+  doupo: {
     title: "Battle Through the Heavens",
     titleZh: "鬥破蒼穹",
     genre: "奇幻片",
@@ -132,8 +121,7 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: doupoPoster,
   },
-  {
-    id: 13,
+  modao: {
     title: "Mo Dao Zu Shi",
     titleZh: "魔道祖師",
     genre: "奇幻片",
@@ -141,5 +129,75 @@ export const movies: Movie[] = [
     duration: "2小時",
     poster: modaoPoster,
   },
+} as const
+
+type BaseKey = keyof typeof baseMovies
+
+const buildList = (order: BaseKey[], startId: number): Movie[] =>
+  order.map((key, idx) => ({
+    id: startId + idx,
+    ...baseMovies[key],
+  }))
+
+// 三組不同順序、不同 id
+const moviesWeekTop10 = buildList(
+  ["xuanyuan", "buliangren", "tianguan", "wanmei", "fanren", "yongsheng", "xianni", "mushen", "shendiao", "zhuxian"],
+  1
+)
+
+const moviesComingSoon = buildList(
+  ["doupo", "modao", "yunshen", "wanmei", "tianguan", "buliangren", "xianni", "fanren", "mushen", "yongsheng"],
+  101
+)
+
+const moviesRandomRecommend = buildList(
+  ["mushen", "zhuxian", "yongsheng", "fanren", "doupo", "xianni", "tianguan", "modao", "xuanyuan", "yunshen"],
+  201
+)
+
+// 所有電影列表（基於 baseMovies，固定順序）
+const allMoviesBase = buildList(
+  ["xuanyuan", "buliangren", "xianni", "fanren", "tianguan", "wanmei", "yongsheng", "mushen", "shendiao", "zhuxian", "yunshen", "doupo", "modao"],
+  301
+)
+
+// 為每部電影加上2和3的版本
+export const allMovies: Movie[] = [
+  ...allMoviesBase,
+  ...allMoviesBase.map((movie, idx) => ({
+    ...movie,
+    id: 301 + allMoviesBase.length + idx,
+    titleZh: `${movie.titleZh}2`,
+  })),
+  ...allMoviesBase.map((movie, idx) => ({
+    ...movie,
+    id: 301 + allMoviesBase.length * 2 + idx,
+    titleZh: `${movie.titleZh}3`,
+  })),
 ]
+
+// 電影分類介面
+export interface MovieCategory {
+  title: string
+  movies: Movie[]
+}
+
+// 包含三個主題的陣列
+export const movieCategories: MovieCategory[] = [
+  {
+    title: "本週前10",
+    movies: moviesWeekTop10,
+  },
+  {
+    title: "即將上映",
+    movies: moviesComingSoon,
+  },
+  {
+    title: "隨機推薦",
+    movies: moviesRandomRecommend,
+  },
+]
+
+// 預設導出 moviesWeekTop10 作為 movies（用於 HeroBanner 等組件）
+export const movies: Movie[] = moviesWeekTop10
 
