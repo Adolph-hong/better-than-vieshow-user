@@ -17,25 +17,25 @@ const TicketCounter = ({
 }: TicketCounterProps) => {
   return (
     <div>
-      <h2 className="mb-[5px] text-[17px]">人數</h2>
-      <div className="flex items-center gap-8">
+      <h2 className="mb-2 text-xl font-semibold">人數</h2>
+      <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={onDecrement}
           disabled={count <= minCount}
-          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D] text-white"} `}
+          className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-colors duration-200 ${count <= minCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D] text-white"} `}
           aria-label="Decrease ticket count"
         >
           <Minus />
         </button>
 
-        <span className="text-[40px] font-bold">{count}</span>
+        <span className="w-[50px] text-center text-[40px] font-semibold">{count}</span>
 
         <button
           type="button"
           onClick={onIncrement}
           disabled={count >= maxCount}
-          className={`flex h-[36px] w-[36px] items-center justify-center rounded-xl transition-colors duration-200 ${count >= maxCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D]"} `}
+          className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-colors duration-200 ${count >= maxCount ? "cursor-not-allowed bg-[#232323]" : "cursor-pointer bg-[#11968D]"} `}
           aria-label="Increase ticket count"
         >
           <Plus />

@@ -77,11 +77,11 @@ const Checkout = () => {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="absolute left-4 rounded-sm bg-[rgba(170,170,170,0.4)] p-2 hover:bg-white/20"
+          className="absolute left-4 rounded-lg bg-[rgba(170,170,170,0.4)] p-2 hover:bg-white/20"
         >
           <ArrowLeft className="h-6 w-6" />
         </button>
-        <h1 className="text-lg font-medium">確認你的訂單</h1>
+        <h1 className="text-lg font-bold">確認你的訂單</h1>
       </header>
 
       {/* Movie Banner Section */}
@@ -92,8 +92,8 @@ const Checkout = () => {
         </div>
 
         <div className="absolute -bottom-8 left-0 px-4">
-          <h2 className="text-3xl font-bold tracking-wide">{movieTitle}</h2>
-          <p className="mt-1 text-sm font-medium text-[#CCCCCC]">
+          <h2 className="text-2xl font-semibold">{movieTitle}</h2>
+          <p className="mt-1 text-sm text-[#BDBDBD]">
             {rating} · {duration}
           </p>
         </div>
@@ -112,32 +112,32 @@ const Checkout = () => {
         {/* Price Details Card */}
         <div className="mt-3 rounded-[10px] bg-[#222222]">
           <div className="space-y-3 px-3 py-4">
-            <div className="flex justify-between text-[#A5A5A5]">
+            <div className="flex justify-between text-[#9E9E9E]">
               <span>
                 {ticketType || "一般數位"} * {ticketCount}
               </span>
               <span>${totalPrice}</span>
             </div>
-            <div className="flex justify-between text-[#A5A5A5]">
+            <div className="flex justify-between text-[#9E9E9E]">
               <span>手續費</span>
               <span>${HANDLING_FEE}</span>
             </div>
           </div>
-          <div className="flex items-center justify-between rounded-[10px] bg-[#353535] px-3 py-4">
-            <span className="text-lg font-semibold">總計</span>
-            <span className="text-lg font-semibold text-[#4BCCBE]">${finalTotalPrice}</span>
+          <div className="flex items-center justify-between rounded-[10px] bg-[#383838] px-3 py-4">
+            <span className="text-lg font-bold">總計</span>
+            <span className="text-lg font-bold text-[#4BCCBE]">${finalTotalPrice}</span>
           </div>
         </div>
 
         {/* Payment Method Selection */}
         <div className="mt-3 rounded-[10px] bg-[#222222] p-3">
-          <span className="text-xs text-[#A5A5A5]">付款方式</span>
+          <span className="text-sm text-[#9E9E9E]">付款方式</span>
           <div className="mt-2 flex items-center gap-3">
             {/* Custom Radio Button for Line Pay */}
             <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#11968D]">
               <div className="h-2.5 w-2.5 rounded-full bg-[#11968D]" />
             </div>
-            <span className="font-medium">Line Pay</span>
+            <span>Line Pay</span>
           </div>
         </div>
       </main>
