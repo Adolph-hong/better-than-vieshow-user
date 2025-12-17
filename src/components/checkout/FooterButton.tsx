@@ -13,8 +13,7 @@ const FooterButton = ({
   variant = "primary",
   className = "",
 }: FooterButtonProps) => {
-  const baseStyles =
-    "w-full cursor-pointer rounded-xl py-[10px] text-center font-medium transition-transform"
+  const baseStyles = "w-full cursor-pointer rounded-lg py-2 text-center"
   const variants = {
     primary: "bg-[#11968D] text-white",
     outline: "border border-[#11968D] text-[#11968D] bg-transparent",
