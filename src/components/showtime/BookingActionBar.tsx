@@ -27,10 +27,8 @@ const BookingActionBar = ({
           type="button"
           onClick={onBooking}
           disabled={isDisabled}
-          className={`flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl py-[10px] font-bold text-white transition-colors ${
-            isDisabled
-              ? "cursor-not-allowed bg-gray-600"
-              : "bg-[#11968D] hover:bg-[#0e7a73] active:bg-[#0b635d]"
+          className={`flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg py-2 text-white transition-colors ${
+            isDisabled ? "cursor-not-allowed bg-[#0B635D] text-white/40" : "bg-[#11968D]"
           }`}
         >
           {buttonIcon}
