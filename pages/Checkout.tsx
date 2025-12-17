@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import FooterButton from "@/components/checkout/FooterButton"
-import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
 type SelectedSeat = {

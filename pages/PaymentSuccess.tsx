@@ -1,7 +1,10 @@
+import { useEffect, useState, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Check } from "lucide-react"
 import FooterButton from "@/components/checkout/FooterButton"
-import OrderInfoCard from "@/components/checkout/OrderInfoCard"
+import OrderInfoCard from "@/components/shared/OrderInfoCard"
+import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
+import { useTickets } from "@/context/TicketContext"
 import { generateOrderId } from "@/mocks/movieData"
 
 type LocationState = {
@@ -22,6 +25,37 @@ const PaymentSuccess = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as LocationState | null
+  const { addTicket } = useTickets()
+  const hasAddedTicket = useRef(false)
+
+  // Generate order ID once per session on this page
+  const [orderId] = useState(() => generateOrderId())
+
+  useEffect(() => {
+    if (!state || hasAddedTicket.current) return
+
+    // Mark as added to prevent double addition in StrictMode
+    hasAddedTicket.current = true
+
+    const participantCount = state.seatString.split(",").length
+
+    addTicket({
+      movieTitle: state.movieTitle,
+      posterUrl: state.posterUrl,
+      rating: state.rating,
+      duration: state.duration,
+      genre: state.genre,
+      date: state.date,
+      time: state.time,
+      theaterName: state.theaterName,
+      ticketType: state.ticketType,
+      seatString: state.seatString,
+      finalTotalPrice: state.finalTotalPrice,
+      orderId,
+      paymentMethod: "Line Pay",
+      participantCount,
+    })
+  }, [state, addTicket, orderId])
 
   if (!state) {
     return (
@@ -61,28 +95,18 @@ const PaymentSuccess = () => {
           />
         </section>
 
-        <section className="mt-3 w-full justify-between space-y-3 rounded-[10px] bg-[#222222] px-3 py-4">
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">總金額</p>
-            <p>${finalTotalPrice}</p>
-          </div>
-
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">付款方式</p>
-            <p>LIne Pay</p>
-          </div>
-
-          <div className="flex justify-between">
-            <p className="text-[#A5A5A5]">訂單編號</p>
-            <p>{generateOrderId()}</p>
-          </div>
-        </section>
+        <OrderSummaryCard
+          totalPrice={finalTotalPrice}
+          paymentMethod="Line Pay"
+          orderId={orderId}
+          className="mt-3"
+        />
 
         <footer className="mt-6 w-full space-y-2">
           <FooterButton variant="outline" onClick={() => navigate("/")}>
             返回首頁
           </FooterButton>
-          <FooterButton>查看票卷</FooterButton>
+          <FooterButton onClick={() => navigate("/tickets")}>查看票卷</FooterButton>
         </footer>
       </div>
     </div>
