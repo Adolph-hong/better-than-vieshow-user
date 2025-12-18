@@ -9,16 +9,17 @@ const CountdownTimer = ({ initialSeconds = 180, onTimeout }: CountdownTimerProps
   const [seconds, setSeconds] = useState(initialSeconds)
 
   useEffect(() => {
+    let timerId: ReturnType<typeof setTimeout> | undefined
+
     if (seconds > 0) {
-      const timerId = setTimeout(() => {
+      timerId = setTimeout(() => {
         setSeconds((prev) => prev - 1)
       }, 1000)
-      return () => clearTimeout(timerId)
-    }
-
-    if (seconds === 0 && onTimeout) {
+    } else if (seconds === 0 && onTimeout) {
       onTimeout()
     }
+
+    return () => clearTimeout(timerId)
   }, [seconds, onTimeout])
 
   const formatTime = (totalSeconds: number) => {
