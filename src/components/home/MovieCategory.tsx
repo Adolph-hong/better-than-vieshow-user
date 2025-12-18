@@ -36,7 +36,7 @@ const MovieCategory = ({ category }: { category: string }) => {
                       <img
                         src={poster}
                         alt={titleZh}
-                        className="w-full h-full object-cover rounded-xl"
+                        className="w-full h-35 object-cover rounded-lg"
                       />
                     </div>
                     <span className="font-family-inter font-normal text-sm text-white line-clamp-2 h-11 break-all w-25 text-center">

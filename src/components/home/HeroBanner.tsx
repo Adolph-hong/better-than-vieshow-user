@@ -109,11 +109,11 @@ const HeroBanner = () => {
                     zIndex: getZIndex(),
                   }}
                 >
-                  <div className="relative w-full h-full rounded-xl overflow-hidden">
+                  <div className="relative w-full h-full overflow-hidden">
                     <img
                       src={movie.poster}
                       alt={movie.title}
-                      className="w-full h-80 object-cover"
+                      className="w-full h-80 object-cover rounded-lg"
                     />
                     {/* 電影資訊只顯示在正中間卡片 */}
                     {isActive && (
