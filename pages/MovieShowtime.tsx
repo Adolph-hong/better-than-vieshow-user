@@ -126,7 +126,7 @@ const MovieShowtime = () => {
   }
 
   // Truncate description logic
-  const truncateLength = 72
+  const truncateLength = 73
   const displayDescription = useMemo(() => {
     if (!movieData) return ""
     if (isExpanded) return movieData.description
@@ -205,12 +205,12 @@ const MovieShowtime = () => {
           showInfo ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <div className="flex h-full flex-col px-5 pt-[22px]">
+        <div className="flex h-full flex-col px-4 pt-5">
           {/* Header */}
           <div className="mb-3 flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white">{movieData.title}</h2>
-              <div className="mt-3 text-sm text-[#CCCCCC]">
+              <h2 className="text-2xl font-semibold text-white">{movieData.title}</h2>
+              <div className="mt-1 text-sm text-[#BDBDBD]">
                 {movieData.rating} · {movieData.duration}
               </div>
               <div className="mt-3 flex gap-2">
@@ -224,18 +224,14 @@ const MovieShowtime = () => {
                 ))}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowInfo(false)}
-              className="rounded-full bg-[#777777] text-[#CCCCCC]"
-            >
-              <X className="text-[#232323]" />
+            <button type="button" onClick={() => setShowInfo(false)} className="cursor-pointer">
+              <X />
             </button>
           </div>
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto">
-            <div className="mb-3 text-sm leading-relaxed text-[#CCCCCC]">
+            <div className="mb-3 text-sm leading-relaxed text-[#BDBDBD]">
               {displayDescription}
               {!isExpanded && movieData.description.length > truncateLength && (
                 <button
@@ -251,7 +247,7 @@ const MovieShowtime = () => {
                 <button
                   type="button"
                   onClick={() => setIsExpanded(false)}
-                  className="inline-flex cursor-pointer items-center text-sm text-[#CCCCCC] underline decoration-[#CCCCCC] underline-offset-2"
+                  className="inline-flex cursor-pointer items-center text-sm text-[#BDBDBD] underline decoration-[#CCCCCC] underline-offset-2"
                 >
                   收起
                   <ChevronUp className="ml-0.5 h-4 w-4" />
@@ -259,16 +255,16 @@ const MovieShowtime = () => {
               )}
             </div>
 
-            <div className="space-y-2 border-t border-[#E5E5E5] pt-3">
-              <div className="flex text-sm text-[#E5E5E5]">
+            <div className="space-y-2 border-t border-[#E5E5E5] pt-3 text-[#BDBDBD]">
+              <div className="flex text-sm">
                 <span className="w-18">導演</span>
                 <span>{movieData.director}</span>
               </div>
-              <div className="flex text-sm text-[#E5E5E5]">
+              <div className="flex text-sm">
                 <span className="w-18 shrink-0">演員</span>
                 <span>{movieData.cast}</span>
               </div>
-              <div className="flex text-sm text-[#E5E5E5]">
+              <div className="flex text-sm">
                 <span className="w-18">上映日</span>
                 <span>{movieData.releaseDate}</span>
               </div>
@@ -293,14 +289,14 @@ const MovieShowtime = () => {
         <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between px-4 py-3">
           <button
             type="button"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-white/20 backdrop-blur-[4px]"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-[4px]"
           >
-            <ArrowLeft className="h-6 w-6 text-white" />
+            <ArrowLeft className="h-6 w-6" />
           </button>
           <button
             type="button"
             onClick={() => setShowInfo(true)}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-white/20 backdrop-blur-[4px]"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-[4px]"
           >
             <Info className="h-6 w-6 text-white" />
           </button>
@@ -311,36 +307,34 @@ const MovieShowtime = () => {
           <img
             src={movieData.posterUrl}
             alt={movieData.title}
-            className="h-full w-full rounded-xl object-cover object-top"
+            className="h-full w-full rounded-lg object-cover object-top"
           />
 
           {/* 播放預告片按鈕 - 移至海報上 */}
-          <div className="absolute right-5.5 bottom-1">
+          <div className="absolute right-7 bottom-3">
             <button
               type="button"
               onClick={() => setShowTrailer(true)}
-              className="flex cursor-pointer items-center gap-1 rounded-lg bg-[#11968D] px-2 py-1 text-sm"
+              className="flex cursor-pointer items-center gap-1 rounded-lg bg-[#11968D] px-2 py-[6px] text-sm"
             >
-              <RoundedPlay />
-              <span className="text-xs leading-[1.2]">播放預告片</span>
+              <RoundedPlay className="h-5 w-5" />
+              <span className="text-sm leading-[1.2]">播放預告片</span>
             </button>
           </div>
         </div>
 
         {/* 電影資訊 */}
-        <div className="absolute z-10 w-full p-3">
+        <div className="absolute z-10 mt-3 w-full">
           <div>
-            <h1 className="mb-1 text-center text-[28px] font-bold tracking-wide">
-              {movieData.title}
-            </h1>
-            <p className="mb-2 text-center text-sm text-[#D5D5D5]">
+            <h1 className="mb-1 text-center text-2xl font-semibold">{movieData.title}</h1>
+            <p className="mb-2 text-center text-sm text-[#BDBDBD]">
               {movieData.rating} · {movieData.duration}
             </p>
             <div className="flex justify-center gap-2">
               {movieData.genres.map((genre) => (
                 <span
                   key={genre}
-                  className="rounded-full border border-[#F2F2F2] px-4 py-[5px] text-xs text-[#F2F2F2]"
+                  className="rounded-full border border-[#F5F5F5] px-4 py-[6px] text-xs text-[#F5F5F5]"
                 >
                   {genre}
                 </span>
@@ -352,8 +346,8 @@ const MovieShowtime = () => {
 
       <main className="px-4 pt-4">
         <section className="mb-6" aria-labelledby="date-selection">
-          <h2 id="date-selection" className="mb-[5px] text-[17px] font-normal">
-            日期
+          <h2 id="date-selection" className="mb-2 text-xl font-semibold">
+            選擇日期
           </h2>
           <div className="flex flex-wrap gap-3">
             {movieData.dates.map((dateData) => (
@@ -373,15 +367,15 @@ const MovieShowtime = () => {
 
         {selectedDateId && (
           <section ref={showtimeRef} aria-labelledby="showtime-selection" className="pb-6">
-            <h2 id="showtime-selection" className="mb-2 text-[17px]">
+            <h2 id="showtime-selection" className="mb-2 text-xl font-semibold">
               選擇時段
             </h2>
             <div className="space-y-2">
               {currentShowtimeGroups.map((group) => (
                 <article key={group.id}>
                   <div className="mb-[5px] flex items-center justify-between">
-                    <h3 className="text-sm text-[#E5E5E5]">{group.name}</h3>
-                    <span className="text-sm text-gray-300">${group.price}/人</span>
+                    <h3 className="text-lg">{group.name}</h3>
+                    <span className="text-lg">${group.price}/人</span>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {group.sessions.map((session) => (
