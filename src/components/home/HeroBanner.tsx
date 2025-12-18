@@ -23,7 +23,7 @@ const HeroBanner = () => {
   return (
     <section className="
     relative flex flex-col w-full h-[517px] mb-3 overflow-hidden
-    mask-[linear-gradient(to_bottom,black_80%,transparent)]
+    mask-[linear-gradient(to_bottom,black_80%,black_80%_92%,transparent_100%)]
   ">
       {/* 背景圖片 */}
       <div
