@@ -54,12 +54,13 @@ const HeroBanner = () => {
             resistanceRatio={0.5}
             watchSlidesProgress
             modules={[Navigation, Pagination]}
-            className="pr-3 first:pl-0 last:pr-0 h-[410px]"
+            className="pr-3 first:pl-0 last:pr-0 h-[420px]"
           >
             {movies.map((movie: Movie, index: number) => {
               const diff = index - activeIndex
               const absDiff = Math.abs(diff)
-              
+              const isActive = diff === 0
+
               // 左邊頂在最上，中間距離上面30px，右邊距離上面60px
               const getTransform = () => {
                 if (diff === 0) {
@@ -101,34 +102,38 @@ const HeroBanner = () => {
               return (
                 <SwiperSlide
                   key={movie.id}
-                  className="w-60! h-80! transition-all duration-500 ease-out"
+                  className="w-60! h-[385px]! transition-all duration-500 ease-out"
                   style={{
                     transform: getTransform(),
                     opacity: getOpacity(),
                     zIndex: getZIndex(),
                   }}
                 >
-                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl">
+                  <div className="relative w-full h-full rounded-xl overflow-hidden">
                     <img
                       src={movie.poster}
                       alt={movie.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-80 object-cover"
                     />
-                    
+                    {/* 電影資訊只顯示在正中間卡片 */}
+                    {isActive && (
+                      <div className="text-center absolute bottom-0 left-0 right-0 px-4">
+                        <h2 className="text-xl text-[#F5F5F5] font-family-inter font-semibold mb-1 line-clamp-1 break-all leading-[1.2] overflow-hidden">
+                          {movie.titleZh}
+                        </h2>
+                        <p className="text-sm text-[#9E9E9E] font-family-inter font-normal leading-normal">
+                          {movie.genre}・{movie.rating}・{movie.duration}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   
                 </SwiperSlide>
               )
             })}
           </Swiper>
+          
 
-          {/* 電影資訊 */}
-          {/* <div className="text-center mt-8 text-white">
-            <h2 className="text-2xl font-bold mb-2">{currentMovie.titleZh}</h2>
-            <p className="text-sm opacity-90">
-              {currentMovie.genre}・{currentMovie.rating}・{currentMovie.duration}
-            </p>
-          </div> */}
         </div>
       </div>
       
