@@ -7,9 +7,7 @@ interface AuthButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const AuthButton = ({ children, className, ...props }: AuthButtonProps) => {
   return (
     <button
-      className={`w-full rounded-full bg-[#11968D] py-[14.5px] font-bold text-white cursor-pointer${
-        className || ""
-      }`}
+      className={`w-full rounded-lg bg-[#11968D] py-2 text-white cursor-pointer${className || ""}`}
       {...props}
     >
       {children}

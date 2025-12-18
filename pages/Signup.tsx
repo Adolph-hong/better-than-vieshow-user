@@ -15,7 +15,7 @@ const Signup = () => {
       footer={
         <p className="text-white">
           已經有帳號?{" "}
-          <Link to="/login" className="text-[#00B0AB] underline underline-offset-4">
+          <Link to="/login" className="text-[#11968D]">
             登入
           </Link>
         </p>
@@ -31,7 +31,11 @@ const Signup = () => {
         placeholder="輸入密碼"
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <Eye /> : <EyeClosed />}
+            {showPassword ? (
+              <Eye className="text-[#777777]" />
+            ) : (
+              <EyeClosed className="text-[#777777]" />
+            )}
           </button>
         }
       />
@@ -41,7 +45,7 @@ const Signup = () => {
           <input
             type="checkbox"
             id="remember"
-            className="peer size-[18px] cursor-pointer appearance-none rounded border border-[#A5A5A5] bg-[#1F1F1F] transition-all checked:border-white checked:bg-white"
+            className="peer size-4 cursor-pointer appearance-none rounded border border-[#A5A5A5] bg-[#1F1F1F] transition-all checked:border-white checked:bg-white"
           />
           <Check
             size={14}
