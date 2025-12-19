@@ -15,6 +15,8 @@ import MovieSearch from "./MovieSearch"
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/signup" element={<Signup />} />
     <Route path="/movie/showtime" element={<MovieShowtime />} />
     <Route path="/seat/selection" element={<SeatSelection />} />
     <Route path="/checkout" element={<Checkout />} />
