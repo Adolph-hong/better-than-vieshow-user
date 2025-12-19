@@ -12,9 +12,9 @@ const Login = () => {
     <AuthLayout
       title="登入"
       footer={
-        <p className="text-white">
+        <p className="text-sm text-white">
           沒有帳號?{" "}
-          <Link to="/signup" className="text-[#11968D]">
+          <Link to="/signup" className="text-sm text-[#11968D]">
             註冊
           </Link>
         </p>

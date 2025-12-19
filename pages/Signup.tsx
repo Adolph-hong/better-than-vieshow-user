@@ -13,9 +13,9 @@ const Signup = () => {
       title="註冊"
       paddingTop="pt-[145px]"
       footer={
-        <p className="text-white">
+        <p className="text-sm text-white">
           已經有帳號?{" "}
-          <Link to="/login" className="text-[#11968D]">
+          <Link to="/login" className="text-sm text-[#11968D]">
             登入
           </Link>
         </p>
