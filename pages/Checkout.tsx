@@ -1,6 +1,9 @@
+import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
+import CountdownTimer from "@/components/checkout/CountdownTimer"
 import FooterButton from "@/components/checkout/FooterButton"
+import TimeoutModal from "@/components/checkout/TimeoutModal"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
@@ -30,6 +33,8 @@ const Checkout = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as LocationState | null
+
+  const [isTimeout, setIsTimeout] = useState(false)
 
   if (!state) {
     return (
@@ -62,7 +67,6 @@ const Checkout = () => {
   const HANDLING_FEE = 20
   const finalTotalPrice = totalPrice + HANDLING_FEE
 
-  // Sort seats for display
   const sortedSeats = [...selectedSeats].sort((a, b) => {
     if (a.row === b.row) return a.column - b.column
     return a.row.localeCompare(b.row)
@@ -72,7 +76,6 @@ const Checkout = () => {
 
   return (
     <div className="w-full bg-black text-white">
-      {/* Header */}
       <header className="absolute top-0 right-0 left-0 z-20 flex items-center justify-center px-4 py-[15px]">
         <button
           type="button"
@@ -84,7 +87,6 @@ const Checkout = () => {
         <h1 className="text-lg font-bold">確認你的訂單</h1>
       </header>
 
-      {/* Movie Banner Section */}
       <div className="relative h-[230px] w-full">
         <div className="absolute inset-0">
           <img src={posterUrl} alt={movieTitle} className="h-full w-full object-cover object-top" />
@@ -100,7 +102,8 @@ const Checkout = () => {
       </div>
 
       <main className="mt-10 px-4">
-        {/* Order Details Card */}
+        <CountdownTimer onTimeout={() => setIsTimeout(true)} />
+
         <OrderInfoCard
           date={date}
           time={time}
@@ -109,7 +112,6 @@ const Checkout = () => {
           seats={seatString}
         />
 
-        {/* Price Details Card */}
         <div className="mt-3 rounded-[10px] bg-[#222222]">
           <div className="space-y-3 px-3 py-4">
             <div className="flex justify-between text-[#9E9E9E]">
@@ -129,11 +131,9 @@ const Checkout = () => {
           </div>
         </div>
 
-        {/* Payment Method Selection */}
         <div className="mt-3 rounded-[10px] bg-[#222222] p-3">
           <span className="text-sm text-[#9E9E9E]">付款方式</span>
           <div className="mt-2 flex items-center gap-3">
-            {/* Custom Radio Button for Line Pay */}
             <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#11968D]">
               <div className="h-2.5 w-2.5 rounded-full bg-[#11968D]" />
             </div>
@@ -166,6 +166,8 @@ const Checkout = () => {
           付款
         </FooterButton>
       </footer>
+
+      <TimeoutModal isOpen={isTimeout} />
     </div>
   )
 }
