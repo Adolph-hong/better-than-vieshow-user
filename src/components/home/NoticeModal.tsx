@@ -18,7 +18,7 @@ const NoticeModal = ({ isOpen, onClose }: NoticeModalProps) => {
             提醒您
             </h2>
             <p className="font-family-inter font-normal text-[#777777] text-center leading-normal w-full">
-            這個網站為學生專題作品, 僅提供學習與展示使用, 並非真實服務貨商業網站
+            這個網站為學生專題作品, 僅提供學習與展示使用, 並非真實服務或商業網站
             </p>
         </div>
 
