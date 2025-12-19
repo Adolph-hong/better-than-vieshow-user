@@ -83,5 +83,11 @@ module.exports = {
     "react/function-component-definition": "off", // 允許箭頭函式元件
     "no-alert": "off", // 允許使用 alert
     "arrow-body-style": "off", // 允許使用 return 語句
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        assert: "htmlFor",
+      },
+    ],
   },
 }
