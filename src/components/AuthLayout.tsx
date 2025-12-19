@@ -23,7 +23,7 @@ const AuthLayout = ({ title, children, footer, paddingTop = "pt-[190px]" }: Auth
 
       <section className="px-4">
         <form className="mt-4 flex flex-col rounded-lg bg-[#1F1F1F] px-4 pb-4">
-          <h2 className="pt-4 text-center text-xl font-semibold text-white">{title}</h2>
+          <h2 className="pt-4 text-center text-xl font-semibold text-[#E5E5E5]">{title}</h2>
           {children}
         </form>
       </section>
