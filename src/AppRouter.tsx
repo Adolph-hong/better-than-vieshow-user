@@ -10,10 +10,12 @@ import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
 import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
 import Home from "./Home"
+import MovieSearch from "./MovieSearch"
 
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
+    <Route path="/movie-search" element={<MovieSearch />} />
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
     <Route path="/movie/showtime" element={<MovieShowtime />} />
