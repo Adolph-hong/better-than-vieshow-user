@@ -12,9 +12,9 @@ const Login = () => {
     <AuthLayout
       title="登入"
       footer={
-        <p className="text-white">
+        <p className="text-sm text-white">
           沒有帳號?{" "}
-          <Link to="/signup" className="text-[#00B0AB] underline underline-offset-4">
+          <Link to="/signup" className="text-sm text-[#11968D]">
             註冊
           </Link>
         </p>
@@ -29,7 +29,11 @@ const Login = () => {
         placeholder="輸入密碼"
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <Eye /> : <EyeClosed />}
+            {showPassword ? (
+              <Eye className="text-[#777777]" />
+            ) : (
+              <EyeClosed className="text-[#777777]" />
+            )}
           </button>
         }
       />
@@ -39,7 +43,7 @@ const Login = () => {
           <input
             type="checkbox"
             id="remember"
-            className="peer size-[18px] cursor-pointer appearance-none rounded border border-[#A5A5A5] bg-[#1F1F1F] transition-all checked:border-white checked:bg-white"
+            className="peer size-4 cursor-pointer appearance-none rounded border border-[#A5A5A5] bg-[#1F1F1F] transition-all checked:border-white checked:bg-white"
           />
           <Check
             size={12}
