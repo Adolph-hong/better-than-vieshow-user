@@ -69,7 +69,7 @@ const MovieList = () => {
 
   return (
     <section className="flex flex-col p-3 w-full gap-2 overflow-x-hidden">
-      <h1 className="font-family-inter font-bold text-white">所有電影</h1>
+      <h1 className="font-family-inter leading-[1.2] text-xl font-semibold text-white">所有電影</h1>
       <div
         ref={containerRef}
         className="grid grid-cols-3 gap-3 overflow-y-auto overflow-x-hidden h-screen"
@@ -83,9 +83,9 @@ const MovieList = () => {
             <img
               src={movie.poster}
               alt={movie.titleZh}
-              className="object-cover rounded-xl h-[145px] w-full overflow-hidden"
+              className="object-cover rounded-lg h-[145px] w-full overflow-hidden"
             />
-            <span className="font-family-inter font-normal text-sm text-white h-8.5 line-clamp-2 break-all text-center">
+            <span className="font-family-inter font-normal text-sm leading-normal text-white h-11 line-clamp-2 break-all text-center">
               {movie.titleZh}
             </span>
           </div>

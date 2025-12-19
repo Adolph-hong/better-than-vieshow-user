@@ -11,7 +11,7 @@ const MovieCategory = ({ category }: { category: string }) => {
 
   return (
     <div className="flex flex-col gap-2 px-3">
-      <h1 className="font-family-inter font-bold text-white">{category}</h1>
+      <h1 className="font-family-inter font-semibold text-xl text-white">{category}</h1>
       <Swiper
         slidesPerView="auto"
         grabCursor
@@ -36,10 +36,10 @@ const MovieCategory = ({ category }: { category: string }) => {
                       <img
                         src={poster}
                         alt={titleZh}
-                        className="w-full h-full object-cover rounded-xl"
+                        className="w-full h-35 object-cover rounded-lg"
                       />
                     </div>
-                    <span className="font-family-inter font-normal text-[13px] text-white line-clamp-2 h-8.5 break-all w-25 text-center">
+                    <span className="font-family-inter font-normal text-sm text-white line-clamp-2 h-11 break-all w-25 text-center">
                       {titleZh}
                     </span>
                   </div>
