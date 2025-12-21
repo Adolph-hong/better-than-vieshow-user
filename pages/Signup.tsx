@@ -22,7 +22,8 @@ const Signup = () => {
     }))
   }
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
     try {
       const response = await fetch(
         "https://better-than-vieshow-api.rocket-coding.com/api/Auth/register",
