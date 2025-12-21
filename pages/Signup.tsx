@@ -25,7 +25,7 @@ const Signup = () => {
   const handleRegister = async () => {
     try {
       const response = await fetch(
-        "http://better-than-vieshow-api.rocket-coding.com/api/Auth/register",
+        "https://better-than-vieshow-api.rocket-coding.com/api/Auth/register",
         {
           method: "POST",
           headers: {
