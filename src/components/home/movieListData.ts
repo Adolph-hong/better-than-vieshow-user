@@ -23,7 +23,6 @@ export interface Movie {
   poster: string
 }
 
-// 來源資料：用 key 方便組裝三組不同順序、不同 id
 const baseMovies = {
   xuanyuan: {
     title: "Xuanyuan Sword",
@@ -139,7 +138,6 @@ const buildList = (order: BaseKey[], startId: number): Movie[] =>
     ...baseMovies[key],
   }))
 
-// 三組不同順序、不同 id
 const moviesWeekTop10 = buildList(
   ["xuanyuan", "buliangren", "tianguan", "wanmei", "fanren", "yongsheng", "xianni", "mushen", "shendiao", "zhuxian"],
   1
@@ -155,13 +153,11 @@ const moviesRandomRecommend = buildList(
   201
 )
 
-// 所有電影列表（基於 baseMovies，固定順序）
 const allMoviesBase = buildList(
   ["xuanyuan", "buliangren", "xianni", "fanren", "tianguan", "wanmei", "yongsheng", "mushen", "shendiao", "zhuxian", "yunshen", "doupo", "modao"],
   301
 )
 
-// 為每部電影加上2和3的版本
 export const allMovies: Movie[] = [
   ...allMoviesBase,
   ...allMoviesBase.map((movie, idx) => ({
@@ -176,13 +172,11 @@ export const allMovies: Movie[] = [
   })),
 ]
 
-// 電影分類介面
 export interface MovieCategory {
   title: string
   movies: Movie[]
 }
 
-// 包含三個主題的陣列
 export const movieCategories: MovieCategory[] = [
   {
     title: "本週前10",
@@ -198,6 +192,5 @@ export const movieCategories: MovieCategory[] = [
   },
 ]
 
-// 預設導出 moviesWeekTop10 作為 movies（用於 HeroBanner 等組件）
 export const movies: Movie[] = moviesWeekTop10
 

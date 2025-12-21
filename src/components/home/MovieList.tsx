@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { allMovies } from "@/components/home/movieData"
+import { allMovies } from "@/components/home/movieListData"
 
 const MovieList = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -12,7 +12,6 @@ const MovieList = () => {
     let observers: IntersectionObserver[] = []
     let timer: ReturnType<typeof setTimeout> | null = null
 
-    // 等待 DOM 渲染完成
     timer = setTimeout(() => {
       const container = containerRef.current
       if (!container) return
@@ -20,11 +19,10 @@ const MovieList = () => {
       const cards = Array.from(container.querySelectorAll<HTMLElement>(".movie-card-slide"))
 
       cards.forEach((card) => {
-        // 立即檢查一次是否可見（用於初始狀態）
         const rect = card.getBoundingClientRect()
         const containerRect = container.getBoundingClientRect()
-        const isVisible = 
-          rect.top < containerRect.bottom && 
+        const isVisible =
+          rect.top < containerRect.bottom &&
           rect.bottom > containerRect.top &&
           rect.left < containerRect.right &&
           rect.right > containerRect.left
@@ -36,7 +34,6 @@ const MovieList = () => {
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
-              // 進入視窗時滑入（從右邊來），離開時滑出（往右邊去）
               if (entry.isIntersecting) {
                 entry.target.classList.add("show")
               } else {
@@ -45,7 +42,7 @@ const MovieList = () => {
             })
           },
           {
-            root: container, // 使用容器作為視窗
+            root: container,
             rootMargin: "0px",
             threshold: 0.01,
           }
@@ -68,24 +65,21 @@ const MovieList = () => {
   }, [])
 
   return (
-    <section className="flex flex-col p-3 w-full gap-2 overflow-x-hidden">
-      <h1 className="font-family-inter leading-[1.2] text-xl font-semibold text-white">所有電影</h1>
+    <section className="flex w-full flex-col gap-2 overflow-x-hidden p-3">
+      <h1 className="font-family-inter text-xl leading-[1.2] font-semibold text-white">所有電影</h1>
       <div
         ref={containerRef}
-        className="grid grid-cols-3 gap-3 overflow-y-auto overflow-x-hidden h-screen"
+        className="grid h-screen grid-cols-3 gap-3 overflow-x-hidden overflow-y-auto"
         style={{ scrollbarWidth: "thin" }}
       >
         {allMovies.map((movie) => (
-          <div
-            key={movie.id}
-            className="movie-card movie-card-slide flex flex-col gap-2"
-          >
+          <div key={movie.id} className="movie-card movie-card-slide flex flex-col gap-2">
             <img
               src={movie.poster}
               alt={movie.titleZh}
-              className="object-cover rounded-lg h-[145px] w-full overflow-hidden"
+              className="h-[145px] w-full overflow-hidden rounded-lg object-cover"
             />
-            <span className="font-family-inter font-normal text-sm leading-normal text-white h-11 line-clamp-2 break-all text-center">
+            <span className="font-family-inter line-clamp-2 h-11 text-center text-sm leading-normal font-normal break-all text-white">
               {movie.titleZh}
             </span>
           </div>

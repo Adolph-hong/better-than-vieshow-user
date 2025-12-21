@@ -68,13 +68,13 @@ const TicketDetail = () => {
             className="h-full w-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-[#0000004D]" />
-          <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-linear-to-t from-black to-transparent" />
         </div>
 
         <div className="absolute top-0 right-0 left-0 flex items-center px-4 py-[15px]">
           <button
             onClick={() => navigate("/tickets")}
-            className="rounded-sm bg-[#AAAAAA66] bg-white/30 p-2 backdrop-blur-sm"
+            className="rounded-sm bg-white/30 p-2 backdrop-blur-sm"
           >
             <ArrowLeft className="h-6 w-6 text-white" />
           </button>
@@ -192,7 +192,7 @@ const TicketDetail = () => {
                 <div className="relative mt-3 flex w-full items-center">
                   <div className="-ml-3 h-6 w-6 rounded-r-full bg-black" />
                   <div
-                    className="h-[1px] flex-1"
+                    className="h-px flex-1"
                     style={{
                       backgroundImage: "linear-gradient(to right, #777777 50%, transparent 50%)",
                       backgroundSize: "12px 1px",
