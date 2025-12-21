@@ -12,7 +12,6 @@ const MovieList = () => {
     let observers: IntersectionObserver[] = []
     let timer: ReturnType<typeof setTimeout> | null = null
 
-    // 等待 DOM 渲染完成
     timer = setTimeout(() => {
       const container = containerRef.current
       if (!container) return
@@ -20,7 +19,6 @@ const MovieList = () => {
       const cards = Array.from(container.querySelectorAll<HTMLElement>(".movie-card-slide"))
 
       cards.forEach((card) => {
-        // 立即檢查一次是否可見（用於初始狀態）
         const rect = card.getBoundingClientRect()
         const containerRect = container.getBoundingClientRect()
         const isVisible = 
@@ -36,7 +34,6 @@ const MovieList = () => {
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
-              // 進入視窗時滑入（從右邊來），離開時滑出（往右邊去）
               if (entry.isIntersecting) {
                 entry.target.classList.add("show")
               } else {
@@ -45,7 +42,7 @@ const MovieList = () => {
             })
           },
           {
-            root: container, // 使用容器作為視窗
+            root: container,
             rootMargin: "0px",
             threshold: 0.01,
           }

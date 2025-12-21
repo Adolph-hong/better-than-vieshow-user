@@ -16,9 +16,6 @@ const MovieSearch = () => {
         ? []
         : allMovies.filter((movie) => {
             const keyword = trimmedQuery.toLowerCase()
-            // 只用 titleZh 當搜尋來源：
-            // - 中文片名：直接用中文比對
-            // - 英文片名：只要在 titleZh 寫英文，例如 "Apple"，一樣可以用 apple / APPLE 搜尋
             return movie.titleZh.toLowerCase().includes(keyword)
           }),
     [trimmedQuery]
