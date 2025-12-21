@@ -1,9 +1,9 @@
 import MovieCategory from "@/components/home/MovieCategory"
-import { movieCategories } from "@/components/home/movieData"
+import { movieCategories } from "@/components/home/movieListData"
 
 const MovieSectionGroup = () => {
   return (
-    <section className="flex flex-col py-3 gap-3 w-full">
+    <section className="flex w-full flex-col gap-3 py-3">
       {movieCategories.map((category) => (
         <MovieCategory key={category.title} category={category.title} />
       ))}

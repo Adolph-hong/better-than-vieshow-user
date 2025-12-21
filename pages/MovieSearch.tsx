@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { Search } from "lucide-react"
-import Footer from "@/components/home/Footer"
-import { allMovies } from "@/components/home/movieData"
+import { allMovies } from "@/components/home/movieListData"
+import Footer from "@/components/shared/Footer"
 
 const MAX_QUERY_LENGTH = 700
 
@@ -24,36 +24,33 @@ const MovieSearch = () => {
   const showNoResult = trimmedQuery.length > 0 && filteredMovies.length === 0
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-[#121212]">
-      <div className="flex flex-col mt-3 gap-3 w-full px-3">
-        <h1 className="font-family-inter font-semibold text-xl text-white leading-[1.2]">搜尋</h1>
-        <div className="flex gap-3 w-full rounded-lg px-3 py-2 bg-[#555555]">
-          <Search className="w-6 h-6 text-[#BABABA]" />
+    <div className="flex min-h-screen flex-col items-center bg-[#121212]">
+      <div className="mt-3 flex w-full flex-col gap-3 px-3">
+        <h1 className="font-family-inter text-xl leading-[1.2] font-semibold text-white">搜尋</h1>
+        <div className="flex w-full gap-3 rounded-lg bg-[#555555] px-3 py-2">
+          <Search className="h-6 w-6 text-[#BABABA]" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="搜尋電影名稱"
             type="text"
             maxLength={MAX_QUERY_LENGTH}
-            className="w-full bg-transparent text-white placeholder:text-[#BABABA] outline-none"
+            className="w-full bg-transparent text-white outline-none placeholder:text-[#BABABA]"
           />
         </div>
       </div>
 
-      <div className="flex-1 w-full px-3 pt-3">
+      <div className="w-full flex-1 px-3 pt-3">
         {filteredMovies.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             {filteredMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="flex flex-col gap-2"
-              >
+              <div key={movie.id} className="flex flex-col gap-2">
                 <img
                   src={movie.poster}
                   alt={movie.titleZh}
-                  className="object-cover rounded-lg h-37 w-full overflow-hidden"
+                  className="h-37 w-full overflow-hidden rounded-lg object-cover"
                 />
-                <span className="font-family-inter font-normal text-sm leading-normal text-white h-11 line-clamp-2 break-all text-center">
+                <span className="font-family-inter line-clamp-2 h-11 text-center text-sm leading-normal font-normal break-all text-white">
                   {movie.titleZh}
                 </span>
               </div>
@@ -63,11 +60,9 @@ const MovieSearch = () => {
 
         {showNoResult && (
           <div className="flex h-[643px] items-center justify-center px-4">
-            <div className="flex flex-col items-center justify-center h-full text-center gap-3">
-              <p className="font-family-inter text-xl font-semibold text-white">
-                沒有結果
-              </p>
-              <span className="font-family-inter text-[#9E9E9E] leading-normal flex whitespace-normal break-all">
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+              <p className="font-family-inter text-xl font-semibold text-white">沒有結果</p>
+              <span className="font-family-inter flex leading-normal break-all whitespace-normal text-[#9E9E9E]">
                 Better Than 威秀中沒有「{trimmedQuery}」的結果。請嘗試其他搜尋。
               </span>
             </div>

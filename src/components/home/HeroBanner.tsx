@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Navigation, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Header from "@/components/home/Header"
-import { movies, type Movie } from "@/components/home/movieData"
+import { movies, type Movie } from "@/components/home/movieListData"
 import type { Swiper as SwiperType } from "swiper"
 // @ts-expect-error - Swiper CSS files don't have type declarations
 import "swiper/css"
@@ -21,10 +21,7 @@ const HeroBanner = () => {
   const currentMovie = movies[activeIndex]
 
   return (
-    <section className="
-    relative flex flex-col w-full h-[517px] mb-3 overflow-hidden
-    mask-[linear-gradient(to_bottom,black_80%,black_80%_92%,transparent_100%)]
-  ">
+    <section className="relative mb-3 flex h-[517px] w-full flex-col overflow-hidden mask-[linear-gradient(to_bottom,black_80%,black_80%_92%,transparent_100%)]">
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-500"
         style={{
@@ -38,7 +35,7 @@ const HeroBanner = () => {
 
       <Header />
 
-      <div className="relative z-10 flex-1 flex items-start justify-center">
+      <div className="relative z-10 flex flex-1 items-start justify-center">
         <div className="w-full max-w-6xl">
           <Swiper
             onSlideChange={handleSlideChange}
@@ -50,7 +47,7 @@ const HeroBanner = () => {
             resistanceRatio={0.5}
             watchSlidesProgress
             modules={[Navigation, Pagination]}
-            className="pr-3 first:pl-0 last:pr-0 h-[420px]"
+            className="h-[420px] pr-3 first:pl-0 last:pr-0"
           >
             {movies.map((movie: Movie, index: number) => {
               const diff = index - activeIndex
@@ -88,44 +85,40 @@ const HeroBanner = () => {
                 if (absDiff === 1) return 5
                 return 1
               }
-              
+
               return (
                 <SwiperSlide
                   key={movie.id}
-                  className="w-60! h-[385px]! transition-all duration-500 ease-out"
+                  className="h-[385px]! w-60! transition-all duration-500 ease-out"
                   style={{
                     transform: getTransform(),
                     opacity: getOpacity(),
                     zIndex: getZIndex(),
                   }}
                 >
-                  <div className="relative w-full h-full overflow-hidden">
+                  <div className="relative h-full w-full overflow-hidden">
                     <img
                       src={movie.poster}
                       alt={movie.title}
-                      className="w-full h-80 object-cover rounded-lg"
+                      className="h-80 w-full rounded-lg object-cover"
                     />
                     {isActive && (
-                      <div className="text-center absolute bottom-0 left-0 right-0 px-4">
-                        <h2 className="text-xl text-[#F5F5F5] font-family-inter font-semibold mb-1 line-clamp-1 break-all leading-[1.2] overflow-hidden">
+                      <div className="absolute right-0 bottom-0 left-0 px-4 text-center">
+                        <h2 className="font-family-inter mb-1 line-clamp-1 overflow-hidden text-xl leading-[1.2] font-semibold break-all text-[#F5F5F5]">
                           {movie.titleZh}
                         </h2>
-                        <p className="text-sm text-[#9E9E9E] font-family-inter font-normal leading-normal">
+                        <p className="font-family-inter text-sm leading-normal font-normal text-[#9E9E9E]">
                           {movie.genre}・{movie.rating}・{movie.duration}
                         </p>
                       </div>
                     )}
                   </div>
-                  
                 </SwiperSlide>
               )
             })}
           </Swiper>
-          
-
         </div>
       </div>
-      
     </section>
   )
 }
