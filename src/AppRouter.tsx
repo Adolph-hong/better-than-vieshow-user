@@ -11,27 +11,16 @@ import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
 import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
-<<<<<<< HEAD
-import Home from "./Home"
-import MovieSearch from "./MovieSearch"
-=======
->>>>>>> Refactor-home-page-clean-code
 
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
-<<<<<<< HEAD
-=======
     <Route path="/movie-search" element={<MovieSearch />} />
->>>>>>> Refactor-home-page-clean-code
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
     <Route path="/movie/showtime" element={<MovieShowtime />} />
     <Route path="/seat/selection" element={<SeatSelection />} />
     <Route path="/checkout" element={<Checkout />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/signup" element={<Signup />} />
-    <Route path="/movie-search" element={<MovieSearch />} />
 
     {/* Routes that require TicketContext */}
     <Route element={<TicketFeatureLayout />}>

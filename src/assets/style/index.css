@@ -1,15 +1,7 @@
 @import "tailwindcss";
-<<<<<<< HEAD
-=======
 @import "@/assets/style/_theme.css";
 @import "@/assets/style/_utility.css";
->>>>>>> Refactor-home-page-clean-code
 
 * {
   font-family: "Inter", sans-serif;
 }
-<<<<<<< HEAD
-@import "@/assets/style/_theme.css";
-@import "@/assets/style/_utility.css";
-=======
->>>>>>> Refactor-home-page-clean-code
