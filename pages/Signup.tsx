@@ -22,7 +22,8 @@ const Signup = () => {
     }))
   }
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
     try {
       const response = await fetch(
         "http://better-than-vieshow-api.rocket-coding.com/api/Auth/register",
@@ -120,7 +121,9 @@ const Signup = () => {
         </label>
       </div>
 
-      <AuthButton onClick={handleRegister}>註冊</AuthButton>
+      <AuthButton type="submit" onClick={handleRegister}>
+        註冊
+      </AuthButton>
     </AuthLayout>
   )
 }
