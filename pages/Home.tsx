@@ -8,7 +8,6 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    // 一進入首頁就顯示彈窗
     setShowModal(true)
   }, [])
 
