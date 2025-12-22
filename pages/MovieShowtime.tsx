@@ -147,12 +147,12 @@ const MovieShowtime = () => {
     <div className="bg-black text-white">
       {/* Trailer Modal */}
       {showTrailer && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 transition-opacity duration-300">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 transition-opacity duration-300">
           {/* Close button - repositioned to match Info button */}
           <button
             type="button"
             onClick={() => setShowTrailer(false)}
-            className="absolute top-3 right-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-[#AAAAAA] backdrop-blur-[4px]"
+            className="absolute top-3 right-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-[#AAAAAA] backdrop-blur-xs"
           >
             <X className="h-6 w-6 text-white" />
           </button>
@@ -289,14 +289,14 @@ const MovieShowtime = () => {
         <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between px-4 py-3">
           <button
             type="button"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-[4px]"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-xs"
           >
             <ArrowLeft className="h-6 w-6" />
           </button>
           <button
             type="button"
             onClick={() => setShowInfo(true)}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-[4px]"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-xs"
           >
             <Info className="h-6 w-6 text-white" />
           </button>

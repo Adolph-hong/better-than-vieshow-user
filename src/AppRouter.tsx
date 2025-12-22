@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom"
 import Checkout from "../pages/Checkout"
+import Home from "../pages/Home"
 import Login from "../pages/Login"
+import MovieSearch from "../pages/MovieSearch"
 import MovieShowtime from "../pages/MovieShowtime"
 import PaymentSuccess from "../pages/PaymentSuccess"
 import SeatSelection from "../pages/SeatSelection"
@@ -9,8 +11,6 @@ import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
 import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
-import Home from "./Home"
-import MovieSearch from "./MovieSearch"
 
 const AppRouter = () => (
   <Routes>
