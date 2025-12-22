@@ -121,7 +121,9 @@ const Signup = () => {
         </label>
       </div>
 
-      <AuthButton onClick={handleRegister}>註冊</AuthButton>
+      <AuthButton type="submit" onClick={handleRegister}>
+        註冊
+      </AuthButton>
     </AuthLayout>
   )
 }
