@@ -4,6 +4,7 @@ import { Eye, EyeClosed, Check } from "lucide-react"
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
 import AuthLayout from "@/components/AuthLayout"
+import sendAPI from "@/utils/sendAPI"
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -25,6 +26,7 @@ const Signup = () => {
   const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
+<<<<<<< HEAD:pages/Signup.tsx
       const response = await fetch(
         "https://better-than-vieshow-api.rocket-coding.com/api/Auth/register",
         {
@@ -35,6 +37,9 @@ const Signup = () => {
           body: JSON.stringify(formData),
         }
       )
+=======
+      const response = await sendAPI(`/api/Auth/register`, "POST", formData)
+>>>>>>> Feature-frontend-auth-api:pages/auth/Signup.tsx
 
       if (!response.ok) {
         // 嘗試解析錯誤訊息，如果後端有回傳 JSON 格式錯誤
