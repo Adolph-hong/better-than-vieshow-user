@@ -69,7 +69,7 @@ const MovieSearch = () => {
           </div>
         )}
       </div>
-      <Footer bottomStyle="bottom-4" />
+      <Footer />
     </div>
   )
 }

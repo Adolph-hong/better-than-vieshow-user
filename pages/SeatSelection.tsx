@@ -246,7 +246,7 @@ const SeatSelection = () => {
                       {/* 螢幕指示器 */}
                       {/* 梯形深色背景 - 漸層效果 */}
                       <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-[1] h-[194px] w-[628px] -translate-x-1/2"
+                        className="pointer-events-none absolute top-0 left-1/2 z-1 h-[194px] w-[628px] -translate-x-1/2"
                         style={{
                           background: "linear-gradient(to bottom, #444444 0%, #232323 100%)",
                           clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
@@ -254,7 +254,7 @@ const SeatSelection = () => {
                       />
                       {/* 投影光效 */}
                       <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-[2] h-[194px] w-[628px] -translate-x-1/2"
+                        className="pointer-events-none absolute top-0 left-1/2 z-2 h-[194px] w-[628px] -translate-x-1/2"
                         style={{
                           background:
                             "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
@@ -280,7 +280,7 @@ const SeatSelection = () => {
                               <div key={`horizontal-aisle-${row}`} className="h-3" />
                             )}
 
-                            <div className="relative z-[3] flex items-center justify-center gap-2">
+                            <div className="relative z-3 flex items-center justify-center gap-2">
                               {rowSeats.map((seat) => {
                                 const status = getSeatStatus(seat)
                                 // 檢查是否需要在這個座位後插入垂直走道
