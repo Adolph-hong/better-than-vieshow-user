@@ -1,12 +1,51 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
 import AuthLayout from "@/components/AuthLayout"
+import sendAPI from "@/utils/sendAPI"
 
 const Signup = () => {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }))
+  }
+
+  const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
+      const response = await sendAPI(`/api/Auth/register`, "POST", formData)
+
+      if (!response.ok) {
+        // 嘗試解析錯誤訊息，如果後端有回傳 JSON 格式錯誤
+        const errorData = await response.json().catch(() => null)
+        const errorMessage = errorData?.message || "註冊失敗，請稍後再試"
+        throw new Error(errorMessage)
+      }
+
+      // 註冊成功
+      alert("註冊成功！請登入")
+      navigate("/login")
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert("發生未知錯誤")
+      }
+    }
+  }
 
   return (
     <AuthLayout
@@ -21,14 +60,30 @@ const Signup = () => {
         </p>
       }
     >
-      <AuthInput id="name" label="名稱" type="text" placeholder="輸入名稱" />
-      <AuthInput id="email" label="信箱" type="email" placeholder="輸入信箱" />
+      <AuthInput
+        id="name"
+        label="名稱"
+        type="text"
+        placeholder="輸入名稱"
+        value={formData.name}
+        onChange={handleInputChange}
+      />
+      <AuthInput
+        id="email"
+        label="信箱"
+        type="email"
+        placeholder="輸入信箱"
+        value={formData.email}
+        onChange={handleInputChange}
+      />
 
       <AuthInput
         id="password"
         label="密碼"
         type={showPassword ? "text" : "password"}
         placeholder="輸入密碼"
+        value={formData.password}
+        onChange={handleInputChange}
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (
@@ -58,7 +113,9 @@ const Signup = () => {
         </label>
       </div>
 
-      <AuthButton>註冊</AuthButton>
+      <AuthButton type="submit" onClick={handleRegister}>
+        註冊
+      </AuthButton>
     </AuthLayout>
   )
 }
