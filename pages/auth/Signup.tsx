@@ -50,7 +50,6 @@ const Signup = () => {
   return (
     <AuthLayout
       title="註冊"
-      paddingTop="pt-[145px]"
       footer={
         <p className="text-sm text-white">
           已經有帳號?{" "}
