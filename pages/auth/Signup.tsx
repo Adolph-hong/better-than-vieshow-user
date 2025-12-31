@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
+import toast from "react-hot-toast"
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
 import AuthLayout from "@/components/AuthLayout"
@@ -9,6 +10,7 @@ import sendAPI from "@/utils/sendAPI"
 const Signup = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -70,6 +72,8 @@ const Signup = () => {
       return
     }
 
+    setIsLoading(true)
+
     try {
       const response = await sendAPI(`/api/Auth/register`, "POST", formData)
 
@@ -84,20 +88,19 @@ const Signup = () => {
         ) {
           setErrors((prev) => ({ ...prev, email: "Email already exist" }))
         } else {
-          alert(errorMessage || "註冊失敗，請稍後再試")
+          toast.error(errorMessage || "註冊失敗，請稍後再試")
         }
         return
       }
 
       // 註冊成功
-      alert("註冊成功！請登入")
+      toast.success("註冊成功！請登入")
       navigate("/login")
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert("發生未知錯誤")
-      }
+    } catch {
+      // 網路錯誤
+      toast.error("發生錯誤，請稍後再試")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -170,7 +173,7 @@ const Signup = () => {
         </label>
       </div>
 
-      <AuthButton type="submit" onClick={handleRegister}>
+      <AuthButton type="submit" onClick={handleRegister} loading={isLoading}>
         註冊
       </AuthButton>
     </AuthLayout>

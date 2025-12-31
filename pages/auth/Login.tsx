@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
+import toast from "react-hot-toast"
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
 import AuthLayout from "@/components/AuthLayout"
@@ -9,6 +10,7 @@ import sendAPI from "@/utils/sendAPI"
 const Login = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -34,6 +36,7 @@ const Login = () => {
     e.preventDefault()
     // 清除之前的錯誤
     setErrors({ email: "", password: "" })
+    setIsLoading(true)
 
     try {
       const response = await sendAPI(`/api/Auth/login`, "POST", formData)
@@ -81,10 +84,13 @@ const Login = () => {
         }
       }
 
+      toast.success("登入成功")
       navigate("/")
     } catch {
-      // 網路錯誤也顯示在密碼欄位
-      setErrors({ email: "", password: "Password incorrect" })
+      // 網路錯誤
+      toast.error("發生錯誤，請稍後再試")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -147,7 +153,7 @@ const Login = () => {
         </label>
       </div>
 
-      <AuthButton type="submit" onClick={handleLogin}>
+      <AuthButton type="submit" onClick={handleLogin} loading={isLoading}>
         登入
       </AuthButton>
     </AuthLayout>

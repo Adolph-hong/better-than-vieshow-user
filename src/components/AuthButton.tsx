@@ -1,16 +1,21 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react"
+import { ClipLoader } from "react-spinners"
 
 interface AuthButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
+  loading?: boolean
 }
 
-const AuthButton = ({ children, className, ...props }: AuthButtonProps) => {
+const AuthButton = ({ children, className, loading, disabled, ...props }: AuthButtonProps) => {
   return (
     <button
-      className={`w-full rounded-lg bg-[#11968D] py-2 text-white cursor-pointer${className || ""}`}
+      className={`flex w-full items-center justify-center rounded-lg bg-[#11968D] py-2 text-white ${
+        loading || disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+      } ${className || ""}`}
+      disabled={loading || disabled}
       {...props}
     >
-      {children}
+      {loading ? <ClipLoader color="#ffffff" size={20} /> : children}
     </button>
   )
 }
