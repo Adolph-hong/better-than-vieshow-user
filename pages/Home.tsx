@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
-import { getHomepageMovies } from "@/api/homepage"
 import Layout from "@/components/home/Layout"
 import MovieList from "@/components/home/MovieList"
 import type { Movie } from "@/components/home/movieListData"
 import MovieSectionGroup from "@/components/home/MovieSectionGroup"
 import NoticeModal from "@/components/home/NoticeModal"
+import { getHomepageMovies } from "@/services/homepageAPI"
 import { transformApiMovies } from "@/utils/movieTransform"
 
 const Home = () => {
