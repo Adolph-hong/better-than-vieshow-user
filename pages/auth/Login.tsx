@@ -111,6 +111,7 @@ const Login = () => {
         label="信箱"
         type="email"
         placeholder="輸入信箱"
+        autoComplete="email"
         value={formData.email}
         onChange={handleInputChange}
         error={errors.email}
@@ -121,6 +122,7 @@ const Login = () => {
         label="密碼"
         type={showPassword ? "text" : "password"}
         placeholder="輸入密碼"
+        autoComplete="current-password"
         value={formData.password}
         onChange={handleInputChange}
         error={errors.password}

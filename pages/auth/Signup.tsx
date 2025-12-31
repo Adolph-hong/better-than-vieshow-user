@@ -129,6 +129,7 @@ const Signup = () => {
         label="信箱"
         type="email"
         placeholder="輸入信箱"
+        autoComplete="email"
         value={formData.email}
         onChange={handleInputChange}
         onBlur={handleBlur}
@@ -140,6 +141,7 @@ const Signup = () => {
         label="密碼"
         type={showPassword ? "text" : "password"}
         placeholder="輸入密碼"
+        autoComplete="new-password"
         value={formData.password}
         onChange={handleInputChange}
         onBlur={handleBlur}
