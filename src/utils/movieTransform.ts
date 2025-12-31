@@ -1,10 +1,9 @@
-import type { ApiMovie } from "@/types/homepage"
 import type { Movie } from "@/components/home/movieListData"
-
+import type { ApiMovie } from "@/types/homepage"
 /**
  * 將分鐘轉換為 "X小時" 或 "X分鐘" 格式
  */
-const formatDuration = (minutes: number): string => {
+export const formatDuration = (minutes: number): string => {
   if (minutes >= 60) {
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
