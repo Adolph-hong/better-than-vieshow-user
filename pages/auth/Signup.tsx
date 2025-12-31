@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
+import toast from "react-hot-toast"
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
 import AuthLayout from "@/components/AuthLayout"
@@ -9,8 +10,13 @@ import sendAPI from "@/utils/sendAPI"
 const Signup = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
+    password: "",
+  })
+  const [errors, setErrors] = useState({
     email: "",
     password: "",
   })
@@ -21,36 +27,86 @@ const Signup = () => {
       ...prev,
       [id]: value,
     }))
+    // 清除該欄位的錯誤
+    if (id === "email" || id === "password") {
+      setErrors((prev) => ({ ...prev, [id]: "" }))
+    }
+  }
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+
+    if (id === "email" && value && !validateEmail(value)) {
+      setErrors((prev) => ({ ...prev, email: "Email format invalid" }))
+    }
+
+    if (id === "password" && value && value.length < 8) {
+      setErrors((prev) => ({ ...prev, password: "Password must be at least 8 characters" }))
+    }
   }
 
   const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+
+    // 前端驗證
+    let hasError = false
+    const newErrors = { email: "", password: "" }
+
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Email format invalid"
+      hasError = true
+    }
+
+    if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters"
+      hasError = true
+    }
+
+    if (hasError) {
+      setErrors(newErrors)
+      return
+    }
+
+    setIsLoading(true)
+
     try {
       const response = await sendAPI(`/api/Auth/register`, "POST", formData)
 
       if (!response.ok) {
-        // 嘗試解析錯誤訊息，如果後端有回傳 JSON 格式錯誤
         const errorData = await response.json().catch(() => null)
-        const errorMessage = errorData?.message || "註冊失敗，請稍後再試"
-        throw new Error(errorMessage)
+        const errorMessage = errorData?.message || ""
+
+        // 處理後端錯誤
+        if (
+          errorMessage.toLowerCase().includes("email") ||
+          errorMessage.toLowerCase().includes("exist")
+        ) {
+          setErrors((prev) => ({ ...prev, email: "Email already exist" }))
+        } else {
+          toast.error(errorMessage || "註冊失敗，請稍後再試")
+        }
+        return
       }
 
       // 註冊成功
-      alert("註冊成功！請登入")
+      toast.success("註冊成功！請登入")
       navigate("/login")
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert("發生未知錯誤")
-      }
+    } catch {
+      // 網路錯誤
+      toast.error("發生錯誤，請稍後再試")
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <AuthLayout
       title="註冊"
-      paddingTop="pt-[145px]"
       footer={
         <p className="text-sm text-white">
           已經有帳號?{" "}
@@ -73,8 +129,11 @@ const Signup = () => {
         label="信箱"
         type="email"
         placeholder="輸入信箱"
+        autoComplete="email"
         value={formData.email}
         onChange={handleInputChange}
+        onBlur={handleBlur}
+        error={errors.email}
       />
 
       <AuthInput
@@ -82,8 +141,11 @@ const Signup = () => {
         label="密碼"
         type={showPassword ? "text" : "password"}
         placeholder="輸入密碼"
+        autoComplete="new-password"
         value={formData.password}
         onChange={handleInputChange}
+        onBlur={handleBlur}
+        error={errors.password}
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (
@@ -113,7 +175,7 @@ const Signup = () => {
         </label>
       </div>
 
-      <AuthButton type="submit" onClick={handleRegister}>
+      <AuthButton type="submit" onClick={handleRegister} loading={isLoading}>
         註冊
       </AuthButton>
     </AuthLayout>
