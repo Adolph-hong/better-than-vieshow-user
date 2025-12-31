@@ -14,6 +14,10 @@ const Signup = () => {
     email: "",
     password: "",
   })
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -21,18 +25,68 @@ const Signup = () => {
       ...prev,
       [id]: value,
     }))
+    // 清除該欄位的錯誤
+    if (id === "email" || id === "password") {
+      setErrors((prev) => ({ ...prev, [id]: "" }))
+    }
+  }
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+
+    if (id === "email" && value && !validateEmail(value)) {
+      setErrors((prev) => ({ ...prev, email: "Email format invalid" }))
+    }
+
+    if (id === "password" && value && value.length < 8) {
+      setErrors((prev) => ({ ...prev, password: "Password must be at least 8 characters" }))
+    }
   }
 
   const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+
+    // 前端驗證
+    let hasError = false
+    const newErrors = { email: "", password: "" }
+
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Email format invalid"
+      hasError = true
+    }
+
+    if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters"
+      hasError = true
+    }
+
+    if (hasError) {
+      setErrors(newErrors)
+      return
+    }
+
     try {
       const response = await sendAPI(`/api/Auth/register`, "POST", formData)
 
       if (!response.ok) {
-        // 嘗試解析錯誤訊息，如果後端有回傳 JSON 格式錯誤
         const errorData = await response.json().catch(() => null)
-        const errorMessage = errorData?.message || "註冊失敗，請稍後再試"
-        throw new Error(errorMessage)
+        const errorMessage = errorData?.message || ""
+
+        // 處理後端錯誤
+        if (
+          errorMessage.toLowerCase().includes("email") ||
+          errorMessage.toLowerCase().includes("exist")
+        ) {
+          setErrors((prev) => ({ ...prev, email: "Email already exist" }))
+        } else {
+          alert(errorMessage || "註冊失敗，請稍後再試")
+        }
+        return
       }
 
       // 註冊成功
@@ -74,6 +128,8 @@ const Signup = () => {
         placeholder="輸入信箱"
         value={formData.email}
         onChange={handleInputChange}
+        onBlur={handleBlur}
+        error={errors.email}
       />
 
       <AuthInput
@@ -83,6 +139,8 @@ const Signup = () => {
         placeholder="輸入密碼"
         value={formData.password}
         onChange={handleInputChange}
+        onBlur={handleBlur}
+        error={errors.password}
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (

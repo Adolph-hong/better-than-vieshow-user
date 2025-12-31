@@ -13,6 +13,10 @@ const Login = () => {
     email: "",
     password: "",
   })
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -20,17 +24,48 @@ const Login = () => {
       ...prev,
       [id]: value,
     }))
+    // 清除該欄位的錯誤
+    if (id === "email" || id === "password") {
+      setErrors((prev) => ({ ...prev, [id]: "" }))
+    }
   }
 
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    // 清除之前的錯誤
+    setErrors({ email: "", password: "" })
+
     try {
       const response = await sendAPI(`/api/Auth/login`, "POST", formData)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null)
-        const errorMessage = errorData?.message || "登入失敗，請稍後再試"
-        throw new Error(errorMessage)
+        const errorMessage = errorData?.message || ""
+        const errorMessageLower = errorMessage.toLowerCase()
+
+        // 根據後端錯誤訊息判斷是哪個欄位的問題（支援中英文關鍵字）
+        const isEmailError =
+          errorMessageLower.includes("email") ||
+          errorMessageLower.includes("not found") ||
+          errorMessage.includes("信箱") ||
+          errorMessage.includes("用戶不存在") ||
+          response.status === 404
+
+        const isPasswordError =
+          errorMessageLower.includes("password") ||
+          errorMessageLower.includes("incorrect") ||
+          errorMessageLower.includes("wrong") ||
+          errorMessage.includes("密碼")
+
+        if (isEmailError) {
+          setErrors({ email: "Email not found", password: "" })
+        } else if (isPasswordError) {
+          setErrors({ email: "", password: "Password incorrect" })
+        } else {
+          // 預設顯示在密碼欄位
+          setErrors({ email: "", password: "Password incorrect" })
+        }
+        return
       }
 
       const data = await response.json()
@@ -44,18 +79,12 @@ const Login = () => {
         if (userName) {
           localStorage.setItem("user", userName)
         }
-      } else {
-        console.warn("後端未回傳 token")
       }
 
-      alert("登入成功！")
       navigate("/")
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert("發生未知錯誤")
-      }
+    } catch {
+      // 網路錯誤也顯示在密碼欄位
+      setErrors({ email: "", password: "Password incorrect" })
     }
   }
 
@@ -78,6 +107,7 @@ const Login = () => {
         placeholder="輸入信箱"
         value={formData.email}
         onChange={handleInputChange}
+        error={errors.email}
       />
 
       <AuthInput
@@ -87,6 +117,7 @@ const Login = () => {
         placeholder="輸入密碼"
         value={formData.password}
         onChange={handleInputChange}
+        error={errors.password}
         rightElement={
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (
