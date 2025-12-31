@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react"
-import { allMovies } from "@/components/home/movieListData"
+import type { Movie } from "@/components/home/movieListData"
 
-const MovieList = () => {
+interface MovieListProps {
+  movies: Movie[]
+}
+
+const MovieList = ({ movies }: MovieListProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const MovieList = () => {
         className="grid h-screen grid-cols-3 gap-3 overflow-x-hidden overflow-y-auto"
         style={{ scrollbarWidth: "thin" }}
       >
-        {allMovies.map((movie) => (
+        {movies.map((movie) => (
           <div key={movie.id} className="movie-card movie-card-slide flex flex-col gap-2">
             <img
               src={movie.poster}
