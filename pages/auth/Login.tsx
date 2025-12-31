@@ -156,7 +156,7 @@ const Login = () => {
       </div>
 
       <AuthButton type="submit" onClick={handleLogin} loading={isLoading}>
-        登入啦
+        登入
       </AuthButton>
     </AuthLayout>
   )
