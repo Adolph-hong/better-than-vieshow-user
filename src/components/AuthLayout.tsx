@@ -11,7 +11,7 @@ const AuthLayout = ({ title, children, footer }: AuthLayoutProps) => {
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black">
       {/* 背景光暈 - 依照 Figma 參數實作 */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[522px] w-[320px] -translate-x-1/2 -translate-y-1/2 bg-[#11968D] blur-[240px] brightness-150" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[522px] w-[320px] -translate-x-1/2 -translate-y-1/2 bg-[#11968D] blur-[130px] brightness-150" />
 
       {/* 主內容容器 - 撐滿剩餘空間並垂直置中 */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4">
