@@ -11,7 +11,7 @@ import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
 import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
-
+import CheckoutConfirm from "../pages/CheckoutConfirm"
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -31,6 +31,7 @@ const AppRouter = () => (
         </Route>
         <Route path=":id" element={<TicketDetail />} />
       </Route>
+      <Route path="/checkout/confirm" element={<CheckoutConfirm />} />
     </Route>
   </Routes>
 )
