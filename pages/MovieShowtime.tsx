@@ -175,6 +175,7 @@ const MovieShowtime = () => {
           duration: movieData.duration,
           genre: movieData.genres[0],
           ticketType: selectedGroup.name,
+          showTimeId: selectedSession.showTimeId,
         },
       })
     }
