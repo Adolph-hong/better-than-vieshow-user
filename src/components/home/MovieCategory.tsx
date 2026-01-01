@@ -1,13 +1,21 @@
 import { Swiper, SwiperSlide } from "swiper/react"
 // @ts-expect-error - Swiper CSS files don't have type declarations
 import "swiper/css"
-import { movieCategories, type Movie } from "@/components/home/movieListData"
+import type { Movie } from "@/components/home/movieListData"
 
-const MovieCategory = ({ category }: { category: string }) => {
-  const categoryData = movieCategories.find((cat) => cat.title === category)
-  const movies = categoryData?.movies || []
+interface MovieCategoryProps {
+  category: string
+  movies: Movie[]
+}
+
+const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
   const showRanking = category === "本週前10"
   const showCountdown = category === "即將上映"
+
+  // 如果沒有電影資料，不顯示此區塊
+  if (!movies || movies.length === 0) {
+    return null
+  }
 
   return (
     <div className="flex flex-col gap-2 px-3">
