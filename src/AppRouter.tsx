@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom"
 import Login from "../pages/auth/Login"
 import Signup from "../pages/auth/Signup"
 import Checkout from "../pages/Checkout"
+import CheckoutConfirm from "../pages/CheckoutConfirm"
 import Home from "../pages/Home"
 import MovieSearch from "../pages/MovieSearch"
 import MovieShowtime from "../pages/MovieShowtime"
@@ -11,14 +12,14 @@ import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
 import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
-import CheckoutConfirm from "../pages/CheckoutConfirm"
+
 const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/movie-search" element={<MovieSearch />} />
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
-    <Route path="/movie/showtime" element={<MovieShowtime />} />
+    <Route path="/movie/showtime/:id" element={<MovieShowtime />} />
     <Route path="/seat/selection" element={<SeatSelection />} />
     <Route path="/checkout" element={<Checkout />} />
 

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { Swiper, SwiperSlide } from "swiper/react"
 // @ts-expect-error - Swiper CSS files don't have type declarations
 import "swiper/css"
@@ -9,12 +10,17 @@ interface MovieCategoryProps {
 }
 
 const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
+  const navigate = useNavigate()
   const showRanking = category === "本週前10"
   const showCountdown = category === "即將上映"
 
   // 如果沒有電影資料，不顯示此區塊
   if (!movies || movies.length === 0) {
     return null
+  }
+
+  const handleMovieClick = (movieId: number) => {
+    navigate(`/movie/showtime/${movieId}`)
   }
 
   return (
@@ -25,7 +31,15 @@ const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
           const { id, titleZh, poster } = movie
           return (
             <SwiperSlide key={id} style={{ width: "auto" }} className="pr-3 first:pl-0 last:pr-0">
-              <div className="flex flex-col gap-2">
+              <div
+                className="flex cursor-pointer flex-col gap-2"
+                onClick={() => handleMovieClick(id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleMovieClick(id)
+                }}
+              >
                 <div className="relative h-[133px] w-25 rounded-xl">
                   {showRanking && (
                     <span className="font-family-inter absolute top-0 left-0 flex h-8 w-8 items-center justify-center bg-linear-to-b from-white to-white/40 bg-clip-text text-[28px] font-bold text-transparent">

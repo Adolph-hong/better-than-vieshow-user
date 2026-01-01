@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 import type { Movie } from "@/components/home/movieListData"
 
 interface MovieListProps {
@@ -7,6 +8,7 @@ interface MovieListProps {
 
 const MovieList = ({ movies }: MovieListProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -68,6 +70,10 @@ const MovieList = ({ movies }: MovieListProps) => {
     }
   }, [])
 
+  const handleMovieClick = (movieId: number) => {
+    navigate(`/movie/showtime/${movieId}`)
+  }
+
   return (
     <section className="flex w-full flex-col gap-2 overflow-x-hidden p-3">
       <h1 className="font-family-inter text-xl leading-[1.2] font-semibold text-white">所有電影</h1>
@@ -77,7 +83,16 @@ const MovieList = ({ movies }: MovieListProps) => {
         style={{ scrollbarWidth: "thin" }}
       >
         {movies.map((movie) => (
-          <div key={movie.id} className="movie-card movie-card-slide flex flex-col gap-2">
+          <div
+            key={movie.id}
+            className="movie-card movie-card-slide flex cursor-pointer flex-col gap-2"
+            onClick={() => handleMovieClick(movie.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") handleMovieClick(movie.id)
+            }}
+          >
             <img
               src={movie.poster}
               alt={movie.titleZh}
