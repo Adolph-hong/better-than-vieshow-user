@@ -21,6 +21,7 @@ const AppRouter = () => (
     <Route path="/signup" element={<Signup />} />
     <Route path="/movie/showtime/:id" element={<MovieShowtime />} />
     <Route path="/seat/selection" element={<SeatSelection />} />
+    <Route path="/checkout/confirm" element={<CheckoutConfirm />} />
     <Route path="/checkout" element={<Checkout />} />
 
     {/* Routes that require TicketContext */}
@@ -32,7 +33,6 @@ const AppRouter = () => (
         </Route>
         <Route path=":id" element={<TicketDetail />} />
       </Route>
-      <Route path="/checkout/confirm" element={<CheckoutConfirm />} />
     </Route>
   </Routes>
 )
