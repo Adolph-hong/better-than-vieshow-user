@@ -151,8 +151,8 @@ const Checkout = () => {
           onClick={async () => {
             try {
               setIsSubmitting(true)
-              // 儲存目前狀態到 sessionStorage，以便從 Line Pay 跳轉回來時重新取得資料
-              sessionStorage.setItem(
+              // 儲存目前狀態到 localStorage，以便從 Line Pay 跳轉回來時重新取得資料
+              localStorage.setItem(
                 "checkout_state",
                 JSON.stringify({
                   ...state,
