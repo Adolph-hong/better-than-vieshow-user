@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import DotIcon from "@/assets/icon/tickets-icon/dot.svg?react"
-import ClockIcon from "@/assets/icon/tickets-icon/mdi_clock.svg?react"
-import UserIcon from "@/assets/icon/tickets-icon/mdi_users.svg?react"
 import TicketsGhostIcon from "@/assets/icon/tickets-icon/tickets-ghost.svg?react"
 import Footer from "@/components/shared/Footer"
 import { getOrders } from "@/services/orderAPI"
 import type { OrderListItem } from "@/types/order"
-import { Loader2 } from "lucide-react"
+import { Loader2 , UsersRound , Clock} from "lucide-react"
 
 const TicketList = () => {
   const navigate = useNavigate()
@@ -110,7 +108,7 @@ const TicketList = () => {
 
   return (
     <>
-      <div className="space-y-[17px] px-4 pb-24 pt-4">
+      <div className="space-y-[17px] pb-24">
         {tickets.map((ticket) => {
           const { year, month, day, week } = formatDate(ticket.showTime)
           const { period, timeStr } = formatTime(ticket.showTime)
@@ -132,22 +130,6 @@ const TicketList = () => {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-                {/* Darken used/cancelled tickets */}
-                {(ticket.isUsed === true || ticket.status !== "Paid") && (
-                  <div className="absolute inset-0 bg-black/50" />
-                )}
-
-                {/* Status Overlay for Used/Expired */}
-                {(ticket.isUsed === true || ticket.status !== "Paid") && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-12 w-full items-center justify-center bg-white/30 backdrop-blur-[1px]">
-                      <span className="text-xl text-white font-semibold">
-                        {ticket.isUsed === true ? "已使用" : ticket.status !== "Paid" ? "已取消" : ""}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
                 {/* Date Tag - Restored Original Style */}
                 <div className="absolute top-4 right-4 flex flex-col rounded-lg bg-[#11968D] py-[6.5px] pr-3 pl-2 text-white">
                   <div className="flex w-full justify-between font-medium space-x-2">
@@ -159,19 +141,35 @@ const TicketList = () => {
                   </div>
                 </div>
 
+                {/* Darken used/cancelled tickets */}
+                {(ticket.isUsed === true || ticket.status !== "Paid") && (
+                  <div className="absolute inset-0 bg-black/50" />
+                )}
+
+                {/* Status Overlay for Used/Expired */}
+                {(ticket.isUsed === true || ticket.status !== "Paid") && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex h-12 w-full items-center justify-center bg-white/15 backdrop-blur-[1px]">
+                      <span className="text-xl text-white font-semibold">
+                        {ticket.isUsed === true ? "已使用" : ticket.status !== "Paid" ? "已取消" : ""}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Movie Info */}
                 <div className="absolute bottom-4 left-4 z-10 w-full pr-4">
                   <h3 className="text-xl font-bold text-white drop-shadow-md truncate w-[90%]">
                     {ticket.movieTitle}
                   </h3>
-                  <div className="mt-2 flex items-center text-xs text-[#A5A5A5] space-x-1">
+                  <div className="mt-2 flex items-center text-sm text-[#A5A5A5] space-x-1">
                     <div className="flex items-center space-x-1">
-                      <UserIcon />
+                      <UsersRound className="h-4 w-4"/>
                       <span>{ticket.ticketCount} 人</span>
                     </div>
                     <DotIcon />
                     <div className="flex items-center space-x-1">
-                      <ClockIcon />
+                      <Clock className="h-4 w-4"/>
                       <span>{formatDuration(ticket.durationMinutes)}</span>
                     </div>
                   </div>
