@@ -16,6 +16,48 @@ import type {
 const formatDuration = (minutes: number): string => `${minutes}分鐘`
 
 /**
+ * 將日期格式轉換為 MM/DD (移除年份)
+ * @param dateString 日期字串，例如 "2023-10-25"
+ * @returns 格式化後的日期，例如 "10/25"
+ */
+const formatDateToMMDD = (dateString: string): string => {
+  if (!dateString) return ""
+  const match = dateString.match(/(\d{2})-(\d{2})$/)
+  if (match) {
+    return `${match[1]}/${match[2]}`
+  }
+  return dateString
+}
+
+/**
+ * 將 24 小時制時間轉換為含上午/中午/下午的 12 小時制
+ * @param timeString 時間字串，例如 "14:00"
+ * @returns 格式化後的時間，例如 "下午2:00"
+ */
+const formatTimeTo12H = (timeString: string): string => {
+  if (!timeString) return ""
+  const [hoursStr, minutesStr] = timeString.split(":")
+  const hours = parseInt(hoursStr, 10)
+  const minutes = minutesStr
+
+  let period = ""
+  let hour12 = hours
+
+  if (hours < 12) {
+    period = "上午"
+    hour12 = hours === 0 ? 12 : hours
+  } else if (hours === 12) {
+    period = "中午"
+    hour12 = 12
+  } else {
+    period = "下午"
+    hour12 = hours - 12
+  }
+
+  return `${period}${hour12}:${minutes}`
+}
+
+/**
  * 分割類型字串
  * @param genreString 類型字串，例如 "SciFi,Action,Adventure"
  * @returns 類型陣列
@@ -62,7 +104,7 @@ export const transformAvailableDates = (
 
   return apiResponse.data.dates.map((dateItem) => ({
     id: dateItem.date,
-    date: dateItem.date,
+    date: formatDateToMMDD(dateItem.date),
     dayOfWeek: dateItem.dayOfWeek,
   }))
 }
@@ -96,11 +138,11 @@ export const transformShowtimes = (apiResponse: ShowtimesApiResponse): ShowtimeG
   // 轉換為 ShowtimeGroup 格式
   return Object.entries(groupedByType).map(([theaterType, sessions]) => ({
     id: theaterType,
-    name: sessions[0].theaterName, // 使用第一個場次的影廳名稱
+    name: theaterType, // 將影廳類型（如 2D, IMAX）作為分組名稱顯示
     price: sessions[0].price, // 假設同類型影廳價格相同
     sessions: sessions.map((session) => ({
       id: session.showTimeId.toString(),
-      time: session.startTime,
+      time: formatTimeTo12H(session.startTime),
       showTimeId: session.showTimeId,
       endTime: session.endTime,
       availableSeats: session.availableSeats,

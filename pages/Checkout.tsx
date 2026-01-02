@@ -5,7 +5,6 @@ import CountdownTimer from "@/components/checkout/CountdownTimer"
 import FooterButton from "@/components/checkout/FooterButton"
 import TimeoutModal from "@/components/checkout/TimeoutModal"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
-import { MOCK_ORDER_ID } from "@/mocks/movieData"
 
 type SelectedSeat = {
   row: string
@@ -27,6 +26,8 @@ type LocationState = {
   ticketCount: number
   price: number
   totalPrice: number
+  orderId: number
+  showTimeId: number
 }
 
 const Checkout = () => {
@@ -158,7 +159,7 @@ const Checkout = () => {
                 ticketType: ticketType || "一般數位",
                 seatString,
                 finalTotalPrice,
-                orderId: MOCK_ORDER_ID,
+                orderId: state.orderId,
               },
             })
           }}

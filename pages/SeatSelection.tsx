@@ -6,6 +6,7 @@ import SeatIcon from "@/assets/seat/seat.svg?react"
 import SeatBadge from "@/components/checkout/SeatBadge"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import { getSeatData } from "@/services/seatAPI"
+import { createOrder } from "@/services/orderAPI"
 import { transformSeatData } from "@/utils/seatTransform"
 import type { SeatMapData, Seat } from "@/types/seat"
 
@@ -34,6 +35,7 @@ const SeatSelection = () => {
   const state = location.state as LocationState | null
 
   const [loading, setLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [seatMap, setSeatMap] = useState<SeatMapData | null>(null)
 
@@ -130,6 +132,55 @@ const SeatSelection = () => {
     const newSelected = [...selectedSeats]
     newSelected[index] = null
     setSelectedSeats(newSelected)
+  }
+  
+  const handleConfirm = async () => {
+    if (!state?.showTimeId || isSubmitting) return
+
+    const selectedValidSeats = selectedSeats.filter((s): s is { row: string; column: number } => s !== null)
+    if (selectedValidSeats.length === 0) return
+
+    // Find seat IDs from seatMap
+    const seatIds = selectedValidSeats.map((s) => {
+      const seat = seatMap?.seats.find((sm) => sm.row === s.row && sm.column === s.column)
+      return seat ? Number(seat.id) : null
+    }).filter((id): id is number => id !== null)
+
+    try {
+      setIsSubmitting(true)
+      const response = await createOrder({
+        showTimeId: state.showTimeId,
+        seatIds,
+      })
+
+      if (response.success) {
+        navigate("/checkout", {
+          state: {
+            movieTitle,
+            posterUrl,
+            rating,
+            duration,
+            genre,
+            date,
+            time,
+            theaterName: seatMap?.theaterName || "鳳廳",
+            selectedSeats: selectedValidSeats,
+            ticketType,
+            ticketCount: selectedValidSeats.length,
+            price,
+            totalPrice: currentTotalPrice,
+            orderId: response.data.orderId,
+            showTimeId: state.showTimeId,
+          },
+        })
+      } else {
+        setError(response.message || "建立訂單失敗")
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "建立訂單時發生錯誤")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const getSeatStatus = (seat: Seat): "sold" | "available" | "selected" | "wheelchair" => {
@@ -380,28 +431,10 @@ const SeatSelection = () => {
       <footer className="mt-[108px]">
         <BookingActionBar
           totalPrice={currentTotalPrice}
-          onBooking={() => {
-            navigate("/checkout", {
-              state: {
-                movieTitle,
-                posterUrl,
-                rating,
-                duration,
-                genre,
-                date,
-                time,
-                theaterName: "鳳廳",
-                selectedSeats: selectedSeats.filter((s: SelectedSeat) => s !== null),
-                ticketType,
-                ticketCount: selectedSeats.filter((s: SelectedSeat) => s !== null).length,
-                price,
-                totalPrice: currentTotalPrice,
-              },
-            })
-          }}
-          isDisabled={selectedSeats.some((s: SelectedSeat) => s === null)}
-          buttonIcon={<Ticket className="h-6 w-6" />}
-          buttonText="確認票卷"
+          onBooking={handleConfirm}
+          isDisabled={selectedSeats.some((s: SelectedSeat) => s === null) || isSubmitting}
+          buttonIcon={isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <Ticket className="h-6 w-6" />}
+          buttonText={isSubmitting ? "建立訂單中..." : "確認票卷"}
         />
       </footer>
     </div>
