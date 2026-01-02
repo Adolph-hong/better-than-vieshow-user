@@ -69,6 +69,30 @@ const TicketDetail = () => {
     right: isFirst ? 50 : window.innerWidth,
   }
 
+  const formatDuration = (minutes: number) => {
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    return `${h} 小時 ${m} 分鐘`
+  }
+
+  const formatDate = (dateString: string) => {
+    const [_year, month, day] = dateString.split("-")
+    return `${month}/${day}`
+  }
+
+  const formatTime = (timeString: string) => {
+    const [hourStr, minuteStr] = timeString.split(":")
+    const hour = parseInt(hourStr, 10)
+    let period = "上午"
+    if (hour === 12) period = "中午"
+    else if (hour >= 18) period = "晚上"
+    else if (hour > 12) period = "下午"
+
+    const displayHour = hour > 12 ? hour - 12 : hour
+    const finalHour = displayHour === 0 ? 12 : displayHour
+    return `${period} ${finalHour}:${minuteStr}`
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -121,7 +145,7 @@ const TicketDetail = () => {
         <div className="absolute -bottom-6 px-4">
           <h2 className="text-2xl font-bold">{ticket.movie.title}</h2>
           <p className="mt-1 text-sm text-[#CCCCCC]">
-            {ticket.movie.rating} • {ticket.movie.duration} 分鐘
+            {ticket.movie.rating} • {formatDuration(ticket.movie.duration)}
           </p>
         </div>
       </div>
@@ -239,8 +263,8 @@ const TicketDetail = () => {
                 </div>
 
                 <OrderInfoCard
-                  date={ticket.showtime.date}
-                  time={ticket.showtime.startTime}
+                  date={formatDate(ticket.showtime.date)}
+                  time={formatTime(ticket.showtime.startTime)}
                   theater={ticket.theater.name}
                   type={ticket.theater.type}
                   seats={`${seat.rowName}${seat.columnNumber}`}
