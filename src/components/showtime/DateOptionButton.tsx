@@ -20,7 +20,7 @@ const DateOptionButton = ({
     >
       <div className="flex flex-col gap-1">
         <span>{date}</span>
-        <span className="text-sm">週{dayOfWeek}</span>
+        <span className="text-sm">{dayOfWeek}</span>
       </div>
     </button>
   )

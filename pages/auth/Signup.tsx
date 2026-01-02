@@ -2,9 +2,9 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
 import toast from "react-hot-toast"
-import AuthButton from "@/components/AuthButton"
-import AuthInput from "@/components/AuthInput"
-import AuthLayout from "@/components/AuthLayout"
+import AuthButton from "@/components/auth-ui/AuthButton"
+import AuthInput from "@/components/auth-ui/AuthInput"
+import AuthLayout from "@/components/auth-ui/AuthLayout"
 import sendAPI from "@/utils/sendAPI"
 
 const Signup = () => {

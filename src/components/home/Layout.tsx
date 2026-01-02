@@ -1,6 +1,6 @@
 import HeroBanner from "@/components/home/HeroBanner"
-import Footer from "@/components/shared/Footer"
 import type { Movie } from "@/components/home/movieListData"
+import Footer from "@/components/shared/Footer"
 
 interface LayoutProps {
   children: React.ReactNode

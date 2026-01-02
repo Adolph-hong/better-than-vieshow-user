@@ -5,7 +5,7 @@ type CountdownTimerProps = {
   onTimeout?: () => void
 }
 
-const CountdownTimer = ({ initialSeconds = 180, onTimeout }: CountdownTimerProps) => {
+const CountdownTimer = ({ initialSeconds = 300, onTimeout }: CountdownTimerProps) => {
   const [seconds, setSeconds] = useState(initialSeconds)
 
   useEffect(() => {

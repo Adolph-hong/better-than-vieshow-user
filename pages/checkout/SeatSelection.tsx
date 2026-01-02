@@ -2,10 +2,13 @@ import { Fragment, useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft, Ticket, Loader2, Minimize2, Maximize2 } from "lucide-react"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
-import SeatIcon from "../src/assets/seat/seat.svg?react"
-import SeatBadge from "../src/components/checkout/SeatBadge"
-import BookingActionBar from "../src/components/showtime/BookingActionBar"
-import { fetchSeatMap, type Seat, type SeatMap } from "../src/mocks/movieData"
+import SeatIcon from "@/assets/seat/seat.svg?react"
+import SeatBadge from "@/components/checkout/SeatBadge"
+import BookingActionBar from "@/components/showtime/BookingActionBar"
+import { getSeatData } from "@/services/seatAPI"
+import { createOrder } from "@/services/orderAPI"
+import { transformSeatData } from "@/utils/seatTransform"
+import type { SeatMapData, Seat } from "@/types/seat"
 
 type SelectedSeat = {
   row: string
@@ -23,6 +26,7 @@ type LocationState = {
   duration?: string
   genre?: string
   ticketType?: string
+  showTimeId: number
 }
 
 const SeatSelection = () => {
@@ -31,7 +35,9 @@ const SeatSelection = () => {
   const state = location.state as LocationState | null
 
   const [loading, setLoading] = useState(true)
-  const [seatMap, setSeatMap] = useState<SeatMap | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [seatMap, setSeatMap] = useState<SeatMapData | null>(null)
 
   // Check if state exists, if not redirect or show loading
   // For this exercise, if no state, we can default or return early.
@@ -58,6 +64,7 @@ const SeatSelection = () => {
     duration: "",
     genre: "",
     ticketType: "",
+    showTimeId: 0,
   }
 
   // If no ticket count (direct access), maybe default to 1 or redirect
@@ -68,19 +75,27 @@ const SeatSelection = () => {
   )
 
   useEffect(() => {
-    if (!state) {
-      // Optional: Redirect back if accessed directly
-      // navigate("/movie/showtime")
-      // return
-    }
-
     const loadData = async () => {
+      if (!state || !state.showTimeId) {
+        setError("缺少場次資訊")
+        setLoading(false)
+        return
+      }
+
       try {
         setLoading(true)
-        const data = await fetchSeatMap()
-        setSeatMap(data)
-      } catch (error) {
-        console.error("Failed to load seat map", error)
+        setError(null)
+        const response = await getSeatData(state.showTimeId)
+        const data = transformSeatData(response)
+        if (data) {
+          setSeatMap(data)
+        } else {
+          setError("座位資料格式錯誤")
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "載入座位失敗")
+        // eslint-disable-next-line no-console
+        console.error("Failed to load seat map", err)
       } finally {
         setLoading(false)
       }
@@ -92,7 +107,7 @@ const SeatSelection = () => {
     if (seat.status === "sold") return
 
     const seatKey = `${seat.row}${seat.column}`
-    const currentIndex = selectedSeats.findIndex((s) => s && `${s.row}${s.column}` === seatKey)
+    const currentIndex = selectedSeats.findIndex((s: SelectedSeat) => s && `${s.row}${s.column}` === seatKey)
 
     if (currentIndex !== -1) {
       // Unselect: remove the seat from the array
@@ -101,7 +116,7 @@ const SeatSelection = () => {
       setSelectedSeats(newSelected)
     } else {
       // Select: find first empty slot
-      const emptyIndex = selectedSeats.findIndex((s) => s === null)
+      const emptyIndex = selectedSeats.findIndex((s: SelectedSeat) => s === null)
       if (emptyIndex !== -1) {
         const newSelected = [...selectedSeats]
         newSelected[emptyIndex] = { row: seat.row, column: seat.column }
@@ -118,6 +133,55 @@ const SeatSelection = () => {
     newSelected[index] = null
     setSelectedSeats(newSelected)
   }
+  
+  const handleConfirm = async () => {
+    if (!state?.showTimeId || isSubmitting) return
+
+    const selectedValidSeats = selectedSeats.filter((s): s is { row: string; column: number } => s !== null)
+    if (selectedValidSeats.length === 0) return
+
+    // Find seat IDs from seatMap
+    const seatIds = selectedValidSeats.map((s) => {
+      const seat = seatMap?.seats.find((sm) => sm.row === s.row && sm.column === s.column)
+      return seat ? Number(seat.id) : null
+    }).filter((id): id is number => id !== null)
+
+    try {
+      setIsSubmitting(true)
+      const response = await createOrder({
+        showTimeId: state.showTimeId,
+        seatIds,
+      })
+
+      if (response.success) {
+        navigate("/checkout", {
+          state: {
+            movieTitle,
+            posterUrl,
+            rating,
+            duration,
+            genre,
+            date,
+            time,
+            theaterName: seatMap?.theaterName || "鳳廳",
+            selectedSeats: selectedValidSeats,
+            ticketType,
+            ticketCount: selectedValidSeats.length,
+            price,
+            totalPrice: currentTotalPrice,
+            orderId: response.data.orderId,
+            showTimeId: state.showTimeId,
+          },
+        })
+      } else {
+        setError(response.message || "建立訂單失敗")
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "建立訂單時發生錯誤")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const getSeatStatus = (seat: Seat): "sold" | "available" | "selected" | "wheelchair" => {
     // Treat 'selected' in mock data as available for this user since we start fresh
@@ -125,25 +189,21 @@ const SeatSelection = () => {
     if (seat.type === "wheelchair") return "wheelchair"
 
     const isSelected = selectedSeats.some(
-      (s) => s && s.row === seat.row && s.column === seat.column
+      (s: SelectedSeat) => s && s.row === seat.row && s.column === seat.column
     )
     return isSelected ? "selected" : "available"
   }
 
-  const getSeatFillColor = (status: string) => {
-    switch (status) {
-      case "sold":
-        return "#3A3A3A"
-      case "selected":
-        return "#11968D"
-      default:
-        return "#B5B5B5"
-    }
+  const getSeatFillColor = (status: string, type: string) => {
+    if (status === "sold") return "#3A3A3A"
+    if (status === "selected") return "#11968D"
+    if (type === "Wheelchair") return "#11968D" // If wheelchair icons should have a special color, though currently UI uses badge for selection
+    return "#B5B5B5"
   }
 
   const currentTotalPrice = effectiveTicketCount * price
 
-  if (loading || !seatMap) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -151,9 +211,24 @@ const SeatSelection = () => {
     )
   }
 
+  if (error || !seatMap) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
+        <p className="text-red-500">錯誤: {error || "無法載入座位資料"}</p>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="mt-4 rounded-lg bg-[#11968D] px-4 py-2 text-white"
+        >
+          返回上一頁
+        </button>
+      </div>
+    )
+  }
+
   // 將座位按照行分組，並按column排序
   const seatsByRow: Record<string, Seat[]> = {}
-  seatMap.seats.forEach((seat) => {
+  seatMap.seats.forEach((seat: Seat) => {
     if (!seatsByRow[seat.row]) {
       seatsByRow[seat.row] = []
     }
@@ -165,8 +240,9 @@ const SeatSelection = () => {
     seatsByRow[row].sort((a, b) => a.column - b.column)
   })
 
-  const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-  const { verticalAisles = [], horizontalAisle } = seatMap // 走道位置
+  const ROW_LABELS_CUSTOM = Array.from(new Set(seatMap.seats.map((s) => s.row))).sort()
+  const verticalAisles: number[] = [] // API doesn't provide aisles, can be added if needed
+  const horizontalAisle: number | undefined = undefined
 
   return (
     <div className="relative flex w-full flex-col overflow-hidden bg-black text-white">
@@ -211,7 +287,7 @@ const SeatSelection = () => {
         <section className="mt-4">
           <div className="mx-4 flex h-[400px] flex-col overflow-hidden bg-[#232323]">
             <TransformWrapper centerOnInit initialScale={1} minScale={1} maxScale={3}>
-              {({ zoomIn, zoomOut }) => (
+              {({ zoomIn, zoomOut }: { zoomIn: () => void; zoomOut: () => void }) => (
                 <div className="relative h-full">
                   {/* 縮放按鈕 - 固定位置，不會跟著縮放 */}
                   <div className="absolute top-3 right-0 left-0 z-20 flex justify-between px-3">
@@ -246,19 +322,23 @@ const SeatSelection = () => {
                       {/* 螢幕指示器 */}
                       {/* 梯形深色背景 - 漸層效果 */}
                       <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-1 h-[194px] w-[628px] -translate-x-1/2"
+                        className="pointer-events-none absolute top-0 left-1/2 z-1 h-full -translate-x-1/2"
                         style={{
-                          background: "linear-gradient(to bottom, #444444 0%, #232323 100%)",
+                          background: "linear-gradient(to bottom, #444444 0%, transparent 20%)",
                           clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
                         }}
                       />
                       {/* 投影光效 */}
                       <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-2 h-[194px] w-[628px] -translate-x-1/2"
+                        className="pointer-events-none absolute top-0 left-1/2 z-2 h-[220px] w-[628px] -translate-x-1/2"
                         style={{
                           background:
-                            "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
+                            "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 40%, transparent 100%)",
                           clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
+                          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
                         }}
                       />
                       {/* 螢幕橫槓 - 獨立定位於頂部中央 */}
@@ -267,7 +347,7 @@ const SeatSelection = () => {
                       {/* 佔位元素 - 讓座位區往下移動避開螢幕指示器 */}
                       <div className="h-8" />
 
-                      {ROW_LABELS.map((row, rowIndex) => {
+                      {ROW_LABELS_CUSTOM.map((row, rowIndex) => {
                         const rowSeats = seatsByRow[row] || []
                         // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
                         const shouldAddHorizontalAisleBefore =
@@ -301,7 +381,7 @@ const SeatSelection = () => {
                                       title={`${seat.row}排 ${seat.column}號`}
                                     >
                                       <SeatIcon
-                                        fill={getSeatFillColor(status)}
+                                        fill={getSeatFillColor(status, seat.type)}
                                         className="h-[19px] w-6"
                                       />
                                     </button>
@@ -327,16 +407,16 @@ const SeatSelection = () => {
           {/* 第一行：座位標題和剩餘待選數量 */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-white">座位</span>
-            {selectedSeats.filter((s) => s === null).length > 0 && (
+            {selectedSeats.filter((s: SelectedSeat) => s === null).length > 0 && (
               <span className="text-sm text-white">
-                尚有 {selectedSeats.filter((s) => s === null).length} 個待選座位
+                尚有 {selectedSeats.filter((s: SelectedSeat) => s === null).length} 個待選座位
               </span>
             )}
           </div>
 
           {/* 第二行：座位按鈕區域 */}
           <div className="mt-2 flex flex-wrap items-center justify-start gap-3">
-            {selectedSeats.map((seat, index) => (
+            {selectedSeats.map((seat: SelectedSeat, index: number) => (
               <SeatBadge
                 key={seat ? `${seat.row}-${seat.column}` : `empty-${index}`}
                 seat={seat}
@@ -351,28 +431,10 @@ const SeatSelection = () => {
       <footer className="mt-[108px]">
         <BookingActionBar
           totalPrice={currentTotalPrice}
-          onBooking={() => {
-            navigate("/checkout", {
-              state: {
-                movieTitle,
-                posterUrl,
-                rating,
-                duration,
-                genre,
-                date,
-                time,
-                theaterName: "鳳廳",
-                selectedSeats: selectedSeats.filter((s) => s !== null),
-                ticketType,
-                ticketCount: selectedSeats.filter((s) => s !== null).length,
-                price,
-                totalPrice: currentTotalPrice,
-              },
-            })
-          }}
-          isDisabled={selectedSeats.some((s) => s === null)}
-          buttonIcon={<Ticket className="h-6 w-6" />}
-          buttonText="確認票卷"
+          onBooking={handleConfirm}
+          isDisabled={selectedSeats.some((s: SelectedSeat) => s === null) || isSubmitting}
+          buttonIcon={isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <Ticket className="h-6 w-6" />}
+          buttonText={isSubmitting ? "建立訂單中..." : "確認票卷"}
         />
       </footer>
     </div>

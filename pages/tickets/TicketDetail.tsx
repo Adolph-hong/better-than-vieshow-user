@@ -1,23 +1,48 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import QRCode from "react-qr-code"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
-import { useTickets } from "@/context/TicketContext"
+import { getOrder } from "@/services/orderAPI"
+import type { OrderDetail } from "@/types/order"
 
 const TicketDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { getTicket } = useTickets()
-  const ticket = getTicket(id || "")
+  const [ticket, setTicket] = useState<OrderDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const [[page], setPage] = useState([0, 0])
   const currentSeatIndex = page
 
+  useEffect(() => {
+    const fetchTicket = async () => {
+      try {
+        setLoading(true)
+        if (!id) throw new Error("無效的訂單編號")
+        const response = await getOrder(id)
+        if (response.success) {
+          setTicket(response.data)
+        } else {
+          setError(response.message || "無法取得訂單詳情")
+        }
+      } catch (err) {
+        console.error("Fetch ticket error:", err)
+        setError("載入訂單時發生錯誤")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTicket()
+  }, [id])
+
   const seats = useMemo(() => {
-    return ticket?.seatString ? ticket.seatString.split(",").map((s) => s.trim()) : []
-  }, [ticket?.seatString])
+    return ticket?.seats || []
+  }, [ticket?.seats])
 
   const paginate = (newDirection: number) => {
     const newPage = page + newDirection
@@ -44,11 +69,46 @@ const TicketDetail = () => {
     right: isFirst ? 50 : window.innerWidth,
   }
 
-  if (!ticket) {
+  const formatDuration = (minutes: number) => {
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    return `${h} 小時 ${m} 分鐘`
+  }
+
+  const formatDate = (dateString: string) => {
+    const [_year, month, day] = dateString.split("-")
+    return `${month}/${day}`
+  }
+
+  const formatTime = (timeString: string) => {
+    const [hourStr, minuteStr] = timeString.split(":")
+    const hour = parseInt(hourStr, 10)
+    let period = "上午"
+    if (hour === 12) period = "中午"
+    else if (hour >= 18) period = "晚上"
+    else if (hour > 12) period = "下午"
+
+    const displayHour = hour > 12 ? hour - 12 : hour
+    const finalHour = displayHour === 0 ? 12 : displayHour
+    return `${period} ${finalHour}:${minuteStr}`
+  }
+
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <p>找不到票卷</p>
-        <button onClick={() => navigate("/tickets")} className="ml-4 text-[#4BCCBE]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (error || !ticket) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white p-4 text-center">
+        <p className="text-red-500 mb-4">{error || "找不到票卷"}</p>
+        <button
+          onClick={() => navigate("/tickets")}
+          className="rounded-lg bg-[#11968D] px-4 py-2 text-white"
+        >
           返回列表
         </button>
       </div>
@@ -63,8 +123,8 @@ const TicketDetail = () => {
       <div className="relative h-[220px] w-full">
         <div className="absolute inset-0">
           <img
-            src={ticket.posterUrl}
-            alt={ticket.movieTitle}
+            src={ticket.movie.posterUrl}
+            alt={ticket.movie.title}
             className="h-full w-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-[#0000004D]" />
@@ -83,9 +143,9 @@ const TicketDetail = () => {
         </div>
 
         <div className="absolute -bottom-6 px-4">
-          <h2 className="text-2xl font-bold">{ticket.movieTitle}</h2>
+          <h2 className="text-2xl font-bold">{ticket.movie.title}</h2>
           <p className="mt-1 text-sm text-[#CCCCCC]">
-            {ticket.rating} • {ticket.duration}
+            {ticket.movie.rating} • {formatDuration(ticket.movie.duration)}
           </p>
         </div>
       </div>
@@ -93,7 +153,7 @@ const TicketDetail = () => {
       <div className="scrollbar-hide mt-8 flex w-full space-x-2 overflow-x-auto px-4">
         {seats.map((seat, index) => (
           <button
-            key={seat}
+            key={seat.seatId}
             onClick={() => jumpToSeat(index)}
             className={`h-[28px] w-[46px] rounded-full text-sm font-medium transition-colors ${
               index === currentSeatIndex
@@ -101,7 +161,7 @@ const TicketDetail = () => {
                 : "bg-[#222222] text-gray-400 hover:bg-[#333333]"
             }`}
           >
-            {seat}
+            {seat.rowName}{seat.columnNumber}
           </button>
         ))}
       </div>
@@ -144,7 +204,7 @@ const TicketDetail = () => {
           onDragEnd={(_, { offset, velocity }) => {
             const swipe = swipePower(offset.x, velocity.x)
 
-            const dragThreshold = window.innerWidth * 0.15 // Reduce threshold to 15% for easier switching
+            const dragThreshold = window.innerWidth * 0.15
 
             if (swipe < -swipeConfidenceThreshold || offset.x < -dragThreshold) {
               if (!isLast) paginate(1)
@@ -159,22 +219,22 @@ const TicketDetail = () => {
           }}
         >
           {seats.map((seat) => {
-            const seatQrValue = `${ticket.id}-${seat}-${ticket.orderId}`
+            const seatQrValue = seat.ticketNumber
 
             return (
               <motion.div
-                key={seat}
+                key={seat.seatId}
                 className="relative w-[85vw] shrink-0 overflow-hidden rounded-[10px] bg-[#1A1A1A]"
               >
                 <div className="absolute left-1/2 mt-4 -translate-x-1/2">
                   <span
-                    className={`rounded-full px-3 py-[7px] text-xs text-white ${
-                      ticket.status === "active"
+                    className={`rounded-full px-3 py-[5.5px] text-sm text-white ${
+                      ticket.status === "Paid"
                         ? "bg-[#11968D] text-black"
-                        : "bg-gray-600 text-white"
+                        : "bg-[#777777] text-white"
                     }`}
                   >
-                    {ticket.status === "active" ? "尚未使用" : "已失效"}
+                    {ticket.status === "Paid" ? "尚未使用" : "已過期"}
                   </span>
                 </div>
 
@@ -203,11 +263,11 @@ const TicketDetail = () => {
                 </div>
 
                 <OrderInfoCard
-                  date={ticket.date}
-                  time={ticket.time}
-                  theater={ticket.theaterName}
-                  type={ticket.ticketType}
-                  seats={seat}
+                  date={formatDate(ticket.showtime.date)}
+                  time={formatTime(ticket.showtime.startTime)}
+                  theater={ticket.theater.name}
+                  type={ticket.theater.type}
+                  seats={`${seat.rowName}${seat.columnNumber}`}
                   className="rounded-none bg-transparent p-4"
                 />
               </motion.div>
@@ -218,9 +278,9 @@ const TicketDetail = () => {
 
       <div className="mt-4 px-4 pb-[153px]">
         <OrderSummaryCard
-          totalPrice={ticket.finalTotalPrice}
-          paymentMethod={ticket.paymentMethod}
-          orderId={ticket.orderId}
+          totalPrice={ticket.totalAmount}
+          paymentMethod={ticket.paymentMethod || "未付款"}
+          orderId={ticket.orderNumber}
         />
       </div>
     </div>
