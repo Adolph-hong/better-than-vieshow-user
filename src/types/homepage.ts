@@ -30,4 +30,3 @@ export interface ApiResponse<T> {
 
 // 首頁 API 回應類型
 export type HomepageApiResponse = ApiResponse<HomepageData>
-
