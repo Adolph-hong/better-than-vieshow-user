@@ -82,6 +82,17 @@ const Login = () => {
         if (userName) {
           localStorage.setItem("user", userName)
         }
+
+        const userEmail = data.email || data.user?.email || data?.data?.email
+        if (userEmail) {
+          localStorage.setItem("userEmail", userEmail)
+
+          const existingAvatarIndex = localStorage.getItem("userAvatarIndex")
+          if (!existingAvatarIndex) {
+            const randomIndex = Math.floor(Math.random() * 10) // 0-9
+            localStorage.setItem("userAvatarIndex", randomIndex.toString())
+          }
+        }
       }
 
       toast.success("登入成功")
