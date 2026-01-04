@@ -313,41 +313,32 @@ const SeatSelection = () => {
                     </button>
                   </div>
 
+
+                  {/* 螢幕指示器 - 固定在容器頂部，不隨座位移動 */}
+                  <div className="pointer-events-none absolute top-0 left-0 right-0 z-30 flex justify-center pt-3">
+                    {/* 螢幕橫槓 */}
+                    <div className="h-2 w-[180px] rounded-lg bg-white" />
+                  </div>
+                  
+                  {/* 投影光效 - 固定位置 */}
+                  <div
+                    className="pointer-events-none absolute top-[20px] left-1/2 z-20 h-[194px] w-[628px] -translate-x-1/2"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, transparent 100%)",
+                      clipPath: "polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%)",
+                      WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                      maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                    }}
+                  />
+
                   <TransformComponent
-                    wrapperClass="!w-full flex-1 min-h-0"
+                    wrapperClass="!w-full !h-full"
                     contentClass="!w-max"
                     contentStyle={{ width: "max-content" }}
                   >
-                    {/* 座位地圖與螢幕指示器 - 合併成同一個容器 */}
-                    <div className="relative mt-3 space-y-3">
-                      {/* 螢幕指示器 */}
-                      {/* 梯形深色背景 - 漸層效果 */}
-                      <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-1 h-full -translate-x-1/2"
-                        style={{
-                          background: "linear-gradient(to bottom, #444444 0%, transparent 20%)",
-                          clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
-                          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                        }}
-                      />
-                      {/* 投影光效 */}
-                      <div
-                        className="pointer-events-none absolute top-0 left-1/2 z-2 h-[220px] w-[628px] -translate-x-1/2"
-                        style={{
-                          background:
-                            "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 40%, transparent 100%)",
-                          clipPath: "polygon(38% 0%, 62.5% 0%, 100% 100%, 0% 100%)",
-                          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                        }}
-                      />
-                      {/* 螢幕橫槓 - 獨立定位於頂部中央 */}
-                      <div className="absolute top-0 left-1/2 z-10 h-2 w-[180px] -translate-x-1/2 rounded-lg bg-white" />
-
-                      {/* 佔位元素 - 讓座位區往下移動避開螢幕指示器 */}
-                      <div className="h-8" />
-
+                    {/* 座位地圖 - 可拖曳 */}
+                    <div className="relative space-y-3 pt-12">
                       {ROW_LABELS_CUSTOM.map((row, rowIndex) => {
                         const rowSeats = seatsByRow[row] || []
                         // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
@@ -366,6 +357,16 @@ const SeatSelection = () => {
                                 const status = getSeatStatus(seat)
                                 // 檢查是否需要在這個座位後插入垂直走道
                                 const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
+
+                                // 如果是走道位置，渲染空白佔位符
+                                if (seat.type === "Aisle") {
+                                  return (
+                                    <div 
+                                      key={`${seat.row}-${seat.column}`} 
+                                      className="h-[19px] w-6"
+                                    />
+                                  )
+                                }
 
                                 return (
                                   <Fragment key={`${seat.row}-${seat.column}`}>
