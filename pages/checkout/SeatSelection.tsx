@@ -314,31 +314,30 @@ const SeatSelection = () => {
                   </div>
 
 
-                  {/* 螢幕指示器 - 固定在容器頂部，不隨座位移動 */}
-                  <div className="pointer-events-none absolute top-0 left-0 right-0 z-30 flex justify-center pt-3">
-                    {/* 螢幕橫槓 */}
-                    <div className="h-2 w-[180px] rounded-lg bg-white" />
-                  </div>
-                  
-                  {/* 投影光效 - 固定位置 */}
-                  <div
-                    className="pointer-events-none absolute top-[20px] left-1/2 z-20 h-[194px] w-[628px] -translate-x-1/2"
-                    style={{
-                      background:
-                        "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, transparent 100%)",
-                      clipPath: "polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%)",
-                      WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                      maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-                    }}
-                  />
-
                   <TransformComponent
                     wrapperClass="!w-full !h-full"
                     contentClass="!w-max"
-                    contentStyle={{ width: "max-content" }}
+                    contentStyle={{ width: "max-content", minHeight: "100%" }}
                   >
                     {/* 座位地圖 - 可拖曳 */}
-                    <div className="relative space-y-3 pt-12">
+                    <div className="relative min-h-full space-y-3 pt-[110px]">
+                      {/* 螢幕指示器 */}
+                      <div className="pointer-events-none absolute top-0 left-0 right-0 z-30 flex justify-center pt-[12px]">
+                        {/* 螢幕橫槓 */}
+                        <div className="h-2 w-[180px] rounded-lg bg-white" />
+                      </div>
+                      
+                      {/* 投影光效 */}
+                      <div
+                        className="pointer-events-none absolute top-[20px] left-1/2 z-20 h-[194px] w-[628px] -translate-x-1/2"
+                        style={{
+                          background:
+                            "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, transparent 100%)",
+                          clipPath: "polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%)",
+                          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+                        }}
+                      />
                       {ROW_LABELS_CUSTOM.map((row, rowIndex) => {
                         const rowSeats = seatsByRow[row] || []
                         // 橫向走道：在指定排之前插入（例如 horizontalAisle = 5 表示在第5排（F）之前插入，即在E之後）
