@@ -14,7 +14,6 @@ const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
   const showRanking = category === "本週前10"
   const showCountdown = category === "即將上映"
 
-  // 如果沒有電影資料，不顯示此區塊
   if (!movies || movies.length === 0) {
     return null
   }

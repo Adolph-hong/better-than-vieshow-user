@@ -28,7 +28,7 @@ const MovieSearch = () => {
         }
         const img = new Image()
         img.onload = () => resolve()
-        img.onerror = () => resolve() // 即使失敗也繼續，不阻塞其他圖片
+        img.onerror = () => resolve()
         img.src = src
       })
     }
@@ -41,7 +41,6 @@ const MovieSearch = () => {
           const movies = transformApiMovies(response.data.recommended)
           setRandomRecommendMovies(movies)
 
-          // 預載入所有圖片
           const imagePromises = movies.map((movie) => preloadImage(movie.poster))
           await Promise.all(imagePromises)
         }
@@ -180,7 +179,6 @@ const MovieSearch = () => {
           </div>
         )}
 
-        {/* 隨機推薦（沒有搜尋時或搜尋不到時顯示） */}
         {showRandomRecommend && (
           <div className="flex flex-col gap-3">
             <h2 className="font-family-inter text-lg font-semibold text-white">隨機推薦</h2>

@@ -33,7 +33,6 @@ const Home = () => {
           setCarouselMovies(transformApiMovies(response.data.carousel))
           setTopWeeklyMovies(transformApiMovies(response.data.topWeekly))
 
-          // 即將上映：按照 daysUntilRelease 升序排序（天數少的在前）
           const upcoming = transformApiMovies(response.data.comingSoon)
           const sortedUpcoming = [...upcoming].sort((a, b) => {
             const daysA = a.daysUntilRelease ?? Infinity

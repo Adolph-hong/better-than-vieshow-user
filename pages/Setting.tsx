@@ -31,7 +31,6 @@ const Setting = () => {
   const userEmail = localStorage.getItem("userEmail") || ""
   const isLoggedIn = !!token
 
-  // 從 localStorage 讀取頭像索引
   const getAvatar = () => {
     if (!isLoggedIn) return null
     const avatarIndex = localStorage.getItem("userAvatarIndex")
@@ -50,7 +49,6 @@ const Setting = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
     localStorage.removeItem("userEmail")
-    // 重新載入頁面以更新狀態
     window.location.reload()
   }
 

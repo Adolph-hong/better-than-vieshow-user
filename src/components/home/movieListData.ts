@@ -224,7 +224,6 @@ export interface MovieCategory {
   title: string
   movies: Movie[]
 }
-
 export const movieCategories: MovieCategory[] = [
   {
     title: "本週前10",

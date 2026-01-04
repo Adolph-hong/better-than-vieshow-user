@@ -2,12 +2,10 @@ import type { ApiResponse, ApiMovie } from "@/types/homepage"
 import sendAPI from "@/utils/sendAPI"
 
 /**
- * 搜尋電影 API 回應類型
  */
 export type SearchMoviesApiResponse = ApiResponse<ApiMovie[] | null>
 
 /**
- * 搜尋電影
  * @param keyword 搜尋關鍵字（必填，至少1個字元）
  * @returns Promise<SearchMoviesApiResponse>
  */

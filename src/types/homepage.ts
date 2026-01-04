@@ -1,17 +1,16 @@
-// API 回應的電影資料格式
+
 export interface ApiMovie {
   id: number
   title: string
   posterUrl: string | null
-  duration: number // 分鐘
+  duration: number 
   genre: string
   rating: string
-  releaseDate: string // ISO date string
-  endDate: string // ISO date string
-  daysUntilRelease?: number // 距離上映天數（僅在即將上映的電影中提供）
+  releaseDate: string
+  endDate: string
+  daysUntilRelease?: number
 }
 
-// 首頁 API 回應的 data 結構
 export interface HomepageData {
   carousel: ApiMovie[]
   topWeekly: ApiMovie[]
@@ -19,8 +18,6 @@ export interface HomepageData {
   recommended: ApiMovie[]
   allMovies: ApiMovie[]
 }
-
-// API 標準回應格式
 export interface ApiResponse<T> {
   success: boolean
   message: string | null
@@ -28,5 +25,4 @@ export interface ApiResponse<T> {
   errors: object | null
 }
 
-// 首頁 API 回應類型
 export type HomepageApiResponse = ApiResponse<HomepageData>
