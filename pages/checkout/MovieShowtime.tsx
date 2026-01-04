@@ -108,15 +108,15 @@ const MovieShowtime = () => {
     loadShowtimes()
   }, [selectedDateId, id])
 
-  // Auto-scroll to showtime section when date is selected
+  // Auto-scroll to showtime section when showtimes finish loading
   useEffect(() => {
-    if (selectedDateId) {
-      // Delay to wait for DOM render
+    if (selectedDateId && !loadingShowtimes && showtimeGroups.length > 0) {
+      // Delay to ensure DOM is fully rendered
       setTimeout(() => {
         showtimeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-      }, 100)
+      }, 150)
     }
-  }, [selectedDateId])
+  }, [selectedDateId, loadingShowtimes, showtimeGroups])
 
   // Auto-scroll to ticket counter section when session is selected
   useEffect(() => {
