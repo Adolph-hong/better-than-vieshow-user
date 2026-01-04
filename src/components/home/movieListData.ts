@@ -21,6 +21,7 @@ export interface Movie {
   rating: string
   duration: string
   poster: string
+  daysUntilRelease?: number // 距離上映天數（僅在即將上映的電影中提供）
 }
 
 const baseMovies = {
@@ -139,22 +140,69 @@ const buildList = (order: BaseKey[], startId: number): Movie[] =>
   }))
 
 const moviesWeekTop10 = buildList(
-  ["xuanyuan", "buliangren", "tianguan", "wanmei", "fanren", "yongsheng", "xianni", "mushen", "shendiao", "zhuxian"],
+  [
+    "xuanyuan",
+    "buliangren",
+    "tianguan",
+    "wanmei",
+    "fanren",
+    "yongsheng",
+    "xianni",
+    "mushen",
+    "shendiao",
+    "zhuxian",
+  ],
   1
 )
 
 const moviesComingSoon = buildList(
-  ["doupo", "modao", "yunshen", "wanmei", "tianguan", "buliangren", "xianni", "fanren", "mushen", "yongsheng"],
+  [
+    "doupo",
+    "modao",
+    "yunshen",
+    "wanmei",
+    "tianguan",
+    "buliangren",
+    "xianni",
+    "fanren",
+    "mushen",
+    "yongsheng",
+  ],
   101
 )
 
 const moviesRandomRecommend = buildList(
-  ["mushen", "zhuxian", "yongsheng", "fanren", "doupo", "xianni", "tianguan", "modao", "xuanyuan", "yunshen"],
+  [
+    "mushen",
+    "zhuxian",
+    "yongsheng",
+    "fanren",
+    "doupo",
+    "xianni",
+    "tianguan",
+    "modao",
+    "xuanyuan",
+    "yunshen",
+  ],
   201
 )
 
 const allMoviesBase = buildList(
-  ["xuanyuan", "buliangren", "xianni", "fanren", "tianguan", "wanmei", "yongsheng", "mushen", "shendiao", "zhuxian", "yunshen", "doupo", "modao"],
+  [
+    "xuanyuan",
+    "buliangren",
+    "xianni",
+    "fanren",
+    "tianguan",
+    "wanmei",
+    "yongsheng",
+    "mushen",
+    "shendiao",
+    "zhuxian",
+    "yunshen",
+    "doupo",
+    "modao",
+  ],
   301
 )
 
@@ -176,7 +224,6 @@ export interface MovieCategory {
   title: string
   movies: Movie[]
 }
-
 export const movieCategories: MovieCategory[] = [
   {
     title: "本週前10",
@@ -193,4 +240,3 @@ export const movieCategories: MovieCategory[] = [
 ]
 
 export const movies: Movie[] = moviesWeekTop10
-

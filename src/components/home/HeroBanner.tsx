@@ -23,7 +23,6 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
     setActiveIndex(swiperInstance.realIndex)
   }
 
-  // 如果沒有電影資料，不渲染組件
   if (!movies || movies.length === 0) {
     return null
   }
@@ -123,7 +122,8 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
                             {movie.titleZh}
                           </h2>
                           <p className="font-family-inter text-sm leading-normal font-normal text-[#9E9E9E]">
-                            {translateGenre(movie.genre)}片・{translateRating(movie.rating)}・{movie.duration}
+                            {translateGenre(movie.genre)}片・{translateRating(movie.rating)}・
+                            {movie.duration}
                           </p>
                         </div>
                       )}
