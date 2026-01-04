@@ -3,6 +3,7 @@ import { Navigation, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Header from "@/components/home/Header"
 import type { Movie } from "@/components/home/movieListData"
+import { translateGenre, translateRating } from "@/utils/movieTranslator"
 import type { Swiper as SwiperType } from "swiper"
 // @ts-expect-error - Swiper CSS files don't have type declarations
 import "swiper/css"
@@ -122,7 +123,7 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
                             {movie.titleZh}
                           </h2>
                           <p className="font-family-inter text-sm leading-normal font-normal text-[#9E9E9E]">
-                            {movie.genre}・{movie.rating}・{movie.duration}
+                            {translateGenre(movie.genre)}片・{translateRating(movie.rating)}・{movie.duration}
                           </p>
                         </div>
                       )}
