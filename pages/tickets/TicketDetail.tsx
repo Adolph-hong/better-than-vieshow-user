@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { PuffLoader } from "react-spinners"
 import QRCode from "react-qr-code"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
@@ -95,8 +96,8 @@ const TicketDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex flex-col w-full min-h-screen items-center justify-center bg-black text-white">
+        <PuffLoader color="#11968D" size={80} />
       </div>
     )
   }

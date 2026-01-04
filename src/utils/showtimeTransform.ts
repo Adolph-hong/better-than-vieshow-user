@@ -13,7 +13,11 @@ import type {
  * @param minutes 分鐘數
  * @returns 格式化後的時長字串，例如 "192分鐘"
  */
-const formatDuration = (minutes: number): string => `${minutes}分鐘`
+const formatDuration = (minutes: number): string => {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `${h}小時 ${m}分鐘`
+}
 
 /**
  * 將日期格式轉換為 MM/DD (移除年份)

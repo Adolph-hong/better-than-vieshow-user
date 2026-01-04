@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft, Ticket, Loader2, Minimize2, Maximize2 } from "lucide-react"
+import { PuffLoader } from "react-spinners"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 import SeatIcon from "@/assets/seat/seat.svg?react"
 import SeatBadge from "@/components/checkout/SeatBadge"
@@ -194,10 +195,9 @@ const SeatSelection = () => {
     return isSelected ? "selected" : "available"
   }
 
-  const getSeatFillColor = (status: string, type: string) => {
+  const getSeatFillColor = (status: string) => {
     if (status === "sold") return "#3A3A3A"
     if (status === "selected") return "#11968D"
-    if (type === "Wheelchair") return "#11968D" // If wheelchair icons should have a special color, though currently UI uses badge for selection
     return "#B5B5B5"
   }
 
@@ -205,8 +205,9 @@ const SeatSelection = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black text-white">
+        <PuffLoader color="#11968D" size={50} />
+        <p className="text-lg font-medium text-white">為您端上好座位...</p>
       </div>
     )
   }
@@ -381,7 +382,7 @@ const SeatSelection = () => {
                                       title={`${seat.row}排 ${seat.column}號`}
                                     >
                                       <SeatIcon
-                                        fill={getSeatFillColor(status, seat.type)}
+                                        fill={getSeatFillColor(status)}
                                         className="h-[19px] w-6"
                                       />
                                     </button>

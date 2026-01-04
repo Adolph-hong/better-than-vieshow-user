@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, Info, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowLeft, Info, X, ChevronDown, ChevronUp } from "lucide-react"
+import { PuffLoader, ClipLoader } from "react-spinners"
 import RoundedPlay from "@/assets/icon/checkout-flow/rounded_play.svg?react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
@@ -15,6 +16,7 @@ import {
   mergeMovieShowtimeData,
   getYouTubeEmbedUrl,
 } from "@/utils/showtimeTransform"
+import { translateGenre, translateRating } from "@/utils/movieTranslator"
 
 const MovieShowtime = () => {
   const navigate = useNavigate()
@@ -107,15 +109,15 @@ const MovieShowtime = () => {
     loadShowtimes()
   }, [selectedDateId, id])
 
-  // Auto-scroll to showtime section when date is selected
+  // Auto-scroll to showtime section when showtimes finish loading
   useEffect(() => {
-    if (selectedDateId) {
-      // Delay to wait for DOM render
+    if (selectedDateId && !loadingShowtimes && showtimeGroups.length > 0) {
+      // Delay to ensure DOM is fully rendered
       setTimeout(() => {
         showtimeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-      }, 100)
+      }, 150)
     }
-  }, [selectedDateId])
+  }, [selectedDateId, loadingShowtimes, showtimeGroups])
 
   // Auto-scroll to ticket counter section when session is selected
   useEffect(() => {
@@ -203,8 +205,9 @@ const MovieShowtime = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black text-white">
+        <PuffLoader color="#11968D" size={80} />
+        <p className="text-lg font-medium text-white">你超有品味 !</p>
       </div>
     )
   }
@@ -292,7 +295,7 @@ const MovieShowtime = () => {
             <div>
               <h2 className="text-2xl font-semibold text-white">{movieData.title}</h2>
               <div className="mt-1 text-sm text-[#BDBDBD]">
-                {movieData.rating} · {movieData.duration}
+                {translateRating(movieData.rating)} · {movieData.duration}
               </div>
               <div className="mt-3 flex gap-2">
                 {movieData.genres.map((genre: string) => (
@@ -300,7 +303,7 @@ const MovieShowtime = () => {
                     key={genre}
                     className="rounded-full bg-[#333333] px-3 py-1 text-xs text-[#FFFFFF]"
                   >
-                    {genre}
+                    {translateGenre(genre)}
                   </span>
                 ))}
               </div>
@@ -410,7 +413,7 @@ const MovieShowtime = () => {
           <div>
             <h1 className="mb-1 text-center text-2xl font-semibold">{movieData.title}</h1>
             <p className="mb-2 text-center text-sm text-[#BDBDBD]">
-              {movieData.rating} · {movieData.duration}
+              {translateRating(movieData.rating)} · {movieData.duration}
             </p>
             <div className="flex justify-center gap-2">
               {movieData.genres.map((genre) => (
@@ -418,7 +421,7 @@ const MovieShowtime = () => {
                   key={genre}
                   className="rounded-full border border-[#F5F5F5] px-4 py-[6px] text-xs text-[#F5F5F5]"
                 >
-                  {genre}
+                  {translateGenre(genre)}
                 </span>
               ))}
             </div>
@@ -454,7 +457,7 @@ const MovieShowtime = () => {
             </h2>
             {loadingShowtimes && (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <ClipLoader color="#11968D" size={30} />
               </div>
             )}
             {!loadingShowtimes && showtimeGroups.length === 0 && (

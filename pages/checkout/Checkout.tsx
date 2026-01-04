@@ -7,6 +7,7 @@ import TimeoutModal from "@/components/checkout/TimeoutModal"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import { requestLinePay } from "@/services/paymentAPI"
 import toast from "react-hot-toast"
+import { translateRating } from "@/utils/movieTranslator"
 
 type SelectedSeat = {
   row: string
@@ -99,7 +100,7 @@ const Checkout = () => {
         <div className="absolute -bottom-8 left-0 px-4">
           <h2 className="text-2xl font-semibold">{movieTitle}</h2>
           <p className="mt-1 text-sm text-[#BDBDBD]">
-            {rating} · {duration}
+            {translateRating(rating)} · {duration}
           </p>
         </div>
       </div>
