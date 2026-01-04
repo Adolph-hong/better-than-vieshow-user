@@ -15,6 +15,7 @@ import {
   mergeMovieShowtimeData,
   getYouTubeEmbedUrl,
 } from "@/utils/showtimeTransform"
+import { translateGenre, translateRating } from "@/utils/movieTranslator"
 
 const MovieShowtime = () => {
   const navigate = useNavigate()
@@ -292,7 +293,7 @@ const MovieShowtime = () => {
             <div>
               <h2 className="text-2xl font-semibold text-white">{movieData.title}</h2>
               <div className="mt-1 text-sm text-[#BDBDBD]">
-                {movieData.rating} · {movieData.duration}
+                {translateRating(movieData.rating)} · {movieData.duration}
               </div>
               <div className="mt-3 flex gap-2">
                 {movieData.genres.map((genre: string) => (
@@ -300,7 +301,7 @@ const MovieShowtime = () => {
                     key={genre}
                     className="rounded-full bg-[#333333] px-3 py-1 text-xs text-[#FFFFFF]"
                   >
-                    {genre}
+                    {translateGenre(genre)}
                   </span>
                 ))}
               </div>
@@ -410,7 +411,7 @@ const MovieShowtime = () => {
           <div>
             <h1 className="mb-1 text-center text-2xl font-semibold">{movieData.title}</h1>
             <p className="mb-2 text-center text-sm text-[#BDBDBD]">
-              {movieData.rating} · {movieData.duration}
+              {translateRating(movieData.rating)} · {movieData.duration}
             </p>
             <div className="flex justify-center gap-2">
               {movieData.genres.map((genre) => (
@@ -418,7 +419,7 @@ const MovieShowtime = () => {
                   key={genre}
                   className="rounded-full border border-[#F5F5F5] px-4 py-[6px] text-xs text-[#F5F5F5]"
                 >
-                  {genre}
+                  {translateGenre(genre)}
                 </span>
               ))}
             </div>
