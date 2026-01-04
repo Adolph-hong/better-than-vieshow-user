@@ -7,6 +7,7 @@ import type {
   ShowtimeGroup,
   ShowtimesApiResponse,
 } from "@/types/showtime"
+import { translateTheaterType } from "@/utils/movieTranslator"
 
 /**
  * 格式化電影時長
@@ -142,7 +143,7 @@ export const transformShowtimes = (apiResponse: ShowtimesApiResponse): ShowtimeG
   // 轉換為 ShowtimeGroup 格式
   return Object.entries(groupedByType).map(([theaterType, sessions]) => ({
     id: theaterType,
-    name: theaterType, // 將影廳類型（如 2D, IMAX）作為分組名稱顯示
+    name: translateTheaterType(theaterType), // 將影廳類型翻譯為中文顯示
     price: sessions[0].price, // 假設同類型影廳價格相同
     sessions: sessions.map((session) => ({
       id: session.showTimeId.toString(),

@@ -16,6 +16,12 @@ export const RATING_MAP: Record<string, string> = {
   R: "限制級",
 }
 
+export const THEATER_TYPE_MAP: Record<string, string> = {
+  Digital: "一般數位",
+  IMAX: "IMAX",
+  "4DX": "4DX",
+}
+
 export const translateGenre = (genre: string): string => {
   // Support if genre is already Chinese or not in map, return original
   return GENRE_MAP[genre] || genre
@@ -24,4 +30,9 @@ export const translateGenre = (genre: string): string => {
 export const translateRating = (rating: string): string => {
   // Support if rating is already Chinese or not in map, return original
   return RATING_MAP[rating] || rating
+}
+
+export const translateTheaterType = (theaterType: string): string => {
+  // Support if theater type is already Chinese or not in map, return original
+  return THEATER_TYPE_MAP[theaterType] || theaterType
 }

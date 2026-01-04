@@ -7,7 +7,7 @@ import TimeoutModal from "@/components/checkout/TimeoutModal"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import { requestLinePay } from "@/services/paymentAPI"
 import toast from "react-hot-toast"
-import { translateRating } from "@/utils/movieTranslator"
+import { translateRating, translateTheaterType } from "@/utils/movieTranslator"
 
 type SelectedSeat = {
   row: string
@@ -112,7 +112,7 @@ const Checkout = () => {
           date={date}
           time={time}
           theater={displayTheater}
-          type={ticketType || "一般數位"}
+          type={ticketType || translateTheaterType("Digital")}
           seats={seatString}
         />
 
@@ -120,7 +120,7 @@ const Checkout = () => {
           <div className="space-y-3 px-3 py-4">
             <div className="flex justify-between text-[#9E9E9E]">
               <span>
-                {ticketType || "一般數位"} * {ticketCount}
+                {ticketType || translateTheaterType("Digital")} * {ticketCount}
               </span>
               <span>${totalPrice}</span>
             </div>
