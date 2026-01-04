@@ -1,64 +1,123 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Info, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
+import { useNavigate, useParams } from "react-router-dom"
+import { ArrowLeft, Info, X, ChevronDown, ChevronUp } from "lucide-react"
+import { PuffLoader, ClipLoader } from "react-spinners"
 import RoundedPlay from "@/assets/icon/checkout-flow/rounded_play.svg?react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
 import ShowtimeOptionButton from "@/components/showtime/ShowtimeOptionButton"
 import TicketCounter from "@/components/showtime/TicketCounter"
+import { getMovieDetails, getMovieAvailableDates, getMovieShowtimes } from "@/services/showtimeAPI"
+import type { MovieShowtimeData, ShowtimeGroup, ShowtimeSession, DateOption } from "@/types/showtime"
 import {
-  fetchMovieShowtimes,
-  type MovieData,
-  type ShowtimeGroup,
-  type ShowtimeSession,
-} from "@/mocks/movieData"
+  transformMovieDetails,
+  transformAvailableDates,
+  transformShowtimes,
+  mergeMovieShowtimeData,
+  getYouTubeEmbedUrl,
+} from "@/utils/showtimeTransform"
+import { translateGenre, translateRating } from "@/utils/movieTranslator"
 
 const MovieShowtime = () => {
   const navigate = useNavigate()
-  const [movieData, setMovieData] = useState<MovieData | null>(null)
+  const { id } = useParams<{ id: string }>()
+  const [movieData, setMovieData] = useState<MovieShowtimeData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedDateId, setSelectedDateId] = useState<string | null>(null)
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
   const [ticketCount, setTicketCount] = useState(1)
   const [showInfo, setShowInfo] = useState(false)
   const [showTrailer, setShowTrailer] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [showtimeGroups, setShowtimeGroups] = useState<ShowtimeGroup[]>([])
+  const [loadingShowtimes, setLoadingShowtimes] = useState(false)
 
   // Refs for auto-scroll
   const showtimeRef = useRef<HTMLElement>(null)
   const ticketCounterRef = useRef<HTMLElement>(null)
 
+  // Load movie details and available dates on mount
   useEffect(() => {
-    const loadData = async () => {
+    const loadMovieData = async () => {
+      if (!id) {
+        setError("電影 ID 不存在")
+        setLoading(false)
+        return
+      }
+
       try {
         setLoading(true)
-        const data = await fetchMovieShowtimes()
-        setMovieData(data)
-        // Modified: Removed automatic selection of first date to satisfy requirement 1
-      } catch {
-        // console.error("Failed to load movie data", error)
+        setError(null)
+
+        const movieId = parseInt(id, 10)
+        if (Number.isNaN(movieId)) {
+          setError("無效的電影 ID")
+          setLoading(false)
+          return
+        }
+
+        // Fetch movie details and available dates in parallel
+        const [detailsResponse, datesResponse] = await Promise.all([
+          getMovieDetails(movieId),
+          getMovieAvailableDates(movieId),
+        ])
+
+        const details = transformMovieDetails(detailsResponse)
+        const dates = transformAvailableDates(datesResponse)
+
+        if (!details) {
+          setError("無法取得電影資料")
+          setLoading(false)
+          return
+        }
+
+        const mergedData = mergeMovieShowtimeData(details, dates)
+        setMovieData(mergedData)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "發生未知錯誤")
+        // eslint-disable-next-line no-console
+        console.error("取得電影資料失敗:", err)
       } finally {
         setLoading(false)
       }
     }
-    loadData()
-  }, [])
 
-  const currentShowtimeGroups = useMemo(() => {
-    if (!selectedDateId || !movieData) return []
-    const selectedDate = movieData.dates.find((d) => d.id === selectedDateId)
-    return selectedDate ? selectedDate.showtimeGroups : []
-  }, [selectedDateId, movieData])
+    loadMovieData()
+  }, [id])
 
-  // Auto-scroll to showtime section when date is selected
+  // Load showtimes when a date is selected
   useEffect(() => {
-    if (selectedDateId) {
-      // Delay to wait for DOM render
+    const loadShowtimes = async () => {
+      if (!selectedDateId || !id) return
+
+      try {
+        setLoadingShowtimes(true)
+        const movieId = parseInt(id, 10)
+        const showtimesResponse = await getMovieShowtimes(movieId, selectedDateId)
+        const transformedShowtimes = transformShowtimes(showtimesResponse)
+        setShowtimeGroups(transformedShowtimes)
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("取得場次資料失敗:", err)
+        setShowtimeGroups([])
+      } finally {
+        setLoadingShowtimes(false)
+      }
+    }
+
+    loadShowtimes()
+  }, [selectedDateId, id])
+
+  // Auto-scroll to showtime section when showtimes finish loading
+  useEffect(() => {
+    if (selectedDateId && !loadingShowtimes && showtimeGroups.length > 0) {
+      // Delay to ensure DOM is fully rendered
       setTimeout(() => {
         showtimeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-      }, 100)
+      }, 150)
     }
-  }, [selectedDateId])
+  }, [selectedDateId, loadingShowtimes, showtimeGroups])
 
   // Auto-scroll to ticket counter section when session is selected
   useEffect(() => {
@@ -72,11 +131,11 @@ const MovieShowtime = () => {
 
   const selectedSessionPrice = useMemo(() => {
     if (!selectedSessionId) return 0
-    const group = currentShowtimeGroups.find((g) =>
+    const group = showtimeGroups.find((g) =>
       g.sessions.some((s) => s.id === selectedSessionId)
     )
     return group ? group.price : 0
-  }, [selectedSessionId, currentShowtimeGroups])
+  }, [selectedSessionId, showtimeGroups])
 
   const totalPrice = selectedSessionPrice * ticketCount
 
@@ -91,20 +150,18 @@ const MovieShowtime = () => {
   const handleBooking = () => {
     if (!selectedDateId || !selectedSessionId || !movieData) return
 
-    const selectedDate = movieData.dates.find((d) => d.id === selectedDateId)
+    const selectedDate = movieData.dates.find((d: DateOption) => d.id === selectedDateId)
 
     let selectedGroup: ShowtimeGroup | undefined
     let selectedSession: ShowtimeSession | undefined
 
-    if (selectedDate) {
-      const foundGroup = selectedDate.showtimeGroups.find((group) =>
-        group.sessions.some((s) => s.id === selectedSessionId)
-      )
+    const foundGroup = showtimeGroups.find((group) =>
+      group.sessions.some((s) => s.id === selectedSessionId)
+    )
 
-      if (foundGroup) {
-        selectedGroup = foundGroup
-        selectedSession = foundGroup.sessions.find((s) => s.id === selectedSessionId)
-      }
+    if (foundGroup) {
+      selectedGroup = foundGroup
+      selectedSession = foundGroup.sessions.find((s) => s.id === selectedSessionId)
     }
 
     if (selectedDate && selectedGroup && selectedSession) {
@@ -120,6 +177,7 @@ const MovieShowtime = () => {
           duration: movieData.duration,
           genre: movieData.genres[0],
           ticketType: selectedGroup.name,
+          showTimeId: selectedSession.showTimeId,
         },
       })
     }
@@ -135,10 +193,36 @@ const MovieShowtime = () => {
       : movieData.description
   }, [movieData, isExpanded])
 
-  if (loading || !movieData) {
+  const trailerEmbedUrl = useMemo(() => {
+    if (!movieData?.trailerUrl) return ""
+    // 加入更多參數減少不必要的後台請求:
+    // cc_load_policy=0 (不載入字幕), iv_load_policy=3 (不顯示註解)
+    const baseUrl = getYouTubeEmbedUrl(movieData.trailerUrl)
+    if (!baseUrl) return ""
+    const separator = baseUrl.includes("?") ? "&" : "?"
+    return `${baseUrl}${separator}cc_load_policy=0&iv_load_policy=3`
+  }, [movieData?.trailerUrl])
+
+  if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black text-white">
+        <PuffLoader color="#11968D" size={80} />
+        <p className="text-lg font-medium text-white">你超有品味 !</p>
+      </div>
+    )
+  }
+
+  if (error || !movieData) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
+        <p className="text-red-500">錯誤: {error || "無法載入電影資料"}</p>
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="mt-4 rounded-lg bg-[#11968D] px-4 py-2 text-white"
+        >
+          返回首頁
+        </button>
       </div>
     )
   }
@@ -162,7 +246,7 @@ const MovieShowtime = () => {
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/n9OPh03GnI4?si=q1W4U5QJA6synPex&amp;start=3&autoplay=1&mute=1"
+                src={trailerEmbedUrl}
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -211,15 +295,15 @@ const MovieShowtime = () => {
             <div>
               <h2 className="text-2xl font-semibold text-white">{movieData.title}</h2>
               <div className="mt-1 text-sm text-[#BDBDBD]">
-                {movieData.rating} · {movieData.duration}
+                {translateRating(movieData.rating)} · {movieData.duration}
               </div>
               <div className="mt-3 flex gap-2">
-                {movieData.genres.map((genre) => (
+                {movieData.genres.map((genre: string) => (
                   <span
                     key={genre}
                     className="rounded-full bg-[#333333] px-3 py-1 text-xs text-[#FFFFFF]"
                   >
-                    {genre}
+                    {translateGenre(genre)}
                   </span>
                 ))}
               </div>
@@ -289,6 +373,7 @@ const MovieShowtime = () => {
         <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between px-4 py-3">
           <button
             type="button"
+            onClick={() => navigate("/")}
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-white/20 backdrop-blur-xs"
           >
             <ArrowLeft className="h-6 w-6" />
@@ -328,7 +413,7 @@ const MovieShowtime = () => {
           <div>
             <h1 className="mb-1 text-center text-2xl font-semibold">{movieData.title}</h1>
             <p className="mb-2 text-center text-sm text-[#BDBDBD]">
-              {movieData.rating} · {movieData.duration}
+              {translateRating(movieData.rating)} · {movieData.duration}
             </p>
             <div className="flex justify-center gap-2">
               {movieData.genres.map((genre) => (
@@ -336,7 +421,7 @@ const MovieShowtime = () => {
                   key={genre}
                   className="rounded-full border border-[#F5F5F5] px-4 py-[6px] text-xs text-[#F5F5F5]"
                 >
-                  {genre}
+                  {translateGenre(genre)}
                 </span>
               ))}
             </div>
@@ -350,7 +435,7 @@ const MovieShowtime = () => {
             選擇日期
           </h2>
           <div className="flex flex-wrap gap-3">
-            {movieData.dates.map((dateData) => (
+            {movieData.dates.map((dateData: DateOption) => (
               <DateOptionButton
                 key={dateData.id}
                 date={dateData.date}
@@ -370,26 +455,36 @@ const MovieShowtime = () => {
             <h2 id="showtime-selection" className="mb-2 text-xl font-semibold">
               選擇時段
             </h2>
-            <div className="space-y-2">
-              {currentShowtimeGroups.map((group) => (
-                <article key={group.id}>
-                  <div className="mb-[5px] flex items-center justify-between">
-                    <h3 className="text-lg">{group.name}</h3>
-                    <span className="text-lg">${group.price}/人</span>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {group.sessions.map((session) => (
-                      <ShowtimeOptionButton
-                        key={session.id}
-                        time={session.time}
-                        isSelected={selectedSessionId === session.id}
-                        onClick={() => setSelectedSessionId(session.id)}
-                      />
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
+            {loadingShowtimes && (
+              <div className="flex items-center justify-center py-8">
+                <ClipLoader color="#11968D" size={30} />
+              </div>
+            )}
+            {!loadingShowtimes && showtimeGroups.length === 0 && (
+              <p className="py-4 text-center text-[#BDBDBD]">此日期暫無場次</p>
+            )}
+            {!loadingShowtimes && showtimeGroups.length > 0 && (
+              <div className="space-y-2">
+                {showtimeGroups.map((group) => (
+                  <article key={group.id}>
+                    <div className="mb-[5px] flex items-center justify-between">
+                      <h3 className="text-lg">{group.name}</h3>
+                      <span className="text-lg">${group.price}/人</span>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {group.sessions.map((session) => (
+                        <ShowtimeOptionButton
+                          key={session.id}
+                          time={session.time}
+                          isSelected={selectedSessionId === session.id}
+                          onClick={() => setSelectedSessionId(session.id)}
+                        />
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
         )}
 

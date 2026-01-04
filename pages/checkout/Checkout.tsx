@@ -5,7 +5,9 @@ import CountdownTimer from "@/components/checkout/CountdownTimer"
 import FooterButton from "@/components/checkout/FooterButton"
 import TimeoutModal from "@/components/checkout/TimeoutModal"
 import OrderInfoCard from "@/components/shared/OrderInfoCard"
-import { MOCK_ORDER_ID } from "@/mocks/movieData"
+import { requestLinePay } from "@/services/paymentAPI"
+import toast from "react-hot-toast"
+import { translateRating, translateTheaterType } from "@/utils/movieTranslator"
 
 type SelectedSeat = {
   row: string
@@ -27,6 +29,8 @@ type LocationState = {
   ticketCount: number
   price: number
   totalPrice: number
+  orderId: number
+  showTimeId: number
 }
 
 const Checkout = () => {
@@ -35,6 +39,7 @@ const Checkout = () => {
   const state = location.state as LocationState | null
 
   const [isTimeout, setIsTimeout] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!state) {
     return (
@@ -52,7 +57,6 @@ const Checkout = () => {
     posterUrl,
     rating,
     duration,
-    genre,
     date,
     time,
     theaterName,
@@ -96,7 +100,7 @@ const Checkout = () => {
         <div className="absolute -bottom-8 left-0 px-4">
           <h2 className="text-2xl font-semibold">{movieTitle}</h2>
           <p className="mt-1 text-sm text-[#BDBDBD]">
-            {rating} · {duration}
+            {translateRating(rating)} · {duration}
           </p>
         </div>
       </div>
@@ -108,7 +112,7 @@ const Checkout = () => {
           date={date}
           time={time}
           theater={displayTheater}
-          type={ticketType || "一般數位"}
+          type={ticketType || translateTheaterType("Digital")}
           seats={seatString}
         />
 
@@ -116,7 +120,7 @@ const Checkout = () => {
           <div className="space-y-3 px-3 py-4">
             <div className="flex justify-between text-[#9E9E9E]">
               <span>
-                {ticketType || "一般數位"} * {ticketCount}
+                {ticketType || translateTheaterType("Digital")} * {ticketCount}
               </span>
               <span>${totalPrice}</span>
             </div>
@@ -144,26 +148,42 @@ const Checkout = () => {
 
       <footer className="mt-3 mb-[101px] px-4">
         <FooterButton
-          onClick={() => {
-            navigate("/payment/success", {
-              state: {
-                movieTitle,
-                posterUrl,
-                rating,
-                duration,
-                genre,
-                date,
-                time,
-                theaterName: displayTheater,
-                ticketType: ticketType || "一般數位",
-                seatString,
-                finalTotalPrice,
-                orderId: MOCK_ORDER_ID,
-              },
-            })
+          loading={isSubmitting}
+          onClick={async () => {
+            try {
+              setIsSubmitting(true)
+              // 儲存目前狀態到 localStorage，以便從 Line Pay 跳轉回來時重新取得資料
+              localStorage.setItem(
+                "checkout_state",
+                JSON.stringify({
+                  ...state,
+                  seatString,
+                  finalTotalPrice,
+                })
+              )
+
+              const response = await requestLinePay({ orderId: state.orderId })
+              console.log("Line Pay Request Response:", response)
+
+              // 兼容不同可能的資料結構 (例如有沒有 data 包層，或是直接回傳扁平資料)
+              const paymentUrl = response.data?.paymentUrl || (response as any).paymentUrl
+
+              // 如果有支付連結，就代表請求成功（即使後端沒給 success: true 欄位）
+              if (paymentUrl) {
+                // 跳轉至 Line Pay 付款頁面
+                window.location.href = paymentUrl
+              } else {
+                toast.error(response.message || "發起付款失敗，請聯繫客服")
+              }
+            } catch (err) {
+              console.error("Line Pay Request Error:", err)
+              toast.error("發生錯誤，請稍後再試")
+            } finally {
+              setIsSubmitting(false)
+            }
           }}
         >
-          付款
+          {isSubmitting ? "跳轉至 Line Pay..." : "付款"}
         </FooterButton>
       </footer>
 

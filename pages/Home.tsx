@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { PuffLoader } from "react-spinners"
 import Layout from "@/components/home/Layout"
 import MovieList from "@/components/home/MovieList"
 import type { Movie } from "@/components/home/movieListData"
@@ -56,8 +57,9 @@ const Home = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex h-screen items-center justify-center">
-          <p className="text-white">載入中...</p>
+        <div className="flex h-screen flex-col items-center justify-center gap-6">
+          <PuffLoader color="#11968D" size={80} />
+          <p className="text-lg font-medium text-white">正在載入電影列表...</p>
         </div>
       </Layout>
     )
