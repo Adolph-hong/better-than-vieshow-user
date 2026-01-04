@@ -46,9 +46,9 @@ const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
                       {index + 1}
                     </span>
                   )}
-                  {showCountdown && (
+                  {showCountdown && movie.daysUntilRelease !== undefined && (
                     <span className="font-family-inter font-normla absolute top-1 left-1/2 flex h-[21px] w-18.5 -translate-x-1/2 items-center justify-center rounded-lg bg-black/60 px-2 py-[3px] text-xs text-white">
-                      倒數 {index + 12} 天
+                      倒數 {movie.daysUntilRelease} 天
                     </span>
                   )}
                   <img src={poster} alt={titleZh} className="h-35 w-full rounded-lg object-cover" />

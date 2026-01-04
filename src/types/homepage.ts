@@ -8,6 +8,7 @@ export interface ApiMovie {
   rating: string
   releaseDate: string // ISO date string
   endDate: string // ISO date string
+  daysUntilRelease?: number // 距離上映天數（僅在即將上映的電影中提供）
 }
 
 // 首頁 API 回應的 data 結構

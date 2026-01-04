@@ -31,6 +31,7 @@ export const transformApiMovieToMovie = (apiMovie: ApiMovie): Movie => {
     rating: apiMovie.rating,
     duration: formatDuration(apiMovie.duration),
     poster,
+    daysUntilRelease: apiMovie.daysUntilRelease,
   }
 }
 
