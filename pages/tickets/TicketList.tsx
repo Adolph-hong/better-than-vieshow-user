@@ -5,7 +5,8 @@ import TicketsGhostIcon from "@/assets/icon/tickets-icon/tickets-ghost.svg?react
 import Footer from "@/components/shared/Footer"
 import { getOrders } from "@/services/orderAPI"
 import type { OrderListItem } from "@/types/order"
-import { Loader2 , UsersRound , Clock} from "lucide-react"
+import { UsersRound , Clock} from "lucide-react"
+import { PuffLoader } from "react-spinners"
 
 const TicketList = () => {
   const navigate = useNavigate()
@@ -41,15 +42,16 @@ const TicketList = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex flex-col w-full min-h-screen items-center justify-center bg-black text-white pb-20">
+        <PuffLoader color="#11968D" size={80} />
+        <p className="text-lg font-medium text-white">為您端上票券列表...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white p-4 text-center">
+      <div className="flex w-full h-full flex-col items-center justify-center bg-black text-white p-4 text-center">
         <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}

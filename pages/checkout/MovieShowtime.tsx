@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, Info, Loader2, X, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowLeft, Info, X, ChevronDown, ChevronUp } from "lucide-react"
+import { PuffLoader, ClipLoader } from "react-spinners"
 import RoundedPlay from "@/assets/icon/checkout-flow/rounded_play.svg?react"
 import BookingActionBar from "@/components/showtime/BookingActionBar"
 import DateOptionButton from "@/components/showtime/DateOptionButton"
@@ -204,8 +205,9 @@ const MovieShowtime = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black text-white">
+        <PuffLoader color="#11968D" size={80} />
+        <p className="text-lg font-medium text-white">你超有品味 !</p>
       </div>
     )
   }
@@ -455,7 +457,7 @@ const MovieShowtime = () => {
             </h2>
             {loadingShowtimes && (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <ClipLoader color="#11968D" size={30} />
               </div>
             )}
             {!loadingShowtimes && showtimeGroups.length === 0 && (
