@@ -367,6 +367,16 @@ const SeatSelection = () => {
                                 // 檢查是否需要在這個座位後插入垂直走道
                                 const shouldAddVerticalAisle = verticalAisles.includes(seat.column)
 
+                                // 如果是走道位置，渲染空白佔位符
+                                if (seat.type === "Aisle") {
+                                  return (
+                                    <div 
+                                      key={`${seat.row}-${seat.column}`} 
+                                      className="h-[19px] w-6"
+                                    />
+                                  )
+                                }
+
                                 return (
                                   <Fragment key={`${seat.row}-${seat.column}`}>
                                     <button
