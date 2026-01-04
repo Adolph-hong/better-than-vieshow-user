@@ -320,7 +320,7 @@ const SeatSelection = () => {
                     contentStyle={{ width: "max-content", minHeight: "100%" }}
                   >
                     {/* 座位地圖 - 可拖曳 */}
-                    <div className="relative min-h-full space-y-3 pt-[110px]">
+                    <div className="relative min-h-full min-w-[628px] space-y-3 pt-[110px]">
                       {/* 螢幕指示器 */}
                       <div className="pointer-events-none absolute top-0 left-0 right-0 z-30 flex justify-center pt-[12px]">
                         {/* 螢幕橫槓 */}
