@@ -8,6 +8,7 @@ import OrderInfoCard from "@/components/shared/OrderInfoCard"
 import OrderSummaryCard from "@/components/shared/OrderSummaryCard"
 import { getOrder } from "@/services/orderAPI"
 import type { OrderDetail } from "@/types/order"
+import { translateTheaterType, translateRating } from "@/utils/movieTranslator"
 
 const TicketDetail = () => {
   const { id } = useParams()
@@ -146,7 +147,7 @@ const TicketDetail = () => {
         <div className="absolute -bottom-6 px-4">
           <h2 className="text-2xl font-bold">{ticket.movie.title}</h2>
           <p className="mt-1 text-sm text-[#CCCCCC]">
-            {ticket.movie.rating} • {formatDuration(ticket.movie.duration)}
+            {translateRating(ticket.movie.rating)} • {formatDuration(ticket.movie.duration)}
           </p>
         </div>
       </div>
@@ -267,7 +268,7 @@ const TicketDetail = () => {
                   date={formatDate(ticket.showtime.date)}
                   time={formatTime(ticket.showtime.startTime)}
                   theater={ticket.theater.name}
-                  type={ticket.theater.type}
+                  type={translateTheaterType(ticket.theater.type)}
                   seats={`${seat.rowName}${seat.columnNumber}`}
                   className="rounded-none bg-transparent p-4"
                 />
