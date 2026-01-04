@@ -194,10 +194,9 @@ const SeatSelection = () => {
     return isSelected ? "selected" : "available"
   }
 
-  const getSeatFillColor = (status: string, type: string) => {
+  const getSeatFillColor = (status: string) => {
     if (status === "sold") return "#3A3A3A"
     if (status === "selected") return "#11968D"
-    if (type === "Wheelchair") return "#11968D" // If wheelchair icons should have a special color, though currently UI uses badge for selection
     return "#B5B5B5"
   }
 
@@ -381,7 +380,7 @@ const SeatSelection = () => {
                                       title={`${seat.row}排 ${seat.column}號`}
                                     >
                                       <SeatIcon
-                                        fill={getSeatFillColor(status, seat.type)}
+                                        fill={getSeatFillColor(status)}
                                         className="h-[19px] w-6"
                                       />
                                     </button>
