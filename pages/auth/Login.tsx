@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Eye, EyeClosed, Check } from "lucide-react"
 import toast from "react-hot-toast"
 import AuthButton from "@/components/auth-ui/AuthButton"
@@ -9,6 +9,7 @@ import sendAPI from "@/utils/sendAPI"
 
 const Login = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -19,6 +20,10 @@ const Login = () => {
     email: "",
     password: "",
   })
+
+  // Extract return URL and state from location
+  const returnUrl = (location.state as { returnUrl?: string; returnState?: unknown })?.returnUrl
+  const returnState = (location.state as { returnUrl?: string; returnState?: unknown })?.returnState
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -85,7 +90,13 @@ const Login = () => {
       }
 
       toast.success("登入成功")
-      navigate("/")
+      
+      // Navigate to return URL if exists, otherwise go to home
+      if (returnUrl) {
+        navigate(returnUrl, { state: returnState })
+      } else {
+        navigate("/")
+      }
     } catch {
       // 網路錯誤
       toast.error("發生錯誤，請稍後再試")

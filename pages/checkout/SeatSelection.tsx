@@ -141,6 +141,32 @@ const SeatSelection = () => {
     const selectedValidSeats = selectedSeats.filter((s): s is { row: string; column: number } => s !== null)
     if (selectedValidSeats.length === 0) return
 
+    // Check if user is logged in
+    const token = localStorage.getItem("token")
+    if (!token) {
+      // User is not logged in, redirect to login page with return URL
+      navigate("/login", {
+        state: {
+          returnUrl: "/seat-selection",
+          returnState: {
+            movieTitle,
+            date,
+            time,
+            price,
+            ticketCount: selectedValidSeats.length,
+            posterUrl,
+            rating,
+            duration,
+            genre,
+            ticketType,
+            showTimeId: state.showTimeId,
+            selectedSeats: selectedValidSeats,
+          },
+        },
+      })
+      return
+    }
+
     // Find seat IDs from seatMap
     const seatIds = selectedValidSeats.map((s) => {
       const seat = seatMap?.seats.find((sm) => sm.row === s.row && sm.column === s.column)
