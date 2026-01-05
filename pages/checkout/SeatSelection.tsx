@@ -117,7 +117,7 @@ const SeatSelection = () => {
     const allSeatsSelected = selectedSeats.every((seat: SelectedSeat) => seat !== null)
     if (allSeatsSelected && selectedSeats.length > 0) {
       setTimeout(() => {
-        confirmSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        confirmSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 150)
     }
   }, [selectedSeats])
