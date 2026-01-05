@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState, useEffect, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft, Ticket, Loader2, Minimize2, Maximize2 } from "lucide-react"
 import { PuffLoader } from "react-spinners"
@@ -39,6 +39,9 @@ const SeatSelection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [seatMap, setSeatMap] = useState<SeatMapData | null>(null)
+
+  // Ref for auto-scroll to confirmation area
+  const confirmSectionRef = useRef<HTMLElement>(null)
 
   // Check if state exists, if not redirect or show loading
   // For this exercise, if no state, we can default or return early.
@@ -103,6 +106,21 @@ const SeatSelection = () => {
     }
     loadData()
   }, [state])
+
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  // Auto-scroll to confirmation area when all seats are selected
+  useEffect(() => {
+    const allSeatsSelected = selectedSeats.every((seat: SelectedSeat) => seat !== null)
+    if (allSeatsSelected && selectedSeats.length > 0) {
+      setTimeout(() => {
+        confirmSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      }, 150)
+    }
+  }, [selectedSeats])
 
   const handleSeatClick = (seat: Seat) => {
     if (seat.status === "sold") return
@@ -429,7 +447,7 @@ const SeatSelection = () => {
       </div>
 
       {/* 底部總金額和確認按鈕 */}
-      <footer className="mt-[108px]">
+      <footer ref={confirmSectionRef} className="mt-[108px]">
         <BookingActionBar
           totalPrice={currentTotalPrice}
           onBooking={handleConfirm}
