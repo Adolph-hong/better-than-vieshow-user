@@ -93,9 +93,43 @@ const Signup = () => {
         return
       }
 
-      // 註冊成功
-      toast.success("註冊成功！請登入")
-      navigate("/login")
+      // 註冊成功，自動登入
+      toast.success("註冊成功！")
+
+      try {
+        // 自動呼叫登入 API
+        const loginResponse = await sendAPI(`/api/Auth/login`, "POST", {
+          email: formData.email,
+          password: formData.password,
+        })
+
+        if (loginResponse.ok) {
+          const loginData = await loginResponse.json()
+
+          // 儲存 token
+          const token = loginData.token || loginData.accessToken || loginData?.data?.token
+          if (token) {
+            localStorage.setItem("token", token)
+          }
+
+          // 儲存使用者名稱
+          const userName = loginData.name || loginData.user?.name || loginData?.data?.name || formData.name
+          if (userName) {
+            localStorage.setItem("user", userName)
+          }
+
+          // 導向首頁
+          navigate("/")
+        } else {
+          // 自動登入失敗，退回原流程
+          toast.success("註冊成功！請登入")
+          navigate("/login")
+        }
+      } catch {
+        // 自動登入發生錯誤，退回原流程
+        toast.success("註冊成功！請登入")
+        navigate("/login")
+      }
     } catch {
       // 網路錯誤
       toast.error("發生錯誤，請稍後再試")
