@@ -129,6 +129,21 @@ const MovieShowtime = () => {
     }
   }, [selectedSessionId])
 
+  // 取得選中的場次資訊
+  const selectedSession = useMemo(() => {
+    if (!selectedSessionId) return null
+    const group = showtimeGroups.find((g) =>
+      g.sessions.some((s) => s.id === selectedSessionId)
+    )
+    return group?.sessions.find((s) => s.id === selectedSessionId) || null
+  }, [selectedSessionId, showtimeGroups])
+
+  // 計算動態最大人數（不超過可用座位，且最多 6 人）
+  const maxTickets = useMemo(() => {
+    if (!selectedSession) return 6
+    return Math.min(selectedSession.availableSeats, 6)
+  }, [selectedSession])
+
   const selectedSessionPrice = useMemo(() => {
     if (!selectedSessionId) return 0
     const group = showtimeGroups.find((g) =>
@@ -139,8 +154,15 @@ const MovieShowtime = () => {
 
   const totalPrice = selectedSessionPrice * ticketCount
 
+  // 當切換場次時，如果當前人數超過新場次的最大人數，自動調整
+  useEffect(() => {
+    if (selectedSessionId && ticketCount > maxTickets) {
+      setTicketCount(maxTickets)
+    }
+  }, [selectedSessionId, maxTickets, ticketCount])
+
   const handleIncrement = () => {
-    setTicketCount((prev) => Math.min(prev + 1, 6))
+    setTicketCount((prev) => Math.min(prev + 1, maxTickets))
   }
 
   const handleDecrement = () => {
@@ -494,8 +516,9 @@ const MovieShowtime = () => {
               count={ticketCount}
               onIncrement={handleIncrement}
               onDecrement={handleDecrement}
-              maxCount={6}
+              maxCount={maxTickets}
               minCount={1}
+              availableSeats={selectedSession?.availableSeats}
             />
           </section>
         )}
