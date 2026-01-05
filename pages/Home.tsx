@@ -32,7 +32,15 @@ const Home = () => {
         if (response.success && response.data) {
           setCarouselMovies(transformApiMovies(response.data.carousel))
           setTopWeeklyMovies(transformApiMovies(response.data.topWeekly))
-          setUpcomingMovies(transformApiMovies(response.data.comingSoon))
+
+          const upcoming = transformApiMovies(response.data.comingSoon)
+          const sortedUpcoming = [...upcoming].sort((a, b) => {
+            const daysA = a.daysUntilRelease ?? Infinity
+            const daysB = b.daysUntilRelease ?? Infinity
+            return daysA - daysB
+          })
+          setUpcomingMovies(sortedUpcoming)
+
           setRandomRecommendMovies(transformApiMovies(response.data.recommended))
           setAllMovies(transformApiMovies(response.data.allMovies))
         } else {

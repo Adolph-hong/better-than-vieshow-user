@@ -2,7 +2,6 @@ import type { HomepageApiResponse } from "@/types/homepage"
 import sendAPI from "@/utils/sendAPI"
 
 /**
- * 取得首頁電影資料
  * @returns Promise<HomepageApiResponse>
  */
 // eslint-disable-next-line import/prefer-default-export

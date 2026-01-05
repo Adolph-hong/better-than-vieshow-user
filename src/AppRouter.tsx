@@ -3,11 +3,12 @@ import Login from "../pages/auth/Login"
 import Signup from "../pages/auth/Signup"
 import Checkout from "../pages/checkout/Checkout"
 import CheckoutConfirm from "../pages/checkout/CheckoutConfirm"
-import Home from "../pages/Home"
-import MovieSearch from "../pages/MovieSearch"
 import MovieShowtime from "../pages/checkout/MovieShowtime"
 import PaymentSuccess from "../pages/checkout/PaymentSuccess"
 import SeatSelection from "../pages/checkout/SeatSelection"
+import Home from "../pages/Home"
+import MovieSearch from "../pages/MovieSearch"
+import Setting from "../pages/Setting"
 import TicketDetail from "../pages/tickets/TicketDetail"
 import TicketList from "../pages/tickets/TicketList"
 import TicketsLayout from "../pages/tickets/TicketsLayout"
@@ -17,6 +18,7 @@ const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/movie-search" element={<MovieSearch />} />
+    <Route path="/settings" element={<Setting />} />
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
     <Route path="/movie/showtime/:id" element={<MovieShowtime />} />

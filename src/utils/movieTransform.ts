@@ -22,7 +22,7 @@ export const transformApiMovieToMovie = (apiMovie: ApiMovie): Movie => {
   // 如果 posterUrl 為 null，使用預設圖片或空字串
   // 這裡可以根據實際需求調整
   const poster = apiMovie.posterUrl || ""
-  
+
   return {
     id: apiMovie.id,
     title: apiMovie.title,
@@ -31,6 +31,7 @@ export const transformApiMovieToMovie = (apiMovie: ApiMovie): Movie => {
     rating: apiMovie.rating,
     duration: formatDuration(apiMovie.duration),
     poster,
+    daysUntilRelease: apiMovie.daysUntilRelease,
   }
 }
 
@@ -43,4 +44,3 @@ export const transformApiMovies = (apiMovies: ApiMovie[] | undefined | null): Mo
   }
   return apiMovies.map(transformApiMovieToMovie)
 }
-
