@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useLocation } from "react-router-dom"
 import { ArrowLeft, Info, X, ChevronDown, ChevronUp } from "lucide-react"
 import { PuffLoader, ClipLoader } from "react-spinners"
 import RoundedPlay from "@/assets/icon/checkout-flow/rounded_play.svg?react"
@@ -20,13 +20,22 @@ import { translateGenre, translateRating } from "@/utils/movieTranslator"
 
 const MovieShowtime = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams<{ id: string }>()
   const [movieData, setMovieData] = useState<MovieShowtimeData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedDateId, setSelectedDateId] = useState<string | null>(null)
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
-  const [ticketCount, setTicketCount] = useState(1)
+  
+  // Extract return state from login if exists
+  const returnState = (location.state as {
+    selectedDateId?: string
+    selectedSessionId?: string
+    ticketCount?: number
+  })
+  
+  const [selectedDateId, setSelectedDateId] = useState<string | null>(returnState?.selectedDateId || null)
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(returnState?.selectedSessionId || null)
+  const [ticketCount, setTicketCount] = useState(returnState?.ticketCount || 1)
   const [showInfo, setShowInfo] = useState(false)
   const [showTrailer, setShowTrailer] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -149,6 +158,23 @@ const MovieShowtime = () => {
 
   const handleBooking = () => {
     if (!selectedDateId || !selectedSessionId || !movieData) return
+
+    // Check if user is logged in
+    const token = localStorage.getItem("token")
+    if (!token) {
+      // User is not logged in, redirect to login page with return URL
+      navigate("/login", {
+        state: {
+          returnUrl: `/movie/showtime/${id}`,
+          returnState: {
+            selectedDateId,
+            selectedSessionId,
+            ticketCount,
+          },
+        },
+      })
+      return
+    }
 
     const selectedDate = movieData.dates.find((d: DateOption) => d.id === selectedDateId)
 
