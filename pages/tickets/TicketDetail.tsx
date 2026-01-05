@@ -221,7 +221,9 @@ const TicketDetail = () => {
           }}
         >
           {seats.map((seat) => {
-            const seatQrValue = seat.ticketNumber
+            // 使用後端提供的完整 QR code 內容，包含票券編號、場次 ID 和座位 ID
+            // 如果沒有 qrCodeContent（舊資料），則使用 ticketNumber 作為 fallback
+            const seatQrValue = seat.qrCodeContent || seat.ticketNumber
 
             return (
               <motion.div
