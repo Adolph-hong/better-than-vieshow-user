@@ -71,19 +71,22 @@ const PaymentSuccess = () => {
   const { movieTitle, date, time, theaterName, ticketType, seatString, finalTotalPrice } = state
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-black text-white">
+    <div className="flex h-[100dvh] w-full flex-col overflow-hidden bg-black text-white">
       {/* Content */}
-      <div className="z-10 flex flex-1 flex-col items-center justify-center px-4">
+      <div className="z-10 flex flex-1 flex-col items-center justify-between px-4 py-6 sm:justify-center sm:py-0">
+        <div className="flex w-full flex-col items-center justify-center gap-2 sm:gap-4">
         {/* Success Icon */}
-        <div className="rounded-full bg-[#4BCCBE]/40 p-[11.86px]">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#4BCCBE]">
-            <Check className="h-10 w-10 stroke-[3] text-white" />
+        <div className="flex flex-col items-center">
+          <div className="rounded-full bg-[#4BCCBE]/40 p-[11.86px]">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#4BCCBE]">
+              <Check className="h-10 w-10 stroke-[3] text-white" />
+            </div>
           </div>
+
+          <h1 className="mt-2 text-xl font-semibold sm:text-2xl">付款成功</h1>
         </div>
 
-        <h1 className="mt-3 text-2xl font-semibold">付款成功</h1>
-
-        <section className="w-full">
+        <section className="w-full space-y-2">
           <OrderInfoCard
             title={movieTitle}
             date={date}
@@ -91,18 +94,19 @@ const PaymentSuccess = () => {
             theater={theaterName}
             type={ticketType}
             seats={seatString}
-            className="mt-3"
+            className="mt-0"
+          />
+
+          <OrderSummaryCard
+            totalPrice={finalTotalPrice}
+            paymentMethod="Line Pay"
+            orderId={orderId}
+            className="mt-0"
           />
         </section>
+        </div>
 
-        <OrderSummaryCard
-          totalPrice={finalTotalPrice}
-          paymentMethod="Line Pay"
-          orderId={orderId}
-          className="mt-3"
-        />
-
-        <footer className="mt-6 w-full space-y-2">
+        <footer className="mt-2 w-full space-y-2 pb-2 sm:pb-0">
           <FooterButton variant="outline" onClick={() => navigate("/")}>
             返回首頁
           </FooterButton>
