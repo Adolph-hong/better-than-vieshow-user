@@ -120,6 +120,22 @@ const TicketDetail = () => {
   const handlePrev = () => paginate(-1)
   const handleNext = () => paginate(1)
 
+  const ticketState = (() => {
+    if (ticket.isUsed) return { text: "已使用", className: "bg-[#777777] text-white" }
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const [year, month, day] = ticket.showtime.date.split("-").map(Number)
+    const showDate = new Date(year, month - 1, day)
+
+    if (showDate < today) return { text: "已過期", className: "bg-[#777777] text-white" }
+
+    if (ticket.status === "Paid") return { text: "尚未使用", className: "bg-[#11968D] text-black" }
+
+    return { text: "已過期", className: "bg-[#777777] text-white" }
+  })()
+
   return (
     <div className="text-white">
       <div className="relative h-[220px] w-full">
@@ -232,13 +248,9 @@ const TicketDetail = () => {
               >
                 <div className="absolute left-1/2 mt-4 -translate-x-1/2">
                   <span
-                    className={`rounded-full px-3 py-[5.5px] text-sm text-white ${
-                      ticket.status === "Paid"
-                        ? "bg-[#11968D] text-black"
-                        : "bg-[#777777] text-white"
-                    }`}
+                    className={`rounded-full px-3 py-[5.5px] text-sm ${ticketState.className}`}
                   >
-                    {ticket.status === "Paid" ? "尚未使用" : "已過期"}
+                    {ticketState.text}
                   </span>
                 </div>
 
