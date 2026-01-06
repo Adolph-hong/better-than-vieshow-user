@@ -131,7 +131,7 @@ const TicketDetail = () => {
 
     if (showDate < today) return { text: "已過期", className: "bg-[#777777] text-white" }
 
-    if (ticket.status === "Paid") return { text: "尚未使用", className: "bg-[#11968D] text-black" }
+    if (ticket.status === "Paid") return { text: "尚未使用", className: "bg-[#11968D] text-white" }
 
     return { text: "已過期", className: "bg-[#777777] text-white" }
   })()
