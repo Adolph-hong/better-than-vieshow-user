@@ -61,11 +61,13 @@ export interface OrderDetailTheater {
 }
 
 export interface OrderDetailSeat {
+  ticketId: number
   seatId: number
   rowName: string
   columnNumber: number
   ticketNumber: string
   qrCodeContent: string
+  status: string // "Used" | "Unused" etc.
 }
 
 export interface OrderDetail {
