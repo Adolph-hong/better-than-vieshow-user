@@ -28,6 +28,7 @@ type LocationState = {
   genre?: string
   ticketType?: string
   showTimeId: number
+  selectedSeats?: SelectedSeat[]
 }
 
 const SeatSelection = () => {
@@ -72,7 +73,7 @@ const SeatSelection = () => {
   const effectiveTicketCount = ticketCount > 0 ? ticketCount : 1
 
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>(
-    Array(effectiveTicketCount).fill(null)
+    state?.selectedSeats || Array(effectiveTicketCount).fill(null)
   )
 
   useEffect(() => {
