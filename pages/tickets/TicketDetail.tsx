@@ -46,6 +46,19 @@ const TicketDetail = () => {
     return ticket?.seats || []
   }, [ticket?.seats])
 
+  // 計算場次日期是否已過期（用於所有座位）
+  const isShowExpired = useMemo(() => {
+    if (!ticket) return false
+    
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const [year, month, day] = ticket.showtime.date.split("-").map(Number)
+    const showDate = new Date(year, month - 1, day)
+
+    return showDate < today
+  }, [ticket])
+
   const paginate = (newDirection: number) => {
     const newPage = page + newDirection
     if (newPage >= 0 && newPage < seats.length) {
@@ -93,6 +106,22 @@ const TicketDetail = () => {
     const displayHour = hour > 12 ? hour - 12 : hour
     const finalHour = displayHour === 0 ? 12 : displayHour
     return `${period} ${finalHour}:${minuteStr}`
+  }
+
+  // 根據座位狀態計算顯示狀態
+  const getTicketState = (seat: typeof seats[0]) => {
+    // 優先檢查座位是否已使用
+    if (seat.status === "Used") {
+      return { text: "已使用", className: "bg-[#777777] text-white" }
+    }
+
+    // 檢查場次是否已過期
+    if (isShowExpired) {
+      return { text: "已過期", className: "bg-[#777777] text-white" }
+    }
+
+    // 其他情況顯示尚未使用
+    return { text: "尚未使用", className: "bg-[#11968D] text-white" }
   }
 
   if (loading) {
@@ -224,6 +253,8 @@ const TicketDetail = () => {
             // 使用後端提供的完整 QR code 內容，包含票券編號、場次 ID 和座位 ID
             // 如果沒有 qrCodeContent（舊資料），則使用 ticketNumber 作為 fallback
             const seatQrValue = seat.qrCodeContent || seat.ticketNumber
+            // 為每個座位計算獨立的狀態
+            const ticketState = getTicketState(seat)
 
             return (
               <motion.div
@@ -232,13 +263,9 @@ const TicketDetail = () => {
               >
                 <div className="absolute left-1/2 mt-4 -translate-x-1/2">
                   <span
-                    className={`rounded-full px-3 py-[5.5px] text-sm text-white ${
-                      ticket.status === "Paid"
-                        ? "bg-[#11968D] text-black"
-                        : "bg-[#777777] text-white"
-                    }`}
+                    className={`rounded-full px-3 py-[5.5px] text-sm ${ticketState.className}`}
                   >
-                    {ticket.status === "Paid" ? "尚未使用" : "已過期"}
+                    {ticketState.text}
                   </span>
                 </div>
 
