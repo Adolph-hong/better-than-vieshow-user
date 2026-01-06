@@ -65,6 +65,7 @@ export interface OrderDetailSeat {
   rowName: string
   columnNumber: number
   ticketNumber: string
+  qrCodeContent: string
 }
 
 export interface OrderDetail {

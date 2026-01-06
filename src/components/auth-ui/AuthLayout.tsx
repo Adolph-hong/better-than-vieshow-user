@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { Link } from "react-router-dom"
 import AuthLogo from "@/assets/icon/auth-logo.svg"
 
 interface AuthLayoutProps {
@@ -16,13 +17,13 @@ const AuthLayout = ({ title, children, footer }: AuthLayoutProps) => {
       {/* 主內容容器 - 撐滿剩餘空間並垂直置中 */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4">
         <header className="flex items-center justify-center">
-          <h1 className="flex flex-col items-center gap-1">
+          <Link to="/" className="flex flex-col items-center gap-1">
             <img src={AuthLogo} alt="Better Than Vieshow Logo" className="h-[32.21px] w-13" />
             <div className="flex items-center gap-1">
               <span className="text-sm font-bold text-white">Better Than</span>
               <span className="font-semibold text-white">威秀</span>
             </div>
-          </h1>
+          </Link>
         </header>
 
         <form className="mt-4 flex w-full flex-col rounded-lg bg-[#1F1F1F] px-4 pb-4">

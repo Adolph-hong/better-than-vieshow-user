@@ -16,6 +16,14 @@ const TicketList = () => {
 
   useEffect(() => {
     const fetchTickets = async () => {
+      // 檢查是否已登入
+      const token = localStorage.getItem("token")
+      if (!token) {
+        // 未登入，導向登入頁面
+        navigate("/login")
+        return
+      }
+
       try {
         setLoading(true)
         const response = await getOrders()
@@ -38,7 +46,7 @@ const TicketList = () => {
     }
 
     fetchTickets()
-  }, [])
+  }, [navigate])
 
   if (loading) {
     return (

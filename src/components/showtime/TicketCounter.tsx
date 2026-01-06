@@ -6,6 +6,7 @@ type TicketCounterProps = {
   onDecrement: () => void
   maxCount?: number
   minCount?: number
+  availableSeats?: number
 }
 
 const TicketCounter = ({
@@ -14,7 +15,10 @@ const TicketCounter = ({
   onDecrement,
   maxCount = 6,
   minCount = 0,
+  availableSeats,
 }: TicketCounterProps) => {
+  // 判斷是否顯示剩餘座位提示（剩餘座位 < 6 且已達最大值時顯示）
+  const showAvailableSeatsHint = availableSeats !== undefined && availableSeats < 6 && count >= maxCount
   return (
     <div>
       <h2 className="mb-2 text-xl font-semibold">人數</h2>
@@ -41,7 +45,12 @@ const TicketCounter = ({
           <Plus />
         </button>
 
-        {count >= maxCount && <span className="-ml-4 text-white">最多選擇 {maxCount} 位</span>}
+        {/* 提示訊息：優先顯示剩餘座位提示 */}
+        {showAvailableSeatsHint ? (
+          <span className="text-white">該場次剩餘 {availableSeats} 位</span>
+        ) : count >= maxCount ? (
+          <span className="text-white">最多選擇 {maxCount} 位</span>
+        ) : null}
       </div>
     </div>
   )
