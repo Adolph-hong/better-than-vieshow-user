@@ -82,6 +82,11 @@ const Login = () => {
         if (userName) {
           localStorage.setItem("user", userName)
         }
+
+        const userEmail = data.email || data.user?.email || data?.data?.email
+        if (userEmail) {
+          localStorage.setItem("userEmail", userEmail)
+        }
       }
 
       toast.success("登入成功")
