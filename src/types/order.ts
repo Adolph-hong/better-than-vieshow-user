@@ -79,6 +79,7 @@ export interface OrderDetail {
   seats: OrderDetailSeat[]
   paymentMethod: string | null
   totalAmount: number
+  isUsed: boolean
 }
 
 export interface GetOrderResponse {
