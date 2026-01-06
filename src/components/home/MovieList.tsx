@@ -77,15 +77,11 @@ const MovieList = ({ movies }: MovieListProps) => {
   return (
     <section className="flex w-full flex-col gap-2 overflow-x-hidden p-3">
       <h1 className="font-family-inter text-xl leading-[1.2] font-semibold text-white">所有電影</h1>
-      <div
-        ref={containerRef}
-        className="grid h-screen grid-cols-3 gap-3 overflow-x-hidden overflow-y-auto"
-        style={{ scrollbarWidth: "thin" }}
-      >
+      <div ref={containerRef} className="grid grid-cols-3 gap-3 overflow-x-hidden">
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="movie-card movie-card-slide flex cursor-pointer flex-col gap-2"
+            className="movie-card movie-card-slide show flex cursor-pointer flex-col gap-2"
             onClick={() => handleMovieClick(movie.id)}
             role="button"
             tabIndex={0}
@@ -106,13 +102,7 @@ const MovieList = ({ movies }: MovieListProps) => {
       </div>
       <style>{`
         .movie-card-slide {
-          transform: translateX(80px) !important;
-          opacity: 0 !important;
           transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-        }
-        .movie-card-slide.show {
-          transform: translateX(0) !important;
-          opacity: 1 !important;
         }
       `}</style>
     </section>
