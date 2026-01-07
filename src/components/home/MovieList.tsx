@@ -77,7 +77,7 @@ const MovieList = ({ movies }: MovieListProps) => {
   return (
     <section className="flex w-full flex-col gap-2 overflow-x-hidden p-3">
       <h1 className="font-family-inter text-xl leading-[1.2] font-semibold text-white">所有電影</h1>
-      <div ref={containerRef} className="grid grid-cols-3 gap-3 overflow-x-hidden">
+      <div ref={containerRef} className="grid grid-cols-3 gap-3 overflow-x-hidden pb-20">
         {movies.map((movie) => (
           <div
             key={movie.id}
