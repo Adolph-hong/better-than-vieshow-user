@@ -23,7 +23,7 @@ const MovieCategory = ({ category, movies }: MovieCategoryProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-2 px-3">
+    <div className="flex flex-col gap-2 px-3 -mr-3">
       <h1 className="font-family-inter text-xl font-semibold text-white">{category}</h1>
       <Swiper slidesPerView="auto" grabCursor style={{ marginLeft: 0, marginRight: 12 }}>
         {movies.map((movie: Movie, index: number) => {
