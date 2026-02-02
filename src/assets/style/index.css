@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@/assets/style/_theme.css";
+@import "@/assets/style/_utility.css";
+
+* {
+  font-family: "Inter", sans-serif;
+}

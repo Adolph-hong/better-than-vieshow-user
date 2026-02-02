@@ -1,0 +1,42 @@
+import { Routes, Route } from "react-router-dom"
+import Login from "../pages/auth/Login"
+import Signup from "../pages/auth/Signup"
+import Checkout from "../pages/checkout/Checkout"
+import CheckoutConfirm from "../pages/checkout/CheckoutConfirm"
+import MovieShowtime from "../pages/checkout/MovieShowtime"
+import PaymentSuccess from "../pages/checkout/PaymentSuccess"
+import SeatSelection from "../pages/checkout/SeatSelection"
+import Home from "../pages/Home"
+import MovieSearch from "../pages/MovieSearch"
+import Setting from "../pages/Setting"
+import TicketDetail from "../pages/tickets/TicketDetail"
+import TicketList from "../pages/tickets/TicketList"
+import TicketsLayout from "../pages/tickets/TicketsLayout"
+import TicketFeatureLayout from "./components/layout/TicketFeatureLayout"
+
+const AppRouter = () => (
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/movie-search" element={<MovieSearch />} />
+    <Route path="/settings" element={<Setting />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/signup" element={<Signup />} />
+    <Route path="/movie/showtime/:id" element={<MovieShowtime />} />
+    <Route path="/seat/selection" element={<SeatSelection />} />
+    <Route path="/checkout/confirm" element={<CheckoutConfirm />} />
+    <Route path="/checkout" element={<Checkout />} />
+
+    {/* Routes that require TicketContext */}
+    <Route element={<TicketFeatureLayout />}>
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/tickets">
+        <Route element={<TicketsLayout />}>
+          <Route index element={<TicketList />} />
+        </Route>
+        <Route path=":id" element={<TicketDetail />} />
+      </Route>
+    </Route>
+  </Routes>
+)
+
+export default AppRouter
