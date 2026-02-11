@@ -20,7 +20,7 @@ const TicketList = () => {
       const token = localStorage.getItem("token")
       if (!token) {
         // 未登入，導向登入頁面
-        navigate("/login")
+        navigate("/login", { replace: true })
         return
       }
 
