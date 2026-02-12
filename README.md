@@ -1,6 +1,6 @@
 # Better Than 威秀 - 電影購票系統
 
-> 本產品以提升整體電影購票流程的使用體驗為目標，打造一套前後台操作更直覺的電影購票系統。
+> 本產品以提升整體電影購票流程的使用體驗為目標，打造一套包含前後台操作更直覺的電影購票系統。
 
 ## 📌 專案簡介
 
@@ -12,10 +12,17 @@
 - **後台 Repository**：[https://github.com/Adolph-hong/better-than-vieshow-admin]
 - **後台展示**：[https://better-than-vieshow-admin.vercel.app/login]
 
+## 測試帳號 (Demo 專用)
+若您欲進入系統體驗完整流程，可使用以下測試資訊：
+- **測試帳號**：`guest@test.com` 
+- **測試密碼**：`Abcd1234`
+> [!TIP]
+> 為了最佳體驗，建議使用行動裝置模式或手機瀏覽器開啟 Demo 網址。
+
 ## 🛠️ 技術棧
 
 ### 核心框架
-- **React 19** - 前端框架
+- **React 19** - 前端開發
 - **TypeScript** - 型別安全
 - **Vite** - 建置工具與開發伺服器
 
