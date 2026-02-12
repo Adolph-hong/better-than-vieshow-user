@@ -8,9 +8,9 @@
 
 ## 🔗 相關連結
 
-- **前台展示**：[前台 Demo 網址]
-- **後台 Repository**：[後台 Repository 連結]
-- **後台展示**：[後台 Demo 網址]
+- **前台展示**：[https://better-than-vieshow-user.vercel.app/]
+- **後台 Repository**：[https://github.com/Adolph-hong/better-than-vieshow-admin]
+- **後台展示**：[https://better-than-vieshow-admin.vercel.app/login]
 
 ## 🛠️ 技術棧
 
