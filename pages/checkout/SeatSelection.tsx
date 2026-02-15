@@ -191,6 +191,7 @@ const SeatSelection = () => {
             totalPrice: currentTotalPrice,
             orderId: response.data.orderId,
             showTimeId: state.showTimeId,
+            expiresAt: response.data.expiresAt,
           },
         })
       } else {
