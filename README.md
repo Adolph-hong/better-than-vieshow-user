@@ -43,6 +43,27 @@
 - **ESLint** - 程式碼檢查（Airbnb 規範）
 - **Prettier** - 程式碼格式化
 
+### Git Flow
+
+#### 分支說明
+- **main** - 正式釋出分支（Protected）
+- **dev** - 開發整合分支（Protected）
+- **qa** - 驗收測試分支
+
+#### 開發流程
+- **feature/*** - 由 dev 開出功能分支進行開發
+- **PR → qa** - 功能完成後先合併至 qa 進行驗收
+- **PR → dev** - 驗收無誤後合併回 dev 進行整合
+
+#### 版本釋出
+- **dev001 / dev002 / ...** - dev 穩定後建立版本標籤
+- **PR → main** - 版本確認後合併至 main 作為正式釋出
+
+#### 分支保護規則
+- **Branch Protection** - main / dev 禁止直接 merge / push
+- **Pull Request Required** - 所有變更必須透過 PR
+- **Code Review** - 至少 1 人審核通過方可合併
+
 ## 🎯 主要功能
 
 - **電影搜尋** - 快速搜尋電影資訊
