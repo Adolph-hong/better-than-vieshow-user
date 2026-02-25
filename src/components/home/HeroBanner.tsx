@@ -20,7 +20,6 @@ interface HeroBannerProps {
 const HeroBanner = ({ movies }: HeroBannerProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const navigate = useNavigate()
-
   const handleSlideChange = (swiperInstance: SwiperType) => {
     setActiveIndex(swiperInstance.realIndex)
   }
@@ -117,13 +116,13 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
                     }}
                   >
                     <div
-                      className="relative h-full w-full cursor-pointer overflow-hidden"
-                      onClick={() => handleMovieClick(movie.id)}
                       role="button"
                       tabIndex={0}
+                      onClick={() => handleMovieClick(movie.id)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") handleMovieClick(movie.id)
+                        if (e.key === "Enter") navigate(`/movie/showtime/${movie.id}`)
                       }}
+                      className="relative h-full w-full cursor-pointer overflow-hidden"
                     >
                       <img
                         src={movie.poster}
