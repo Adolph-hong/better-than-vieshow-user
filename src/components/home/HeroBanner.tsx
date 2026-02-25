@@ -24,10 +24,6 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
     setActiveIndex(swiperInstance.realIndex)
   }
 
-  const handleMovieClick = (movieId: number) => {
-    navigate(`/movie/showtime/${movieId}`)
-  }
-
   if (!movies || movies.length === 0) {
     return null
   }
@@ -118,7 +114,7 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
                     <div
                       role="button"
                       tabIndex={0}
-                      onClick={() => handleMovieClick(movie.id)}
+                      onClick={() => navigate(`/movie/showtime/${movie.id}`)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") navigate(`/movie/showtime/${movie.id}`)
                       }}
