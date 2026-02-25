@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Navigation, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Header from "@/components/home/Header"
@@ -18,7 +19,7 @@ interface HeroBannerProps {
 
 const HeroBanner = ({ movies }: HeroBannerProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
-
+  const navigate = useNavigate()
   const handleSlideChange = (swiperInstance: SwiperType) => {
     setActiveIndex(swiperInstance.realIndex)
   }
@@ -110,7 +111,15 @@ const HeroBanner = ({ movies }: HeroBannerProps) => {
                       zIndex: getZIndex(),
                     }}
                   >
-                    <div className="relative h-full w-full overflow-hidden">
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => navigate(`/movie/showtime/${movie.id}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") navigate(`/movie/showtime/${movie.id}`)
+                      }}
+                      className="relative h-full w-full cursor-pointer overflow-hidden"
+                    >
                       <img
                         src={movie.poster}
                         alt={movie.title}
