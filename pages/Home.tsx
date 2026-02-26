@@ -9,7 +9,7 @@ import { getHomepageMovies } from "@/services/homepageAPI"
 import { transformApiMovies } from "@/utils/movieTransform"
 
 const Home = () => {
-  const [showModal, setShowModal] = useState(false)
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
   const [carouselMovies, setCarouselMovies] = useState<Movie[]>([])
   const [topWeeklyMovies, setTopWeeklyMovies] = useState<Movie[]>([])
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([])
@@ -17,9 +17,13 @@ const Home = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const NOTICE_KEY = "btv_notice_seen"
 
   useEffect(() => {
-    setShowModal(true)
+    const hasSeen = sessionStorage.getItem(NOTICE_KEY)
+    if (!hasSeen) {
+      setIsNoticeOpen(true)
+    }
   }, [])
 
   useEffect(() => {
@@ -58,8 +62,9 @@ const Home = () => {
     fetchHomepageData()
   }, [])
 
-  const handleClose = () => {
-    setShowModal(false)
+  const handleCloseNotice = () => {
+    sessionStorage.setItem(NOTICE_KEY, "true")
+    setIsNoticeOpen(false)
   }
 
   if (loading) {
@@ -93,7 +98,7 @@ const Home = () => {
         />
         <MovieList movies={allMovies} />
       </Layout>
-      <NoticeModal isOpen={showModal} onClose={handleClose} />
+      <NoticeModal isOpen={isNoticeOpen} onClose={handleCloseNotice} />
     </>
   )
 }

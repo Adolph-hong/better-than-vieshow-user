@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import CountdownTimer from "@/components/checkout/CountdownTimer"
@@ -31,6 +31,7 @@ type LocationState = {
   totalPrice: number
   orderId: number
   showTimeId: number
+  expiresAt: string
 }
 
 const Checkout = () => {
@@ -41,7 +42,36 @@ const Checkout = () => {
   const [isTimeout, setIsTimeout] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (!state) {
+  // localStorage key
+  const CHECKOUT_STATE_KEY = "checkout_state"
+
+  // 嘗試從 localStorage 恢復資料（如果 location.state 不存在）
+  const [checkoutState, _setCheckoutState] = useState<LocationState | null>(() => {
+    // 優先使用 location.state
+    if (state) return state
+    
+    // 如果沒有 state，嘗試從 localStorage 恢復
+    const savedState = localStorage.getItem(CHECKOUT_STATE_KEY)
+    if (savedState) {
+      try {
+        return JSON.parse(savedState) as LocationState
+      } catch (e) {
+        console.error("Failed to parse saved checkout state", e)
+        return null
+      }
+    }
+    
+    return null
+  })
+
+  // 當有有效的 state 時，存入 localStorage
+  useEffect(() => {
+    if (checkoutState) {
+      localStorage.setItem(CHECKOUT_STATE_KEY, JSON.stringify(checkoutState))
+    }
+  }, [checkoutState, CHECKOUT_STATE_KEY])
+
+  if (!checkoutState) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
         <p>無資料，請重新選擇</p>
@@ -65,7 +95,21 @@ const Checkout = () => {
     ticketType,
     ticketCount,
     totalPrice,
-  } = state
+    expiresAt,
+  } = checkoutState
+
+  // 計算距離過期時間的剩餘秒數
+  const calculateRemainingSeconds = (): number => {
+    if (!expiresAt) return 300 // 如果沒有過期時間，預設 5 分鐘
+    
+    const expiryTime = new Date(expiresAt).getTime()
+    const currentTime = new Date().getTime()
+    const remainingMs = expiryTime - currentTime
+    
+    return Math.max(0, Math.floor(remainingMs / 1000))
+  }
+
+  const initialSeconds = calculateRemainingSeconds()
 
   const displayTheater = theaterName || room || "未知影廳"
   const HANDLING_FEE = 20
@@ -106,7 +150,10 @@ const Checkout = () => {
       </div>
 
       <main className="mt-10 px-4">
-        <CountdownTimer onTimeout={() => setIsTimeout(true)} />
+        <CountdownTimer 
+          initialSeconds={initialSeconds} 
+          onTimeout={() => setIsTimeout(true)} 
+        />
 
         <OrderInfoCard
           date={date}
@@ -154,15 +201,15 @@ const Checkout = () => {
               setIsSubmitting(true)
               // 儲存目前狀態到 localStorage，以便從 Line Pay 跳轉回來時重新取得資料
               localStorage.setItem(
-                "checkout_state",
+                CHECKOUT_STATE_KEY,
                 JSON.stringify({
-                  ...state,
+                  ...checkoutState,
                   seatString,
                   finalTotalPrice,
                 })
               )
 
-              const response = await requestLinePay({ orderId: state.orderId })
+              const response = await requestLinePay({ orderId: checkoutState.orderId })
               console.log("Line Pay Request Response:", response)
 
               // 兼容不同可能的資料結構 (例如有沒有 data 包層，或是直接回傳扁平資料)
